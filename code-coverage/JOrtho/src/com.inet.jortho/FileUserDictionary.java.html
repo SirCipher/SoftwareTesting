@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FileUserDictionary.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">FileUserDictionary.java</span></div><h1>FileUserDictionary.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 23.12.2007
+ */
+package com.inet.jortho;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.Locale;
+
+
+
+/**
+ * This is a reference implementation of the interface {@link UserDictionaryProvider}.
+ * It save the user dictionaries on the local disk as text files.
+ * @author Volker Berlin
+ */
+public class FileUserDictionary implements UserDictionaryProvider{
+
+    private final String fileBase;
+    private File file;
+    
+    /** 
+     * Create a FileUserDictionary with the dictionaries in the root of the current
+     * application.
+     */
+    public FileUserDictionary(){
+<span class="nc" id="L46">        this( &quot;&quot; );</span>
+<span class="nc" id="L47">    }</span>
+    
+    /**
+     * Create a FileUserDictionary with the dictionaries on a specific location.
+     * @param fileBase the base 
+     */
+<span class="nc" id="L53">    public FileUserDictionary( String fileBase ){</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if( fileBase == null ){</span>
+<span class="nc" id="L55">            fileBase = &quot;&quot;;</span>
+        }
+<span class="nc" id="L57">        fileBase = fileBase.trim();</span>
+<span class="nc" id="L58">        fileBase = fileBase.replace( '\\', '/' );</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">        if( fileBase.length() &gt; 0 &amp;&amp; !fileBase.endsWith(&quot;/&quot;) ){</span>
+<span class="nc" id="L60">            fileBase += &quot;/&quot;;</span>
+        }
+<span class="nc" id="L62">        this.fileBase = fileBase;</span>
+<span class="nc" id="L63">    }</span>
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void addWord(String word){
+        try{
+<span class="nc" id="L70">            FileOutputStream output = new FileOutputStream( file, true );</span>
+<span class="nc" id="L71">            Writer writer = new OutputStreamWriter( output, &quot;UTF8&quot; );</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            if( file.length() &gt; 0 ){</span>
+<span class="nc" id="L73">                writer.write( &quot;\n&quot; );</span>
+            }
+<span class="nc" id="L75">            writer.write( word );</span>
+<span class="nc" id="L76">            writer.close();</span>
+<span class="nc" id="L77">        }catch(Exception ex){</span>
+<span class="nc" id="L78">        	SpellChecker.getMessageHandler().handleException( ex );</span>
+        }
+<span class="nc" id="L80">    }</span>
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator&lt;String&gt; getWords(Locale locale){
+<span class="nc" id="L87">        file = new File(fileBase + &quot;UserDictionary_&quot; + locale + &quot;.txt&quot; );</span>
+        try{
+<span class="nc" id="L89">            FileInputStream input = new FileInputStream(file);</span>
+<span class="nc" id="L90">            return new WordIterator( input, &quot;UTF8&quot; );</span>
+<span class="nc" id="L91">        }catch(IOException ex){</span>
+            /* ignore FileNotFound */
+        }
+<span class="nc" id="L94">        return null;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setUserWords(String wordList){
+        try{
+<span class="nc" id="L102">            FileOutputStream output = new FileOutputStream( file );</span>
+<span class="nc" id="L103">            Writer writer = new OutputStreamWriter( output, &quot;UTF8&quot; );</span>
+<span class="nc" id="L104">            writer.write( wordList );</span>
+<span class="nc" id="L105">            writer.close();</span>
+<span class="nc" id="L106">        }catch(Exception ex){</span>
+<span class="nc" id="L107">        	SpellChecker.getMessageHandler().handleException( ex );</span>
+        }
+<span class="nc" id="L109">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

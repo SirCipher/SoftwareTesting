@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CheckerMenu.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">CheckerMenu.java</span></div><h1>CheckerMenu.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 07.11.2005
+ */
+package com.inet.jortho;
+
+import java.awt.event.*;
+
+import javax.swing.*;
+
+/**
+ * @author Volker Berlin
+ */
+class CheckerMenu extends JMenu implements HierarchyListener {
+    
+    private final CheckerListener listener;
+
+    CheckerMenu(SpellCheckerOptions options){
+<span class="fc" id="L37">        super( Utils.getResource(&quot;spelling&quot;));</span>
+<span class="fc" id="L38">        listener = new CheckerListener(this, options);</span>
+<span class="fc" id="L39">        super.addHierarchyListener(this);</span>
+<span class="fc" id="L40">    }</span>
+
+
+    public void hierarchyChanged(HierarchyEvent ev) {
+        // If this sub menu is added to a parent
+        // then an Listener is added to request show popup events of the parent
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        if(ev.getChangeFlags() == HierarchyEvent.PARENT_CHANGED &amp;&amp; ev.getChanged() == this){</span>
+<span class="fc" id="L47">            JPopupMenu parent = (JPopupMenu)getParent();</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            if(parent != null){</span>
+<span class="fc" id="L49">                parent.addPopupMenuListener(listener);</span>
+<span class="fc" id="L50">            }else{</span>
+<span class="nc" id="L51">                ((JPopupMenu)ev.getChangedParent()).removePopupMenuListener(listener);</span>
+            }
+        }
+<span class="fc" id="L54">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

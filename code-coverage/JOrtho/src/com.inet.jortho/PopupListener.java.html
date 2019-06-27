@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PopupListener.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">PopupListener.java</span></div><h1>PopupListener.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 06.12.2007
+ */
+package com.inet.jortho;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JPopupMenu;
+
+/**
+ * Implement a MouseListener for Popup Event. It simple show the popup if there are the right mouse event. This should
+ * be part of the standard Java API.
+ * 
+ * @author Volker Berlin
+ */
+public class PopupListener extends MouseAdapter {
+
+    private final JPopupMenu menu;
+
+<span class="fc" id="L40">    public PopupListener( JPopupMenu menu ) {</span>
+<span class="fc" id="L41">        this.menu = menu;</span>
+<span class="fc" id="L42">    }</span>
+
+    @Override
+    public void mousePressed( MouseEvent ev ) {
+<span class="nc" id="L46">        maybeShowPopup( ev );</span>
+<span class="nc" id="L47">    }</span>
+
+    @Override
+    public void mouseReleased( MouseEvent ev ) {
+<span class="nc" id="L51">        maybeShowPopup( ev );</span>
+<span class="nc" id="L52">    }</span>
+
+    private void maybeShowPopup( MouseEvent ev ) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if( ev.isPopupTrigger() ) {</span>
+<span class="nc" id="L56">            menu.show( ev.getComponent(), ev.getX(), ev.getY() );</span>
+        }
+<span class="nc" id="L58">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

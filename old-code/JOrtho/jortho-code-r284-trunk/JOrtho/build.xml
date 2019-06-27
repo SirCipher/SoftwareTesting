@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JOrtho" default="build">
+	<target name="javadoc">
+		<javadoc
+			    encoding="UTF8"
+				destdir="doc"
+				author="false"
+				version="true"
+				use="true"
+				windowtitle="JOrtho - Java Spell Checker">
+			    <fileset dir="src" defaultexcludes="yes">
+			      <include name="com/inet/jortho/*.java"/>
+			      <exclude name="com/inet/jortho/Utils.java"/>
+				  <exclude name="com/inet/jortho/LanguageBundle*.java"/>
+			    </fileset>
+			<bottom><![CDATA[<i>Copyright &#169; 2005 - 2013 i-net software. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<target name="build">
+		<antcall target="createJar"/>
+		<antcall target="createZip"/>
+	</target>
+	
+	
+	<target name="createJar" depends="javadoc">
+		<delete dir="temp"/>
+		<mkdir dir="temp"/>
+		<javac srcdir="src" destdir="temp" target="1.5" source="1.5" encoding="UTF8">
+			<include name="com/inet/jortho/**/*.java"/>
+			<exclude name="**/*Test*.java"/>
+		</javac>
+		<jar destfile="temp/jortho.jar">
+    		<manifest >
+		      	<attribute name="Implementation-Title" value="i-net JOrtho"/>
+		      	<attribute name="Implementation-Version" value="1.0"/>
+		      	<attribute name="Implementation-Vendor" value="i-net software GmbH"/>
+				<attribute name="Application-Name" value="i-net JOrtho" />
+    			<attribute name="Codebase" value="*"/>
+    			<attribute name="Permissions" value="sandbox"/>
+    			<attribute name="Application-Library-Allowable-Codebase" value="*"/>
+    			<attribute name="Trusted-Only" value="false"/>
+    			<attribute name="Trusted-Library" value="false"/>
+			</manifest>
+			<fileset dir="temp"/>
+			<fileset dir="src" includes="com/inet/jortho/**/*.properties"/>
+		</jar>	
+	</target>
+	
+	
+	<target name="createSampleJar">
+		<delete dir="temp"/>
+		<mkdir dir="temp"/>
+		<javac srcdir="src" destdir="temp" target="1.5" source="1.5" encoding="UTF8">
+			<include name="Sample*.java"/>
+		</javac>
+		<jar destfile="temp/jortho.jar">
+    		<manifest >
+				<attribute name="Application-Name" value="i-net JOrtho Sample" />
+    			<attribute name="Codebase" value="*"/>
+    			<attribute name="Permissions" value="sandbox"/>
+    			<attribute name="Application-Library-Allowable-Codebase" value="*"/>
+    			<attribute name="Trusted-Only" value="false"/>
+    			<attribute name="Trusted-Library" value="false"/>
+			</manifest>
+			<fileset dir="temp">
+				<include name="Sample*.*"/>
+			</fileset>
+		</jar>	
+	</target>
+	
+	
+	<target name="createZip">
+		<zip destfile="JOrtho.zip">
+			<fileset dir="temp" includes="jortho.jar"/>
+			<fileset dir="." includes="doc/**/*.*"/>
+			<fileset dir="." includes="src/**/*.*" excludes="src/**/*Test*.java"/>
+			<fileset dir="." includes="src/com/inet/jorthotests/**/*.*"/>
+			<fileset dir="." includes="license.txt"/>
+			<zipfileset dir="www" includes="index.html" fullpath="manual.html"/>
+		</zip>
+		<delete dir="temp"/>
+	</target>
+	
+	
+	<target name="buildsign" depends="javadoc">
+		<antcall target="createJar"/>
+		<ant antfile="buildsign.xml" target="sign_jar" />
+		<antcall target="createZip"/>
+		<antcall target="createSampleJar"/>
+		<ant antfile="buildsign.xml" target="sign_jar" />
+		<move file="temp/jortho.jar" tofile="sample.jar"/>
+		<delete dir="temp"/>
+	</target>
+	
+	
+</project>

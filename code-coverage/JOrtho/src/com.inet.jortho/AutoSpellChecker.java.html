@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>AutoSpellChecker.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">AutoSpellChecker.java</span></div><h1>AutoSpellChecker.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 05.11.2005
+ */
+package com.inet.jortho;
+
+import java.util.Locale;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
+import javax.swing.text.Highlighter.Highlight;
+
+/**
+ * This class check a &lt;code&gt;JTextComponent&lt;/code&gt; automatically (in the background) for orthography. Spell error are
+ * highlighted with a red zigzag line.
+ * 
+ * @author Volker Berlin
+ */
+class AutoSpellChecker implements DocumentListener, LanguageChangeListener {
+<span class="fc" id="L39">    private static final RedZigZagPainter painter = new RedZigZagPainter();</span>
+
+    private final JTextComponent                jText;
+    private final SpellCheckerOptions options;
+
+    private Dictionary                    dictionary;
+
+    private Locale                        locale;
+
+    
+<span class="fc" id="L49">    public AutoSpellChecker(JTextComponent text, SpellCheckerOptions options){</span>
+<span class="fc" id="L50">        this.jText = text;</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        this.options = options == null ? SpellChecker.getOptions() : options;</span>
+<span class="fc" id="L52">        jText.getDocument().addDocumentListener( this );</span>
+
+<span class="fc" id="L54">        SpellChecker.addLanguageChangeLister( this );</span>
+<span class="fc" id="L55">        dictionary = SpellChecker.getCurrentDictionary();</span>
+<span class="fc" id="L56">        locale = SpellChecker.getCurrentLocale();</span>
+<span class="fc" id="L57">        checkAll();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Remove the AutoSpellChecker from the given JTextComponent.
+     * 
+     * @param text
+     *            the JTextComponent
+     */
+    static void disable( JTextComponent text ){
+<span class="nc" id="L67">        AbstractDocument doc = (AbstractDocument)text.getDocument();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        for(DocumentListener listener : doc.getDocumentListeners()){</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            if(listener instanceof AutoSpellChecker){</span>
+<span class="nc" id="L70">                AutoSpellChecker autoSpell = (AutoSpellChecker)listener;</span>
+<span class="nc" id="L71">                doc.removeDocumentListener( autoSpell );</span>
+<span class="nc" id="L72">                removeHighlights(text);</span>
+            }
+        }
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Remove all SpellChecker highlights from the given JTextComponent.
+     * 
+     * @param text
+     *            the JTextComponent
+     */
+	private static void removeHighlights( JTextComponent text ) {
+<span class="nc" id="L84">        Highlighter highlighter = text.getHighlighter();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for( Highlight highlight : highlighter.getHighlights() ) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if( highlight.getPainter() == painter ) {</span>
+<span class="nc" id="L87">                highlighter.removeHighlight( highlight );</span>
+            }
+        }
+<span class="nc" id="L90">    }</span>
+    
+    /**
+     * Refresh the highlighting. This can be useful if the dictionary was modify.
+     * 
+     * @param text
+     *            the JTextComponent
+     */
+    static void refresh( JTextComponent text ){
+<span class="fc" id="L99">        AbstractDocument doc = (AbstractDocument)text.getDocument();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for(DocumentListener listener : doc.getDocumentListeners()){</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if( listener instanceof AutoSpellChecker ){</span>
+<span class="fc" id="L102">                AutoSpellChecker autoSpell = (AutoSpellChecker)listener;</span>
+<span class="fc" id="L103">                autoSpell.checkAll();</span>
+            }
+        }
+<span class="fc" id="L106">    }</span>
+
+    /*====================================================================
+     * 
+     * Methods of interface DocumentListener
+     * 
+     *===================================================================*/
+
+    /**
+     * {@inheritDoc}
+     */
+    public void changedUpdate( DocumentEvent ev ) {
+        //Nothing
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    public void insertUpdate( DocumentEvent ev ) {
+<span class="fc" id="L125">        checkElements( ev.getOffset(), ev.getLength() );</span>
+<span class="fc" id="L126">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeUpdate( DocumentEvent ev ) {
+<span class="fc" id="L132">        checkElements( ev.getOffset(), 0 );</span>
+<span class="fc" id="L133">    }</span>
+
+    /**
+     * Check the Elements on the given position.
+     */
+    private void checkElements( int offset, int length ) {
+<span class="fc" id="L139">        int end = offset + length;</span>
+<span class="fc" id="L140">        Document document = jText.getDocument();</span>
+        Element element;
+
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        do{</span>
+            try {
+                // We need to use a ParagraphElement because a CharacterElement produce problems with formating in a word
+<span class="fc" id="L146">                element = ((AbstractDocument)document).getParagraphElement( offset );</span>
+<span class="pc" id="L147">            } catch( java.lang.Exception ex ) {</span>
+<span class="nc" id="L148">                return;</span>
+            }
+<span class="fc" id="L150">            checkElement( element );</span>
+<span class="fc" id="L151">            int endOffset = element.getEndOffset();</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            offset = endOffset &gt; offset ? endOffset : offset + 1;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        }while( offset &lt;= end &amp;&amp; offset &lt; document.getLength() );</span>
+<span class="fc" id="L154">    }</span>
+
+    /**
+     * Check the spelling of the text of an element.
+     * 
+     * @param element
+     *            the to checking Element
+     */
+    private void checkElement( javax.swing.text.Element element ) {
+        try {
+<span class="fc" id="L164">            int i = element.getStartOffset();</span>
+<span class="fc" id="L165">            int j = element.getEndOffset();</span>
+<span class="fc" id="L166">            Highlighter highlighter = jText.getHighlighter();</span>
+<span class="fc" id="L167">            Highlight[] highlights = highlighter.getHighlights();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            for( int k = highlights.length; --k &gt;= 0; ) {</span>
+<span class="fc" id="L169">                Highlight highlight = highlights[k];</span>
+<span class="fc" id="L170">                int hlStartOffset = highlight.getStartOffset();</span>
+<span class="fc" id="L171">                int hlEndOffset = highlight.getEndOffset();</span>
+<span class="fc bfc" id="L172" title="All 4 branches covered.">                if( (i &lt;= hlStartOffset &amp;&amp; hlStartOffset &lt;= j) || </span>
+<span class="pc bpc" id="L173" title="1 of 4 branches missed.">                    (i &lt;= hlEndOffset &amp;&amp; hlEndOffset &lt;= j) ) {</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">                    if( highlight.getPainter() == painter ) {</span>
+<span class="fc" id="L175">                        highlighter.removeHighlight( highlight );</span>
+                    }
+                }
+            }
+
+<span class="fc" id="L180">            int l = ((AbstractDocument)jText.getDocument()).getLength();</span>
+<span class="fc" id="L181">            j = Math.min( j, l );</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            if( i &gt;= j )</span>
+<span class="fc" id="L183">                return;</span>
+
+            // prevent a NPE if the dictionary is currently not loaded.
+<span class="fc" id="L186">            Dictionary dic = dictionary;</span>
+<span class="fc" id="L187">            Locale loc = locale;</span>
+<span class="pc bpc" id="L188" title="2 of 4 branches missed.">            if( dic == null || loc == null ){</span>
+<span class="nc" id="L189">                return;</span>
+            }
+            
+<span class="fc" id="L192">            Tokenizer tok = new Tokenizer( jText, dic, loc, i, j, options );</span>
+            String word;
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            while( (word = tok.nextInvalidWord()) != null ) {</span>
+<span class="fc" id="L195">                int wordOffset = tok.getWordOffset();</span>
+<span class="fc" id="L196">                highlighter.addHighlight( wordOffset, wordOffset + word.length(), painter );</span>
+            }
+<span class="pc" id="L198">        } catch( BadLocationException e ) {</span>
+<span class="nc" id="L199">        	SpellChecker.getMessageHandler().handleException( e );</span>
+        }
+<span class="fc" id="L201">    }</span>
+
+    /**
+//     * Check the completely text. Because this can consume many times with large Documents that this will do in a thread
+     * in the background step by step.
+     */
+    private void checkAll() {
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if( jText == null ) {</span>
+            //the needed objects does not exists
+<span class="nc" id="L210">            return;</span>
+        }
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        if( dictionary == null ) {</span>
+<span class="nc" id="L213">            removeHighlights( jText );</span>
+<span class="nc" id="L214">            return;</span>
+        }
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        if( jText.getDocument().getLength() == 0 ){</span>
+            // no text, no highlights
+<span class="fc" id="L218">            return;</span>
+        }
+
+<span class="fc" id="L221">        Thread thread = new Thread( new Runnable() {</span>
+            public void run() {
+<span class="fc" id="L223">                Document document = jText.getDocument();</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">                for( int i = 0; i &lt; document.getLength(); ) {</span>
+                    try {
+<span class="fc" id="L226">                        final Element element = ((AbstractDocument)document).getParagraphElement( i );</span>
+<span class="fc" id="L227">                        i = element.getEndOffset();</span>
+<span class="fc" id="L228">                        SwingUtilities.invokeLater( new Runnable() {</span>
+                            public void run() {
+<span class="fc" id="L230">                                checkElement( element );</span>
+<span class="fc" id="L231">                            }</span>
+
+                        } );
+<span class="pc" id="L234">                    } catch( java.lang.Exception ex ) {</span>
+<span class="nc" id="L235">                        return;</span>
+                    }
+                }
+<span class="fc" id="L238">            }</span>
+<span class="fc" id="L239">        }, &quot;JOrtho checkall&quot; );</span>
+<span class="fc" id="L240">        thread.setPriority( Thread.NORM_PRIORITY - 1 );</span>
+<span class="fc" id="L241">        thread.setDaemon( true );</span>
+<span class="fc" id="L242">        thread.start();</span>
+<span class="fc" id="L243">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    public void languageChanged( LanguageChangeEvent ev ) {
+<span class="nc" id="L249">        dictionary = SpellChecker.getCurrentDictionary();</span>
+<span class="nc" id="L250">        locale = SpellChecker.getCurrentLocale();</span>
+<span class="nc" id="L251">        checkAll();</span>
+<span class="nc" id="L252">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

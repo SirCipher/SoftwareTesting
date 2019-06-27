@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Suggestion</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Suggestion (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Suggestion</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (10/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2008 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; *  Created on 04.11.2005
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;/**
+<i>27</i>&nbsp; * This class hold one Suggestion for another spelling. 
+<i>28</i>&nbsp; * Note: this class has a natural ordering that is inconsistent with equals.
+<i>29</i>&nbsp; * @author Volker Berlin
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;final class Suggestion implements Comparable&lt;Suggestion&gt;{
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private final String word;
+<i>34</i>&nbsp;    private final int diff;
+<i>35</i>&nbsp;    
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Construct a suggestion
+<i>38</i>&nbsp;     * @param word the characters of the suggested the word.
+<i>39</i>&nbsp;     * @param diff the difference to the original word.
+<i>40</i>&nbsp;     */
+<b class="fc"><i>41</i>&nbsp;    Suggestion( CharSequence word, int diff) {</b>
+<b class="fc"><i>42</i>&nbsp;        this.word = word.toString();</b>
+<b class="fc"><i>43</i>&nbsp;        this.diff = diff;</b>
+<b class="fc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;    
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Return the suggested word and it equals to getWord().
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public String toString(){
+<b class="nc"><i>51</i>&nbsp;        return word;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Get the suggested word.
+<i>57</i>&nbsp;     * @return the word
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public String getWord() {
+<b class="fc"><i>60</i>&nbsp;        return word;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Return a value that descript dissimilarity to the original word.
+<i>66</i>&nbsp;     * A vaulue of 0 means that the value is 100% identical. This should not occur.
+<i>67</i>&nbsp;     * @return the dissimilarity, so larger to differ the word.   
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public int getDissimilarity(){
+<b class="fc"><i>70</i>&nbsp;        return diff;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;    
+<i>73</i>&nbsp;    
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * {@inheritDoc}
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    @Override
+<i>78</i>&nbsp;    public boolean equals(Object sugg){
+<b class="fc"><i>79</i>&nbsp;        if (sugg instanceof Suggestion) {</b>
+<b class="fc"><i>80</i>&nbsp;            return word.equals( ((Suggestion)sugg).word );</b>
+<i>81</i>&nbsp;        }
+<b class="nc"><i>82</i>&nbsp;        return false;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;    
+<i>85</i>&nbsp;    
+<i>86</i>&nbsp;    /**
+<i>87</i>&nbsp;     * {@inheritDoc}
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    @Override
+<i>90</i>&nbsp;    public int hashCode(){
+<b class="fc"><i>91</i>&nbsp;        return word.hashCode();</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * {@inheritDoc}
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public int compareTo( Suggestion sugg ) {
+<b class="fc"><i>99</i>&nbsp;        return diff - sugg.diff;</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

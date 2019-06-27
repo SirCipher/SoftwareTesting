@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator_ru.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator_ru.java</span></div><h1>BookGenerator_ru.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 13.12.2007
+ */
+package com.inet.jorthodictionaries;
+
+import java.io.File;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * All String include kyrillic charcters. If you have not a kyrillic keyboard then only copy and paste it.
+ * Do not enter any string with a latin keyboard
+ * @author Volker Berlin
+ */
+<span class="nc" id="L35">public class BookGenerator_ru extends BookGenerator {</span>
+
+<span class="nc" id="L37">    private Hashtable&lt;String, Template&gt; templates = new Hashtable&lt;String, Template&gt;();</span>
+
+    /**
+     * Need 2 run. First are parsed the templates. Then start the real parsing.
+     */
+    @Override
+    void start( File file ) throws Exception {
+<span class="nc" id="L44">        BookGenerator_ru_templates templateGenerator = new BookGenerator_ru_templates(this);</span>
+<span class="nc" id="L45">        templateGenerator.start( file );</span>
+<span class="nc" id="L46">        templates = templateGenerator.getTemplates();</span>
+<span class="nc" id="L47">        System.out.println(&quot;\nTemplate Count: &quot;+templates.size());</span>
+        
+<span class="nc" id="L49">        super.start( file );</span>
+<span class="nc" id="L50">    }</span>
+    
+    @Override
+    boolean isValidLanguage( String word, String wikiText ) {
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        if( wikiText.indexOf( &quot;{{-ru-}}&quot; ) &lt; 0 &amp;&amp; wikiText.indexOf( &quot;{{-ru-|&quot; ) &lt; 0 ) {</span>
+<span class="nc" id="L55">            return false;</span>
+        }
+
+        //The list of templates can be found at
+        //http://ru.wiktionary.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%A8%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%D1%8B_%D1%81%D0%BB%D0%BE%D0%B2%D0%BE%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B9/%D0%A4%D0%B0%D0%BC%D0%B8%D0%BB%D0%B8%D0%B8
+<span class="nc" id="L60">        findRuleAndAddWords( word, wikiText );</span>
+
+<span class="nc" id="L62">        return true;</span>
+    }
+    
+    /**
+     * Find the placholder of templates and add the words that was build with this templates.
+     */
+    private void findRuleAndAddWords( String word, String wikiText ) {
+<span class="nc" id="L69">        int idxStart = wikiText.indexOf( &quot;{{&quot; );</span>
+<span class="nc" id="L70">        int idxEnd = wikiText.indexOf( &quot;}}&quot;, idxStart );</span>
+<span class="nc bnc" id="L71" title="All 4 branches missed.">        while( idxStart &gt;= 0 &amp;&amp; idxEnd &gt;= 0 ) {</span>
+<span class="nc" id="L72">            Properties props = parseRule( wikiText, idxStart + 2, idxEnd );</span>
+<span class="nc" id="L73">            String ruleName = props.getProperty( &quot;0&quot; );</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if( ruleName != null ) {</span>
+<span class="nc" id="L75">                Template template = templates.get( ruleName );</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                if( template != null ) {</span>
+<span class="nc" id="L77">                    template.addWords( word, props );</span>
+                }
+            }
+
+<span class="nc" id="L81">            idxStart = wikiText.indexOf( &quot;{{&quot;, idxEnd );</span>
+<span class="nc" id="L82">            idxEnd = wikiText.indexOf( &quot;}}&quot;, idxStart );</span>
+        }
+<span class="nc" id="L84">    }</span>
+
+
+    /**
+     * Read the inforamtions of the template placeholder
+     */
+    private Properties parseRule( String wikiText, int idxStart, int idxEnd ) {
+<span class="nc" id="L91">        Properties props = new Properties();</span>
+        
+<span class="nc" id="L93">        String[] tokens = wikiText.substring( idxStart, idxEnd ).split( &quot;\\|&quot; );</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for(int i=0; i&lt;tokens.length; i++){</span>
+<span class="nc" id="L95">            String value = tokens[i].trim();</span>
+<span class="nc" id="L96">            int idx = value.indexOf( '=' );</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if(idx &gt; 0){</span>
+<span class="nc" id="L98">                String name = value.substring( 0, idx );</span>
+<span class="nc" id="L99">                value = value.substring( idx+1 );</span>
+<span class="nc" id="L100">                props.setProperty( name, normalizeString( value ) );</span>
+<span class="nc" id="L101">            } else {</span>
+<span class="nc" id="L102">                props.setProperty( String.valueOf( i ), value );</span>
+            }
+        }
+<span class="nc" id="L105">        return props;</span>
+    }
+    
+    private String normalizeString( String str ){
+<span class="nc" id="L109">        StringBuilder builder = new StringBuilder();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for(int i=0; i&lt;str.length(); i++ ){</span>
+<span class="nc" id="L111">            char c = str.charAt( i );</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            switch(c){</span>
+                case '\u0301':
+                case '-':
+<span class="nc" id="L115">                    continue;</span>
+            }
+<span class="nc" id="L117">            builder.append( c );</span>
+        }
+<span class="nc" id="L119">        return builder.toString();</span>
+    }
+
+    /**
+     * Described the needed informations of a template.
+     */
+    public class Template{
+<span class="nc" id="L126">        private Hashtable&lt;String, String[]&gt; rules = new Hashtable&lt;String, String[]&gt;();</span>
+        private String templateName;
+        
+<span class="nc" id="L129">        Template( String templateName ) {</span>
+<span class="nc" id="L130">            this.templateName = templateName;</span>
+<span class="nc" id="L131">        }</span>
+
+        public void addWords( String word, Properties props ) {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            for( Map.Entry&lt;String, String[]&gt; rule : rules.entrySet() ){</span>
+<span class="nc" id="L135">                String root = props.getProperty( rule.getKey() );</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if(root != null){</span>
+<span class="nc" id="L137">                    String[] endings = rule.getValue();</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    for( String ending : endings){</span>
+<span class="nc" id="L139">                        addWord(root+ending);</span>
+                    }
+                }
+            }
+<span class="nc" id="L143">        }</span>
+        
+        /**
+         * get the count of found rules in the template. Only templates with rules make sence.
+         */
+        int getRuleCount() {
+<span class="nc" id="L149">            return rules.size();</span>
+        }
+        
+        /**
+         * Get the name of the template without the prefix &quot;Ð¨Ð°Ð±Ð»Ð¾Ð½:&quot;
+         */
+        String getName(){
+<span class="nc" id="L156">            return templateName.substring( 7 );</span>
+        }
+
+        /**
+         * Add a single ending to a rule.
+         */
+        void addEnding( String rule, String ending ) {
+<span class="nc" id="L163">            String[] endings = rules.get( rule );</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            if( endings == null ) {</span>
+<span class="nc" id="L165">                endings = new String[1];</span>
+<span class="nc" id="L166">            } else {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                for( String e : endings ) {</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                    if( e.equals( ending ) ) {</span>
+                        //Ending already in list
+<span class="nc" id="L170">                        return;</span>
+                    }
+                }
+<span class="nc" id="L173">                String[] temp = new String[endings.length + 1];</span>
+<span class="nc" id="L174">                System.arraycopy( endings, 0, temp, 0, endings.length );</span>
+<span class="nc" id="L175">                endings = temp;</span>
+            }
+<span class="nc" id="L177">            endings[endings.length - 1] = ending;</span>
+<span class="nc" id="L178">            rules.put( rule, endings );</span>
+<span class="nc" id="L179">        }</span>
+
+        /**
+         * Create a Java source code representation of this template. Currently obsolet.
+         */
+        @Override
+        public String toString() {
+<span class="nc" id="L186">            StringBuilder builder = new StringBuilder();</span>
+<span class="nc" id="L187">            builder.append( &quot;//&quot; ).append( templateName ).append( '\n' );</span>
+<span class="nc" id="L188">            builder.append( &quot;template = new Template();\n&quot; );</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            for( Map.Entry&lt;String, String[]&gt; rule : rules.entrySet() ) {</span>
+<span class="nc" id="L190">                builder.append( &quot;template.addRule( \&quot;&quot; ).append( rule.getKey() ).append( '\&quot;' );</span>
+<span class="nc" id="L191">                String[] endings = rule.getValue();</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                for( String ending : endings ) {</span>
+<span class="nc" id="L193">                    builder.append( &quot;, \&quot;&quot; ).append( ending ).append( &quot;\&quot;&quot; );</span>
+                }
+<span class="nc" id="L195">                builder.append( &quot; );\n&quot; );</span>
+            }
+<span class="nc" id="L197">            builder.append( &quot;templates.put( \&quot;&quot; ).append( getName() ).append( &quot;\&quot;, template );\n&quot; );</span>
+<span class="nc" id="L198">            builder.append( &quot;\n&quot; );</span>
+<span class="nc" id="L199">            return builder.toString();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

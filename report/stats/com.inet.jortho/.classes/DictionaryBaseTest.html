@@ -1,0 +1,130 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DictionaryBaseTest</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DictionaryBaseTest (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DictionaryBaseTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.2%
+  </span>
+  <span class="absValue">
+    (16/ 19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.inet.jortho;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import junit.framework.TestCase;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import javax.swing.*;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;
+<b class="fc"><i>8</i>&nbsp;public class DictionaryBaseTest extends TestCase {</b>
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    static {
+<b class="fc"><i>11</i>&nbsp;        AllTests.init();</b>
+<b class="fc"><i>12</i>&nbsp;    }</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Tests that the suggestions feature does return suggestions as well as the spelling mistake being replaced
+<i>16</i>&nbsp;     * by the suggestion
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    public void testSearchSuggestions() {
+<b class="fc"><i>19</i>&nbsp;        @SuppressWarnings(&quot;SpellCheckingInspection&quot;) JEditorPane jText = TestUtils.initDefaultSpellchecker(&quot;testt&quot;);</b>
+<b class="fc"><i>20</i>&nbsp;        Tokenizer tokenizer = TestUtils.getDefaultTokenizer(jText);</b>
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;        assertNotNull(&quot;No spelling mistake found by tokenizer&quot;, tokenizer.nextInvalidWord());</b>
+<i>23</i>&nbsp;
+<b class="fc"><i>24</i>&nbsp;        List&lt;Suggestion&gt; suggestions = SpellChecker.getCurrentDictionary().searchSuggestions(jText.getText());</b>
+<b class="fc"><i>25</i>&nbsp;        assertTrue(&quot;No suggestions returned&quot;, suggestions.size() &gt; 0);</b>
+<i>26</i>&nbsp;
+<b class="fc"><i>27</i>&nbsp;        String replacement = suggestions.get(0).getWord();</b>
+<b class="fc"><i>28</i>&nbsp;        jText.setText(replacement);</b>
+<i>29</i>&nbsp;
+<b class="fc"><i>30</i>&nbsp;        tokenizer = TestUtils.getDefaultTokenizer(jText);</b>
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;        assertNull(&quot;Editor not updated with replacement value&quot;, tokenizer.nextInvalidWord());</b>
+<b class="fc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Checks that the search suggestions handles null input gracefully
+<i>37</i>&nbsp;     */
+<i>38</i>&nbsp;    public void testSearchSuggestionsNullInput() {
+<i>39</i>&nbsp;        try {
+<b class="fc"><i>40</i>&nbsp;            List&lt;Suggestion&gt; suggestions = SpellChecker.getCurrentDictionary().searchSuggestions(null);</b>
+<b class="nc"><i>41</i>&nbsp;            assertEquals(&quot;No results should be returned with a null input&quot;, suggestions.size(), 0);</b>
+<b class="fc"><i>42</i>&nbsp;        } catch (NullPointerException e) {</b>
+<b class="fc"><i>43</i>&nbsp;            fail(&quot;Null input to searchSuggestions not handled gracefully. Ex: &quot; + e);</b>
+<b class="nc"><i>44</i>&nbsp;        }</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:13</div>
+</div>
+</body>
+</html>

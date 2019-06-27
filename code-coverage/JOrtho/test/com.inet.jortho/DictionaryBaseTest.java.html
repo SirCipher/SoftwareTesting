@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DictionaryBaseTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">test</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">DictionaryBaseTest.java</span></div><h1>DictionaryBaseTest.java</h1><pre class="source lang-java linenums">package com.inet.jortho;
+
+import junit.framework.TestCase;
+
+import javax.swing.*;
+import java.util.List;
+
+<span class="fc" id="L8">public class DictionaryBaseTest extends TestCase {</span>
+
+    static {
+<span class="fc" id="L11">        AllTests.init();</span>
+<span class="fc" id="L12">    }</span>
+
+    /**
+     * Tests that the suggestions feature does return suggestions as well as the spelling mistake being replaced
+     * by the suggestion
+     */
+    public void testSearchSuggestions() {
+<span class="fc" id="L19">        @SuppressWarnings(&quot;SpellCheckingInspection&quot;) JEditorPane jText = TestUtils.initDefaultSpellchecker(&quot;testt&quot;);</span>
+<span class="fc" id="L20">        Tokenizer tokenizer = TestUtils.getDefaultTokenizer(jText);</span>
+
+<span class="fc" id="L22">        assertNotNull(&quot;No spelling mistake found by tokenizer&quot;, tokenizer.nextInvalidWord());</span>
+
+<span class="fc" id="L24">        List&lt;Suggestion&gt; suggestions = SpellChecker.getCurrentDictionary().searchSuggestions(jText.getText());</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        assertTrue(&quot;No suggestions returned&quot;, suggestions.size() &gt; 0);</span>
+
+<span class="fc" id="L27">        String replacement = suggestions.get(0).getWord();</span>
+<span class="fc" id="L28">        jText.setText(replacement);</span>
+
+<span class="fc" id="L30">        tokenizer = TestUtils.getDefaultTokenizer(jText);</span>
+
+<span class="fc" id="L32">        assertNull(&quot;Editor not updated with replacement value&quot;, tokenizer.nextInvalidWord());</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Checks that the search suggestions handles null input gracefully
+     */
+    public void testSearchSuggestionsNullInput() {
+        try {
+<span class="nc" id="L40">            List&lt;Suggestion&gt; suggestions = SpellChecker.getCurrentDictionary().searchSuggestions(null);</span>
+<span class="nc" id="L41">            assertEquals(&quot;No results should be returned with a null input&quot;, suggestions.size(), 0);</span>
+<span class="pc" id="L42">        } catch (NullPointerException e) {</span>
+<span class="nc" id="L43">            fail(&quot;Null input to searchSuggestions not handled gracefully. Ex: &quot; + e);</span>
+        }
+<span class="nc" id="L45">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

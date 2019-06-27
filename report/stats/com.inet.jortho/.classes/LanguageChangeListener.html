@@ -1,0 +1,90 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LanguageChangeListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LanguageChangeListener (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">LanguageChangeListener</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2008 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; *  Created on 06.12.2007
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import java.util.EventListener;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;/**
+<i>28</i>&nbsp; * A language change event gets fired whenever the language is changed.
+<i>29</i>&nbsp; * You can register a LanguageChangeListener in the class SpellChecker.
+<i>30</i>&nbsp; * @author Volker Berlin
+<i>31</i>&nbsp; * @see SpellChecker#addLanguageChangeLister(LanguageChangeListener)
+<i>32</i>&nbsp; * @see SpellChecker#removeLanguageChangeLister(LanguageChangeListener)
+<i>33</i>&nbsp; */
+<i>34</i>&nbsp;public interface LanguageChangeListener extends EventListener{
+<i>35</i>&nbsp;    
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * This method gets called when the language is changed.
+<i>38</i>&nbsp;     * This occurs if the user selects another language in the languages menu.
+<i>39</i>&nbsp;     * @param ev A LanguageChangeEvent object describing the changes.
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public void languageChanged(LanguageChangeEvent ev);
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

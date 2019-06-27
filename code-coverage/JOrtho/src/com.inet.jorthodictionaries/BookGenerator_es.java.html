@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator_es.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator_es.java</span></div><h1>BookGenerator_es.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 13.12.2007
+ */
+package com.inet.jorthodictionaries;
+
+import java.util.Properties;
+import java.util.StringTokenizer;
+
+/**
+ * 
+ * @author Volker Berlin
+ */
+<span class="nc" id="L32">public class BookGenerator_es extends BookGenerator {</span>
+
+    @Override
+    boolean isValidLanguage( String word, String wikiText ) {
+<span class="nc bnc" id="L36" title="All 4 branches missed.">        if( wikiText.indexOf( &quot;{{ES}}&quot; ) &lt; 0 &amp;&amp; wikiText.indexOf( &quot;{{ES|&quot; ) &lt; 0 ) {</span>
+<span class="nc" id="L37">            return false;</span>
+        }
+
+        //the follow rules can be found at http://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n
+
+        //http://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_adjetivos
+<span class="nc" id="L43">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.-Ã³n&quot;, null, new String[] { &quot;Ã³n&quot;, &quot;ona&quot;, &quot;ones&quot;, &quot;onas&quot; } ); //redirect to inflect.es.adj.agudo-cons</span>
+<span class="nc" id="L44">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.agudo-cons&quot;, null, new String[] { &quot;Ã³n&quot;, &quot;ona&quot;, &quot;ones&quot;, &quot;onas&quot; } );</span>
+<span class="nc" id="L45">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.ad-lib&quot;, null, new String[] { &quot;&quot; }, new String[] { &quot;&quot; }, new String[] { &quot;&quot; }, new String[] { &quot;&quot; } );</span>
+<span class="nc" id="L46">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.no-gÃ©nero&quot;, new String[] { &quot;s&quot; } );</span>
+<span class="nc" id="L47">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.reg&quot;, null, new String[] { &quot;o&quot;, &quot;os&quot;, &quot;a&quot;, &quot;as&quot; } );</span>
+<span class="nc" id="L48">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.adj.reg-cons&quot;, new String[] { &quot;es&quot;, &quot;a&quot;, &quot;as&quot; } );</span>
+
+        //http://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_sustantivos
+<span class="nc" id="L51">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.sust.-Ã³n&quot;, null, new String[] { &quot;Ã³n&quot;, &quot;ones&quot; } ); //redirect to inflect.es.sust.agudo-cons</span>
+<span class="nc" id="L52">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.sust.agudo-cons&quot;, null, new String[] { &quot;Ã³n&quot;, &quot;ones&quot; } );</span>
+        //inflect.es.sust.invariante nothing
+        //inflect.es.sust.plur.tantum nothing
+<span class="nc" id="L55">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.sust.reg&quot;, new String[] { &quot;s&quot; } );</span>
+<span class="nc" id="L56">        findRuleAndAddWords( word, wikiText, &quot;inflect.es.sust.reg-cons&quot;, new String[] { &quot;es&quot; } );</span>
+        //{{inflect.es.sust.sing.tantum}} nothing
+
+        //http://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
+<span class="nc" id="L60">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.ar&quot;, null, new String[] { &quot;ar&quot;, &quot;ado&quot;, &quot;ando&quot;, &quot;o&quot;, &quot;as&quot;, &quot;Ã¡s&quot;, &quot;a&quot;, &quot;amos&quot;, &quot;Ã¡is&quot;,</span>
+<span class="nc" id="L61">                        &quot;an&quot;, &quot;aba&quot;, &quot;abas&quot;, &quot;Ã¡bamos&quot;, &quot;abais&quot;, &quot;aban&quot;, &quot;Ã©&quot;, &quot;aste&quot;, &quot;Ã³&quot;, &quot;asteis&quot;, &quot;aron&quot;, &quot;arÃ©&quot;, &quot;arÃ¡s&quot;, &quot;arÃ¡&quot;, &quot;aremos&quot;,</span>
+<span class="nc" id="L62">                        &quot;arÃ©is&quot;, &quot;arÃ¡n&quot;, &quot;arÃ­a&quot;, &quot;arÃ­as&quot;, &quot;arÃ­amos&quot;, &quot;arÃ­ais&quot;, &quot;arÃ­an&quot;, &quot;e&quot;, &quot;es&quot;, &quot;Ã©s&quot;, &quot;emos&quot;, &quot;Ã©is&quot;, &quot;en&quot;, &quot;ara&quot;,</span>
+<span class="nc" id="L63">                        &quot;aras&quot;, &quot;Ã¡ramos&quot;, &quot;arais&quot;, &quot;aran&quot;, &quot;ase&quot;, &quot;ases&quot;, &quot;Ã¡semos&quot;, &quot;aseis&quot;, &quot;asen&quot;, &quot;are&quot;, &quot;ares&quot;, &quot;Ã¡remos&quot;, &quot;areis&quot;,</span>
+<span class="nc" id="L64">                        &quot;aren&quot;, &quot;Ã¡&quot;, &quot;emos&quot;, &quot;ad&quot; } );</span>
+<span class="nc" id="L65">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.2.ar&quot;, null, new String[] { &quot;ar&quot;, &quot;ado&quot;, &quot;ando&quot;, &quot;Ã¡s&quot;, &quot;amos&quot;, &quot;Ã¡is&quot;, &quot;aba&quot;,</span>
+<span class="nc" id="L66">                        &quot;abas&quot;, &quot;Ã¡bamos&quot;, &quot;abais&quot;, &quot;aban&quot;, &quot;Ã©&quot;, &quot;aste&quot;, &quot;Ã³&quot;, &quot;asteis&quot;, &quot;aron&quot;, &quot;arÃ©&quot;, &quot;arÃ¡s&quot;, &quot;arÃ¡&quot;, &quot;aremos&quot;, &quot;arÃ©is&quot;,</span>
+<span class="nc" id="L67">                        &quot;arÃ¡n&quot;, &quot;arÃ­a&quot;, &quot;arÃ­as&quot;, &quot;arÃ­amos&quot;, &quot;arÃ­ais&quot;, &quot;arÃ­an&quot;, &quot;Ã©s&quot;, &quot;emos&quot;, &quot;Ã©is&quot;, &quot;ara&quot;, &quot;aras&quot;, &quot;Ã¡ramos&quot;, &quot;arais&quot;,</span>
+<span class="nc" id="L68">                        &quot;aran&quot;, &quot;ase&quot;, &quot;ases&quot;, &quot;Ã¡semos&quot;, &quot;aseis&quot;, &quot;asen&quot;, &quot;are&quot;, &quot;ares&quot;, &quot;Ã¡remos&quot;, &quot;areis&quot;, &quot;aren&quot;, &quot;Ã¡&quot;, &quot;emos&quot;, &quot;ad&quot; }, new String[] {</span>
+<span class="nc" id="L69">                        &quot;o&quot;, &quot;as&quot;, &quot;a&quot;, &quot;an&quot;, &quot;e&quot;, &quot;es&quot;, &quot;en&quot; } );</span>
+<span class="nc" id="L70">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.car&quot;, null, new String[] { &quot;car&quot;, &quot;cado&quot;, &quot;cando&quot;, &quot;co&quot;, &quot;cas&quot;, &quot;cÃ¡s&quot;, &quot;ca&quot;,</span>
+<span class="nc" id="L71">                        &quot;camos&quot;, &quot;cÃ¡is&quot;, &quot;can&quot;, &quot;caba&quot;, &quot;cabas&quot;, &quot;cÃ¡bamos&quot;, &quot;cabais&quot;, &quot;caban&quot;, &quot;quÃ©&quot;, &quot;caste&quot;, &quot;cÃ³&quot;, &quot;casteis&quot;, &quot;caron&quot;,</span>
+<span class="nc" id="L72">                        &quot;carÃ©&quot;, &quot;carÃ¡s&quot;, &quot;carÃ¡&quot;, &quot;caremos&quot;, &quot;carÃ©is&quot;, &quot;carÃ¡n&quot;, &quot;carÃ­a&quot;, &quot;carÃ­as&quot;, &quot;carÃ­amos&quot;, &quot;carÃ­ais&quot;, &quot;carÃ­an&quot;, &quot;que&quot;,</span>
+<span class="nc" id="L73">                        &quot;ques&quot;, &quot;quÃ©s&quot;, &quot;quemos&quot;, &quot;quÃ©is&quot;, &quot;quen&quot;, &quot;cara&quot;, &quot;caras&quot;, &quot;cÃ¡ramos&quot;, &quot;carais&quot;, &quot;caran&quot;, &quot;case&quot;, &quot;acses&quot;,</span>
+<span class="nc" id="L74">                        &quot;cÃ¡semos&quot;, &quot;caseis&quot;, &quot;casen&quot;, &quot;care&quot;, &quot;cares&quot;, &quot;cÃ¡remos&quot;, &quot;careis&quot;, &quot;caren&quot;, &quot;cÃ¡&quot;, &quot;quemos&quot;, &quot;cad&quot; } );</span>
+<span class="nc" id="L75">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.cuar&quot;, null, new String[] { &quot;cuar&quot;, &quot;cuado&quot;, &quot;cuando&quot;, &quot;cuo&quot;, &quot;cÃºo&quot;, &quot;cuas&quot;,</span>
+<span class="nc" id="L76">                        &quot;cÃºas&quot;, &quot;cua&quot;, &quot;cÃºa&quot;, &quot;cuamos&quot;, &quot;cuÃ¡is&quot;, &quot;cuan&quot;, &quot;cÃºan&quot;, &quot;cuaba&quot;, &quot;cuabas&quot;, &quot;cuÃ¡bamos&quot;, &quot;cuabais&quot;, &quot;cuaban&quot;, &quot;cuÃ©&quot;,</span>
+<span class="nc" id="L77">                        &quot;cuaste&quot;, &quot;cuÃ³&quot;, &quot;cuasteis&quot;, &quot;cuaron&quot;, &quot;cuarÃ©&quot;, &quot;cuarÃ¡s&quot;, &quot;cuarÃ¡&quot;, &quot;cuaremos&quot;, &quot;cuarÃ©is&quot;, &quot;cuarÃ¡n&quot;, &quot;cuarÃ­a&quot;,</span>
+<span class="nc" id="L78">                        &quot;cuarÃ­as&quot;, &quot;cuarÃ­amos&quot;, &quot;cuarÃ­ais&quot;, &quot;cuarÃ­an&quot;, &quot;cue&quot;, &quot;cÃºe&quot;, &quot;cues&quot;, &quot;cÃºes&quot;, &quot;cuemos&quot;, &quot;cuÃ©is&quot;, &quot;cuen&quot;, &quot;cÃºen&quot;,</span>
+<span class="nc" id="L79">                        &quot;cuara&quot;, &quot;cuaras&quot;, &quot;cuÃ¡ramos&quot;, &quot;cuarais&quot;, &quot;cuaran&quot;, &quot;cuase&quot;, &quot;cuases&quot;, &quot;cuÃ¡semos&quot;, &quot;cuaseis&quot;, &quot;cuasen&quot;, &quot;cuare&quot;,</span>
+<span class="nc" id="L80">                        &quot;cuares&quot;, &quot;cuÃ¡remos&quot;, &quot;cuareis&quot;, &quot;cuaren&quot;, &quot;cua&quot;, &quot;cÃºa&quot;, &quot;cuemos&quot;, &quot;cuad&quot; } );</span>
+        //TODO es.v.conj.dar (0)
+<span class="nc" id="L82">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.gar&quot;, null, new String[] { &quot;gar&quot;, &quot;gado&quot;, &quot;gando&quot;, &quot;go&quot;, &quot;gas&quot;, &quot;gÃ¡s&quot;, &quot;ga&quot;,</span>
+<span class="nc" id="L83">                        &quot;gamos&quot;, &quot;gÃ¡is&quot;, &quot;gan&quot;, &quot;gaba&quot;, &quot;gabas&quot;, &quot;gÃ¡bamos&quot;, &quot;gabais&quot;, &quot;gaban&quot;, &quot;guÃ©&quot;, &quot;gaste&quot;, &quot;gÃ³&quot;, &quot;gasteis&quot;, &quot;garon&quot;,</span>
+<span class="nc" id="L84">                        &quot;garÃ©&quot;, &quot;garÃ¡s&quot;, &quot;garÃ¡&quot;, &quot;garemos&quot;, &quot;garÃ©is&quot;, &quot;garÃ¡n&quot;, &quot;garÃ­a&quot;, &quot;garÃ­as&quot;, &quot;garÃ­amos&quot;, &quot;garÃ­ais&quot;, &quot;garÃ­an&quot;, &quot;gue&quot;,</span>
+<span class="nc" id="L85">                        &quot;gues&quot;, &quot;guÃ©s&quot;, &quot;guemos&quot;, &quot;guÃ©is&quot;, &quot;guen&quot;, &quot;gara&quot;, &quot;garas&quot;, &quot;gÃ¡ramos&quot;, &quot;garais&quot;, &quot;garan&quot;, &quot;gase&quot;, &quot;gases&quot;,</span>
+<span class="nc" id="L86">                        &quot;gÃ¡semos&quot;, &quot;gaseis&quot;, &quot;gasen&quot;, &quot;gare&quot;, &quot;gares&quot;, &quot;gÃ¡remos&quot;, &quot;gareis&quot;, &quot;garen&quot;, &quot;gÃ¡&quot;, &quot;guemos&quot;, &quot;gad&quot; } );</span>
+        //TODO es.v.conj.guar (12)
+<span class="nc" id="L88">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.-ie-ue-.ar&quot;, null, new String[] { &quot;ar&quot;, &quot;ado&quot;, &quot;ando&quot;, &quot;Ã¡s&quot;, &quot;amos&quot;, &quot;Ã¡is&quot;, &quot;aba&quot;,</span>
+<span class="nc" id="L89">                        &quot;abas&quot;, &quot;Ã¡bamos&quot;, &quot;abais&quot;, &quot;aban&quot;, &quot;Ã©&quot;, &quot;aste&quot;, &quot;Ã³&quot;, &quot;asteis&quot;, &quot;aron&quot;, &quot;arÃ©&quot;, &quot;arÃ¡s&quot;, &quot;arÃ¡&quot;, &quot;aremos&quot;, &quot;arÃ©is&quot;,</span>
+<span class="nc" id="L90">                        &quot;arÃ¡n&quot;, &quot;arÃ­a&quot;, &quot;arÃ­as&quot;, &quot;arÃ­amos&quot;, &quot;arÃ­ais&quot;, &quot;arÃ­an&quot;, &quot;Ã©s&quot;, &quot;emos&quot;, &quot;Ã©is&quot;, &quot;ara&quot;, &quot;aras&quot;, &quot;Ã¡ramos&quot;, &quot;arais&quot;,</span>
+<span class="nc" id="L91">                        &quot;aran&quot;, &quot;ase&quot;, &quot;ases&quot;, &quot;Ã¡semos&quot;, &quot;aseis&quot;, &quot;asen&quot;, &quot;are&quot;, &quot;ares&quot;, &quot;Ã¡remos&quot;, &quot;areis&quot;, &quot;aren&quot;, &quot;Ã¡&quot;, &quot;emos&quot;, &quot;ad&quot; }, new String[] {</span>
+<span class="nc" id="L92">                        &quot;o&quot;, &quot;as&quot;, &quot;a&quot;, &quot;an&quot;, &quot;e&quot;, &quot;es&quot;, &quot;en&quot; } );</span>
+        //TODO es.v.conj.-ie-ue-.gar (23)
+        //TODO es.v.conj.-ie-ue-.zar (8)
+        //TODO es.v.conj.izar (7)
+<span class="nc" id="L96">        findRuleAndAddWords( word, wikiText, &quot;es.v.conj.zar&quot;, null, new String[] { &quot;zar&quot;, &quot;zado&quot;, &quot;zando&quot;, &quot;zo&quot;, &quot;zas&quot;, &quot;zÃ¡s&quot;, &quot;za&quot;,</span>
+<span class="nc" id="L97">                        &quot;zamos&quot;, &quot;zÃ¡is&quot;, &quot;zan&quot;, &quot;zaba&quot;, &quot;zabas&quot;, &quot;zÃ¡bamos&quot;, &quot;zabais&quot;, &quot;zaban&quot;, &quot;cÃ©&quot;, &quot;zaste&quot;, &quot;zÃ³&quot;, &quot;zasteis&quot;, &quot;zaron&quot;,</span>
+<span class="nc" id="L98">                        &quot;zarÃ©&quot;, &quot;zarÃ¡s&quot;, &quot;zarÃ¡&quot;, &quot;azremos&quot;, &quot;zarÃ©is&quot;, &quot;zarÃ¡n&quot;, &quot;zarÃ­a&quot;, &quot;zarÃ­as&quot;, &quot;zarÃ­amos&quot;, &quot;zarÃ­ais&quot;, &quot;zarÃ­an&quot;, &quot;ce&quot;,</span>
+<span class="nc" id="L99">                        &quot;ces&quot;, &quot;cÃ©s&quot;, &quot;cemos&quot;, &quot;cÃ©is&quot;, &quot;cen&quot;, &quot;zara&quot;, &quot;zaras&quot;, &quot;zÃ¡ramos&quot;, &quot;zarais&quot;, &quot;zaran&quot;, &quot;zase&quot;, &quot;zases&quot;, &quot;zÃ¡semos&quot;,</span>
+<span class="nc" id="L100">                        &quot;zaseis&quot;, &quot;zasen&quot;, &quot;zare&quot;, &quot;zares&quot;, &quot;zÃ¡remos&quot;, &quot;zareis&quot;, &quot;zaren&quot;, &quot;zÃ¡&quot;, &quot;cemos&quot;, &quot;zad&quot; } );</span>
+        //TODO es.v.conj.andar (1)
+
+<span class="nc" id="L103">        es_v_conj_er( wikiText );</span>
+<span class="nc" id="L104">        es_v_conj_ie_ue_er( wikiText );</span>
+<span class="nc" id="L105">        es_v_conj_cer( wikiText );</span>
+<span class="nc" id="L106">        es_v_conj_zc_cer( wikiText );</span>
+<span class="nc" id="L107">        es_v_conj_eer( wikiText );</span>
+<span class="nc" id="L108">        es_v_conj_ger( wikiText );</span>
+<span class="nc" id="L109">        es_v_conj_caer( wikiText );</span>
+<span class="nc" id="L110">        es_v_conj_hacer( wikiText );</span>
+<span class="nc" id="L111">        es_v_conj_poner( wikiText );</span>
+<span class="nc" id="L112">        es_v_conj_tener( wikiText );</span>
+<span class="nc" id="L113">        es_v_conj_traer( wikiText );</span>
+
+<span class="nc" id="L115">        es_v_conj_ir( wikiText );</span>
+<span class="nc" id="L116">        es_v_conj_cir( wikiText );</span>
+<span class="nc" id="L117">        es_v_conj_zc_cir( wikiText );</span>
+<span class="nc" id="L118">        es_v_conj_decir( wikiText );</span>
+<span class="nc" id="L119">        es_v_conj_gir( wikiText );</span>
+<span class="nc" id="L120">        es_v_conj_ie_i_ue_ir( wikiText );</span>
+<span class="nc" id="L121">        es_v_conj_nir( wikiText );</span>
+<span class="nc" id="L122">        es_v_conj_seguir( wikiText );</span>
+<span class="nc" id="L123">        es_v_conj_uir( wikiText );</span>
+
+<span class="nc" id="L125">        return true;</span>
+    }
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.-ie-ue-.er&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_ie_ue_er( String wikiText ) {
+<span class="nc" id="L133">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.-ie-ue-.er&quot;, 0 );</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L136">            String nexo = props.getProperty( &quot;nexo&quot;, &quot;&quot; );</span>
+<span class="nc" id="L137">            String w2 = props.getProperty( &quot;2&quot;, &quot;{{{2}}}&quot; );</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+            //presente de indicativo
+<span class="nc" id="L141">            props.setProperty( &quot;i.p.1s&quot;, w2 + nexo + &quot;o&quot; );</span>
+<span class="nc" id="L142">            props.setProperty( &quot;i.p.2s&quot;, w2 + nexo + &quot;es&quot; );</span>
+<span class="nc" id="L143">            props.setProperty( &quot;i.p.3s&quot;, w2 + nexo + &quot;e&quot; );</span>
+<span class="nc" id="L144">            props.setProperty( &quot;i.p.3p&quot;, w2 + nexo + &quot;en&quot; );</span>
+
+            //presente de subjuntivo
+<span class="nc" id="L147">            props.setProperty( &quot;s.p.1s&quot;, w2 + nexo + &quot;a&quot; );</span>
+<span class="nc" id="L148">            props.setProperty( &quot;s.p.2s&quot;, w2 + nexo + &quot;as&quot; );</span>
+<span class="nc" id="L149">            props.setProperty( &quot;s.p.3s&quot;, w2 + nexo + &quot;a&quot; );</span>
+<span class="nc" id="L150">            props.setProperty( &quot;s.p.3p&quot;, w2 + nexo + &quot;an&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            props.setProperty( &quot;im.2s&quot;, pronominal ? (props.getProperty( &quot;3&quot;, &quot;{{{3}}}&quot; ) + nexo + &quot;ete&quot;) : (w2 + nexo + &quot;e&quot;) );</span>
+
+<span class="nc" id="L155">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L157">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.er&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_er( String wikiText ) {
+<span class="nc" id="L164">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.er&quot;, 0 );</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L166">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L168">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.cer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_cer( String wikiText ) {
+<span class="nc" id="L175">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.cer&quot;, 0 );</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L177">            props.put( &quot;nexo&quot;, &quot;c&quot; );</span>
+<span class="nc" id="L178">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.zc.cer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_zc_cer( String wikiText ) {
+<span class="nc" id="L187">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.zc.cer&quot;, 0 );</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L189">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L190">            String w2 = props.getProperty( &quot;2&quot;, &quot;&quot; );</span>
+
+<span class="nc" id="L192">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if( props.getProperty( &quot;nexo&quot;, &quot;&quot; ).length() == 0 ) {</span>
+<span class="nc" id="L194">                props.put( &quot;nexo&quot;, &quot;c&quot; );</span>
+            }
+
+            //presente de indicativo
+<span class="nc" id="L198">            props.put( &quot;i.p.1s&quot;, w1 + &quot;zco&quot; );</span>
+
+            //presente de subjuntivo
+<span class="nc" id="L201">            props.put( &quot;s.p.1s&quot;, w1 + &quot;zca&quot; );</span>
+<span class="nc" id="L202">            props.put( &quot;s.p.2s&quot;, w1 + &quot;zcas&quot; );</span>
+<span class="nc" id="L203">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;zcÃ¡s&quot; );</span>
+<span class="nc" id="L204">            props.put( &quot;s.p.3s&quot;, w1 + &quot;zca&quot; );</span>
+<span class="nc" id="L205">            props.put( &quot;s.p.1p&quot;, w1 + &quot;zcamos&quot; );</span>
+<span class="nc" id="L206">            props.put( &quot;s.p.2p&quot;, w1 + &quot;zcÃ¡is&quot; );</span>
+<span class="nc" id="L207">            props.put( &quot;s.p.3p&quot;, w1 + &quot;zcan&quot; );</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            if( w2.length() &gt; 0 ) {</span>
+<span class="nc" id="L209">                props.put( &quot;im.3s&quot;, w2 + &quot;zcase&quot; );</span>
+<span class="nc" id="L210">                props.put( &quot;im.1p&quot;, w1 + &quot;zcÃ¡monos&quot; );</span>
+<span class="nc" id="L211">                props.put( &quot;im.3p&quot;, w2 + &quot;zcanse&quot; );</span>
+<span class="nc" id="L212">            } else {</span>
+<span class="nc" id="L213">                props.put( &quot;im.3s&quot;, w1 + &quot;zcase&quot; );</span>
+<span class="nc" id="L214">                props.put( &quot;im.1p&quot;, w1 + &quot;zcamos&quot; );</span>
+<span class="nc" id="L215">                props.put( &quot;im.3p&quot;, w1 + &quot;zcan&quot; );</span>
+            }
+
+<span class="nc" id="L218">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L220">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.eer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_eer( String wikiText ) {
+<span class="nc" id="L227">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.eer&quot;, 0 );</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L229">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+
+<span class="nc" id="L231">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+
+<span class="nc" id="L233">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;Ã­&quot; );</span>
+<span class="nc" id="L234">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;Ã­ste&quot; );</span>
+<span class="nc" id="L235">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;yÃ³&quot; );</span>
+<span class="nc" id="L236">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;jimos&quot; );</span>
+<span class="nc" id="L237">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;Ã­steis&quot; );</span>
+<span class="nc" id="L238">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;yeron&quot; );</span>
+
+            //subjuntivo
+
+<span class="nc" id="L242">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;yera&quot; );</span>
+<span class="nc" id="L243">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;yeras&quot; );</span>
+<span class="nc" id="L244">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;yera&quot; );</span>
+<span class="nc" id="L245">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;yÃ©ramos&quot; );</span>
+<span class="nc" id="L246">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;yerais&quot; );</span>
+<span class="nc" id="L247">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;yeran&quot; );</span>
+
+<span class="nc" id="L249">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;yese&quot; );</span>
+<span class="nc" id="L250">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;yeses&quot; );</span>
+<span class="nc" id="L251">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;yese&quot; );</span>
+<span class="nc" id="L252">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;yÃ©semos&quot; );</span>
+<span class="nc" id="L253">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;yeseis&quot; );</span>
+<span class="nc" id="L254">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;yesen&quot; );</span>
+
+<span class="nc" id="L256">            props.put( &quot;s.f.1s&quot;, w1 + &quot;yere&quot; );</span>
+<span class="nc" id="L257">            props.put( &quot;s.f.2s&quot;, w1 + &quot;yeres&quot; );</span>
+<span class="nc" id="L258">            props.put( &quot;s.f.3s&quot;, w1 + &quot;yere&quot; );</span>
+<span class="nc" id="L259">            props.put( &quot;s.f.1p&quot;, w1 + &quot;yÃ©remos&quot; );</span>
+<span class="nc" id="L260">            props.put( &quot;s.f.2p&quot;, w1 + &quot;yereis&quot; );</span>
+<span class="nc" id="L261">            props.put( &quot;s.f.3p&quot;, w1 + &quot;yeren&quot; );</span>
+
+<span class="nc" id="L263">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L265">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.ger&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_ger( String wikiText ) {
+<span class="nc" id="L272">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.ger&quot;, 0 );</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L274">            props.put( &quot;nexo&quot;, &quot;g&quot; );</span>
+
+<span class="nc" id="L276">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.caer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_caer( String wikiText ) {
+<span class="nc" id="L285">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.caer&quot;, 0 );</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L287">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L290">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+
+            //primera persona singular presente
+<span class="nc" id="L293">            props.put( &quot;i.p.1s&quot;, w1 + &quot;caigo&quot; );</span>
+
+<span class="nc" id="L295">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;cayÃ³&quot; );</span>
+<span class="nc" id="L296">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;cayeron&quot; );</span>
+
+            //subjuntivo
+
+<span class="nc" id="L300">            props.put( &quot;s.p.1s&quot;, w1 + &quot;caiga&quot; );</span>
+<span class="nc" id="L301">            props.put( &quot;s.p.2s&quot;, w1 + &quot;caigas&quot; );</span>
+<span class="nc" id="L302">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;caigÃ¡s&quot; );</span>
+<span class="nc" id="L303">            props.put( &quot;s.p.3s&quot;, w1 + &quot;caiga&quot; );</span>
+<span class="nc" id="L304">            props.put( &quot;s.p.1p&quot;, w1 + &quot;caigamos&quot; );</span>
+<span class="nc" id="L305">            props.put( &quot;s.p.2p&quot;, w1 + &quot;caigÃ¡is&quot; );</span>
+<span class="nc" id="L306">            props.put( &quot;s.p.3p&quot;, w1 + &quot;caigan&quot; );</span>
+
+<span class="nc" id="L308">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;cayera&quot; );</span>
+<span class="nc" id="L309">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;cayeras&quot; );</span>
+<span class="nc" id="L310">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;cayera&quot; );</span>
+<span class="nc" id="L311">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;cayÃ©ramos&quot; );</span>
+<span class="nc" id="L312">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;cayerais&quot; );</span>
+<span class="nc" id="L313">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;cayeran&quot; );</span>
+
+<span class="nc" id="L315">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;cayese&quot; );</span>
+<span class="nc" id="L316">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;cayeses&quot; );</span>
+<span class="nc" id="L317">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;cayese&quot; );</span>
+<span class="nc" id="L318">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;cayÃ©semos&quot; );</span>
+<span class="nc" id="L319">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;cayeseis&quot; );</span>
+<span class="nc" id="L320">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;cayesen&quot; );</span>
+
+<span class="nc" id="L322">            props.put( &quot;s.f.1s&quot;, w1 + &quot;cayere&quot; );</span>
+<span class="nc" id="L323">            props.put( &quot;s.f.2s&quot;, w1 + &quot;cayeres&quot; );</span>
+<span class="nc" id="L324">            props.put( &quot;s.f.3s&quot;, w1 + &quot;cayere&quot; );</span>
+<span class="nc" id="L325">            props.put( &quot;s.f.1p&quot;, w1 + &quot;cayÃ©remos&quot; );</span>
+<span class="nc" id="L326">            props.put( &quot;s.f.2p&quot;, w1 + &quot;cayereis&quot; );</span>
+<span class="nc" id="L327">            props.put( &quot;s.f.3p&quot;, w1 + &quot;cayeren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L330" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L331">                props.put( &quot;im.3s&quot;, w1 + &quot;cÃ¡igase&quot; );</span>
+<span class="nc" id="L332">                props.put( &quot;im.1p&quot;, w1 + &quot;caigÃ¡monos&quot; );</span>
+<span class="nc" id="L333">                props.put( &quot;im.3p&quot;, w1 + &quot;cÃ¡iganse&quot; );</span>
+<span class="nc" id="L334">            } else {</span>
+<span class="nc" id="L335">                props.put( &quot;im.3s&quot;, w1 + &quot;caiga&quot; );</span>
+<span class="nc" id="L336">                props.put( &quot;im.1p&quot;, w1 + &quot;caigamos&quot; );</span>
+<span class="nc" id="L337">                props.put( &quot;im.3p&quot;, w1 + &quot;caigan&quot; );</span>
+            }
+
+<span class="nc" id="L340">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L342">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.hacer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_hacer( String wikiText ) {
+<span class="nc" id="L349">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.hacer&quot;, 0 );</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L351">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L354">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc" id="L355">            props.put( &quot;1&quot;, w1 + &quot;ac&quot; );</span>
+<span class="nc" id="L356">            props.put( &quot;2&quot;, w1 + &quot;Ã¡c&quot; );</span>
+
+<span class="nc" id="L358">            props.put( &quot;i.p.1s&quot;, w1 + &quot;ago&quot; );</span>
+
+<span class="nc" id="L360">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;ice&quot; );</span>
+<span class="nc" id="L361">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;iciste&quot; );</span>
+<span class="nc" id="L362">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;izo&quot; );</span>
+<span class="nc" id="L363">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;icimos&quot; );</span>
+<span class="nc" id="L364">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;icisteis&quot; );</span>
+<span class="nc" id="L365">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;icieron&quot; );</span>
+
+<span class="nc" id="L367">            props.put( &quot;i.f.1s&quot;, w1 + &quot;arÃ©&quot; );</span>
+<span class="nc" id="L368">            props.put( &quot;i.f.2s&quot;, w1 + &quot;arÃ¡s&quot; );</span>
+<span class="nc" id="L369">            props.put( &quot;i.f.3s&quot;, w1 + &quot;arÃ¡&quot; );</span>
+<span class="nc" id="L370">            props.put( &quot;i.f.1p&quot;, w1 + &quot;aremos&quot; );</span>
+<span class="nc" id="L371">            props.put( &quot;i.f.2p&quot;, w1 + &quot;arÃ©is&quot; );</span>
+<span class="nc" id="L372">            props.put( &quot;i.f.3p&quot;, w1 + &quot;arÃ¡n&quot; );</span>
+
+<span class="nc" id="L374">            props.put( &quot;i.c.1s&quot;, w1 + &quot;arÃ­a&quot; );</span>
+<span class="nc" id="L375">            props.put( &quot;i.c.2s&quot;, w1 + &quot;arÃ­as&quot; );</span>
+<span class="nc" id="L376">            props.put( &quot;i.c.3s&quot;, w1 + &quot;arÃ­a&quot; );</span>
+<span class="nc" id="L377">            props.put( &quot;i.c.1p&quot;, w1 + &quot;arÃ­amos&quot; );</span>
+<span class="nc" id="L378">            props.put( &quot;i.c.2p&quot;, w1 + &quot;arÃ­ais&quot; );</span>
+<span class="nc" id="L379">            props.put( &quot;i.c.3p&quot;, w1 + &quot;arÃ­an&quot; );</span>
+
+            //subjuntivo
+
+<span class="nc" id="L383">            props.put( &quot;s.p.1s&quot;, w1 + &quot;aga&quot; );</span>
+<span class="nc" id="L384">            props.put( &quot;s.p.2s&quot;, w1 + &quot;agas&quot; );</span>
+<span class="nc" id="L385">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;agÃ¡s&quot; );</span>
+<span class="nc" id="L386">            props.put( &quot;s.p.3s&quot;, w1 + &quot;aga&quot; );</span>
+<span class="nc" id="L387">            props.put( &quot;s.p.1p&quot;, w1 + &quot;agamos&quot; );</span>
+<span class="nc" id="L388">            props.put( &quot;s.p.2p&quot;, w1 + &quot;agÃ¡is&quot; );</span>
+<span class="nc" id="L389">            props.put( &quot;s.p.3p&quot;, w1 + &quot;agan&quot; );</span>
+
+<span class="nc" id="L391">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;iciera&quot; );</span>
+<span class="nc" id="L392">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;icieras&quot; );</span>
+<span class="nc" id="L393">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;iciera&quot; );</span>
+<span class="nc" id="L394">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;iciÃ©ramos&quot; );</span>
+<span class="nc" id="L395">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;icierais&quot; );</span>
+<span class="nc" id="L396">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;icieran&quot; );</span>
+
+<span class="nc" id="L398">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;iciese&quot; );</span>
+<span class="nc" id="L399">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;icieses&quot; );</span>
+<span class="nc" id="L400">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;iciese&quot; );</span>
+<span class="nc" id="L401">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;iciÃ©semos&quot; );</span>
+<span class="nc" id="L402">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;icieseis&quot; );</span>
+<span class="nc" id="L403">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;iciesen&quot; );</span>
+
+<span class="nc" id="L405">            props.put( &quot;s.f.1s&quot;, w1 + &quot;iciere&quot; );</span>
+<span class="nc" id="L406">            props.put( &quot;s.f.2s&quot;, w1 + &quot;icieres&quot; );</span>
+<span class="nc" id="L407">            props.put( &quot;s.f.3s&quot;, w1 + &quot;iciere&quot; );</span>
+<span class="nc" id="L408">            props.put( &quot;s.f.1p&quot;, w1 + &quot;iciÃ©remos&quot; );</span>
+<span class="nc" id="L409">            props.put( &quot;s.f.2p&quot;, w1 + &quot;iciereis&quot; );</span>
+<span class="nc" id="L410">            props.put( &quot;s.f.3p&quot;, w1 + &quot;icieren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L413" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L414">                props.put( &quot;im.2s&quot;, w1 + &quot;azte&quot; );</span>
+<span class="nc" id="L415">                props.put( &quot;im.3s&quot;, w1 + &quot;Ã¡gase&quot; );</span>
+<span class="nc" id="L416">                props.put( &quot;im.1p&quot;, w1 + &quot;agÃ¡monos&quot; );</span>
+<span class="nc" id="L417">                props.put( &quot;im.3p&quot;, w1 + &quot;Ã¡ganse&quot; );</span>
+<span class="nc" id="L418">            } else {</span>
+<span class="nc" id="L419">                props.put( &quot;im.2s&quot;, w1 + &quot;az&quot; );</span>
+<span class="nc" id="L420">                props.put( &quot;im.3s&quot;, w1 + &quot;aga&quot; );</span>
+<span class="nc" id="L421">                props.put( &quot;im.1p&quot;, w1 + &quot;agamos&quot; );</span>
+<span class="nc" id="L422">                props.put( &quot;im.3p&quot;, w1 + &quot;agan&quot; );</span>
+            }
+
+<span class="nc" id="L425">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L427">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.poner&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_poner( String wikiText ) {
+<span class="nc" id="L434">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.poner&quot;, 0 );</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L436">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L439">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc" id="L440">            props.put( &quot;1&quot;, w1 + &quot;pon&quot; );</span>
+<span class="nc" id="L441">            props.put( &quot;2&quot;, w1 + &quot;pÃ³n&quot; );</span>
+
+<span class="nc" id="L443">            props.put( &quot;i.p.1s&quot;, w1 + &quot;pongo&quot; );</span>
+<span class="nc" id="L444">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;puse&quot; );</span>
+<span class="nc" id="L445">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;pusiste&quot; );</span>
+<span class="nc" id="L446">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;puso&quot; );</span>
+<span class="nc" id="L447">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;pusimos&quot; );</span>
+<span class="nc" id="L448">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;pusisteis&quot; );</span>
+<span class="nc" id="L449">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;pusieron&quot; );</span>
+
+<span class="nc" id="L451">            props.put( &quot;i.f.1s&quot;, w1 + &quot;pondrÃ©&quot; );</span>
+<span class="nc" id="L452">            props.put( &quot;i.f.2s&quot;, w1 + &quot;pondrÃ¡s&quot; );</span>
+<span class="nc" id="L453">            props.put( &quot;i.f.3s&quot;, w1 + &quot;pondrÃ¡&quot; );</span>
+<span class="nc" id="L454">            props.put( &quot;i.f.1p&quot;, w1 + &quot;pondremos&quot; );</span>
+<span class="nc" id="L455">            props.put( &quot;i.f.2p&quot;, w1 + &quot;pondrÃ©is&quot; );</span>
+<span class="nc" id="L456">            props.put( &quot;i.f.3p&quot;, w1 + &quot;pondrÃ¡n&quot; );</span>
+
+<span class="nc" id="L458">            props.put( &quot;i.c.1s&quot;, w1 + &quot;pondrÃ­a&quot; );</span>
+<span class="nc" id="L459">            props.put( &quot;i.c.2s&quot;, w1 + &quot;pondrÃ­as&quot; );</span>
+<span class="nc" id="L460">            props.put( &quot;i.c.3s&quot;, w1 + &quot;pondrÃ­a&quot; );</span>
+<span class="nc" id="L461">            props.put( &quot;i.c.1p&quot;, w1 + &quot;pondrÃ­amos&quot; );</span>
+<span class="nc" id="L462">            props.put( &quot;i.c.2p&quot;, w1 + &quot;pondrÃ­ais&quot; );</span>
+<span class="nc" id="L463">            props.put( &quot;i.c.3p&quot;, w1 + &quot;pondrÃ­an&quot; );</span>
+
+<span class="nc" id="L465">            props.put( &quot;s.p.1s&quot;, w1 + &quot;ponga&quot; );</span>
+<span class="nc" id="L466">            props.put( &quot;s.p.2s&quot;, w1 + &quot;pongas&quot; );</span>
+<span class="nc" id="L467">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;pongÃ¡s&quot; );</span>
+<span class="nc" id="L468">            props.put( &quot;s.p.3s&quot;, w1 + &quot;ponga&quot; );</span>
+<span class="nc" id="L469">            props.put( &quot;s.p.1p&quot;, w1 + &quot;pongamos&quot; );</span>
+<span class="nc" id="L470">            props.put( &quot;s.p.2p&quot;, w1 + &quot;pongÃ¡is&quot; );</span>
+<span class="nc" id="L471">            props.put( &quot;s.p.3p&quot;, w1 + &quot;pongan&quot; );</span>
+<span class="nc" id="L472">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;pusiera&quot; );</span>
+<span class="nc" id="L473">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;pusieras&quot; );</span>
+<span class="nc" id="L474">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;pusiera&quot; );</span>
+<span class="nc" id="L475">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;pusiÃ©ramos&quot; );</span>
+<span class="nc" id="L476">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;pusierais&quot; );</span>
+<span class="nc" id="L477">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;pusieran&quot; );</span>
+<span class="nc" id="L478">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;pusiese&quot; );</span>
+<span class="nc" id="L479">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;pusieses&quot; );</span>
+<span class="nc" id="L480">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;pusiese&quot; );</span>
+<span class="nc" id="L481">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;pusiÃ©semos&quot; );</span>
+<span class="nc" id="L482">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;pusieseis&quot; );</span>
+<span class="nc" id="L483">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;pusiesen&quot; );</span>
+<span class="nc" id="L484">            props.put( &quot;s.f.1s&quot;, w1 + &quot;pusiere&quot; );</span>
+<span class="nc" id="L485">            props.put( &quot;s.f.2s&quot;, w1 + &quot;pusieres&quot; );</span>
+<span class="nc" id="L486">            props.put( &quot;s.f.3s&quot;, w1 + &quot;pusiere&quot; );</span>
+<span class="nc" id="L487">            props.put( &quot;s.f.1p&quot;, w1 + &quot;pusiÃ©remos&quot; );</span>
+<span class="nc" id="L488">            props.put( &quot;s.f.2p&quot;, w1 + &quot;pusiereis&quot; );</span>
+<span class="nc" id="L489">            props.put( &quot;s.f.3p&quot;, w1 + &quot;pusieren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L492" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L493">                props.put( &quot;im.2s&quot;, w1 + &quot;ponte&quot; );</span>
+<span class="nc" id="L494">                addWord( w1 + &quot;pÃ³nete&quot; );</span>
+<span class="nc" id="L495">                props.put( &quot;im.3s&quot;, w1 + &quot;pÃ³ngase&quot; );</span>
+<span class="nc" id="L496">                props.put( &quot;im.1p&quot;, w1 + &quot;pongÃ¡monos&quot; );</span>
+<span class="nc" id="L497">                props.put( &quot;im.3p&quot;, w1 + &quot;pÃ³nganse&quot; );</span>
+<span class="nc" id="L498">            } else {</span>
+<span class="nc" id="L499">                props.put( &quot;im.2s&quot;, w1 + &quot;pÃ³n&quot; );</span>
+<span class="nc" id="L500">                addWord( w1 + &quot;pone&quot; );</span>
+<span class="nc" id="L501">                props.put( &quot;im.3s&quot;, w1 + &quot;ponga&quot; );</span>
+<span class="nc" id="L502">                props.put( &quot;im.1p&quot;, w1 + &quot;pongamos&quot; );</span>
+<span class="nc" id="L503">                props.put( &quot;im.3p&quot;, w1 + &quot;pongan&quot; );</span>
+            }
+
+<span class="nc" id="L506">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L508">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.tener&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_tener( String wikiText ) {
+<span class="nc" id="L515">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.tener&quot;, 0 );</span>
+<span class="nc bnc" id="L516" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L517">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L520">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc" id="L521">            props.put( &quot;1&quot;, w1 + &quot;ten&quot; );</span>
+<span class="nc" id="L522">            props.put( &quot;2&quot;, w1 + &quot;tÃ©n&quot; );</span>
+
+<span class="nc" id="L524">            props.put( &quot;i.p.1s&quot;, w1 + &quot;tengo&quot; );</span>
+<span class="nc" id="L525">            props.put( &quot;i.p.2s&quot;, w1 + &quot;tienes&quot; );</span>
+<span class="nc" id="L526">            props.put( &quot;i.p.3s&quot;, w1 + &quot;tiene&quot; );</span>
+<span class="nc" id="L527">            props.put( &quot;i.p.3p&quot;, w1 + &quot;tienen&quot; );</span>
+
+<span class="nc" id="L529">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;tuve&quot; );</span>
+<span class="nc" id="L530">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;tuviste&quot; );</span>
+<span class="nc" id="L531">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;tuvo&quot; );</span>
+<span class="nc" id="L532">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;tuvimos&quot; );</span>
+<span class="nc" id="L533">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;tuvisteis&quot; );</span>
+<span class="nc" id="L534">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;tuvieron&quot; );</span>
+
+<span class="nc" id="L536">            props.put( &quot;i.f.1s&quot;, w1 + &quot;tendrÃ©&quot; );</span>
+<span class="nc" id="L537">            props.put( &quot;i.f.2s&quot;, w1 + &quot;tendrÃ¡s&quot; );</span>
+<span class="nc" id="L538">            props.put( &quot;i.f.3s&quot;, w1 + &quot;tendrÃ¡&quot; );</span>
+<span class="nc" id="L539">            props.put( &quot;i.f.1p&quot;, w1 + &quot;tendremos&quot; );</span>
+<span class="nc" id="L540">            props.put( &quot;i.f.2p&quot;, w1 + &quot;tendrÃ©is&quot; );</span>
+<span class="nc" id="L541">            props.put( &quot;i.f.3p&quot;, w1 + &quot;tendrÃ¡n&quot; );</span>
+
+<span class="nc" id="L543">            props.put( &quot;i.c.1s&quot;, w1 + &quot;tendrÃ­a&quot; );</span>
+<span class="nc" id="L544">            props.put( &quot;i.c.2s&quot;, w1 + &quot;tendrÃ­as&quot; );</span>
+<span class="nc" id="L545">            props.put( &quot;i.c.3s&quot;, w1 + &quot;tendrÃ­a&quot; );</span>
+<span class="nc" id="L546">            props.put( &quot;i.c.1p&quot;, w1 + &quot;tendrÃ­amos&quot; );</span>
+<span class="nc" id="L547">            props.put( &quot;i.c.2p&quot;, w1 + &quot;tendrÃ­ais&quot; );</span>
+<span class="nc" id="L548">            props.put( &quot;i.c.3p&quot;, w1 + &quot;tendrÃ­an&quot; );</span>
+
+            //subjuntivo
+
+<span class="nc" id="L552">            props.put( &quot;s.p.1s&quot;, w1 + &quot;tenga&quot; );</span>
+<span class="nc" id="L553">            props.put( &quot;s.p.2s&quot;, w1 + &quot;tengas&quot; );</span>
+<span class="nc" id="L554">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;tengÃ¡s&quot; );</span>
+<span class="nc" id="L555">            props.put( &quot;s.p.3s&quot;, w1 + &quot;tenga&quot; );</span>
+<span class="nc" id="L556">            props.put( &quot;s.p.1p&quot;, w1 + &quot;tengamos&quot; );</span>
+<span class="nc" id="L557">            props.put( &quot;s.p.2p&quot;, w1 + &quot;tengÃ¡is&quot; );</span>
+<span class="nc" id="L558">            props.put( &quot;s.p.3p&quot;, w1 + &quot;tengan&quot; );</span>
+
+<span class="nc" id="L560">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;tuviera&quot; );</span>
+<span class="nc" id="L561">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;tuvieras&quot; );</span>
+<span class="nc" id="L562">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;tuviera&quot; );</span>
+<span class="nc" id="L563">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;tuviÃ©ramos&quot; );</span>
+<span class="nc" id="L564">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;tuvierais&quot; );</span>
+<span class="nc" id="L565">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;tuvieran&quot; );</span>
+
+<span class="nc" id="L567">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;tuviese&quot; );</span>
+<span class="nc" id="L568">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;tuvieses&quot; );</span>
+<span class="nc" id="L569">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;tuviese&quot; );</span>
+<span class="nc" id="L570">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;tuviÃ©semos&quot; );</span>
+<span class="nc" id="L571">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;tuvieseis&quot; );</span>
+<span class="nc" id="L572">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;tuviesen&quot; );</span>
+
+<span class="nc" id="L574">            props.put( &quot;s.f.1s&quot;, w1 + &quot;tuviere&quot; );</span>
+<span class="nc" id="L575">            props.put( &quot;s.f.2s&quot;, w1 + &quot;tuvieres&quot; );</span>
+<span class="nc" id="L576">            props.put( &quot;s.f.3s&quot;, w1 + &quot;tuviere&quot; );</span>
+<span class="nc" id="L577">            props.put( &quot;s.f.1p&quot;, w1 + &quot;tuviÃ©remos&quot; );</span>
+<span class="nc" id="L578">            props.put( &quot;s.f.2p&quot;, w1 + &quot;tuviereis&quot; );</span>
+<span class="nc" id="L579">            props.put( &quot;s.f.3p&quot;, w1 + &quot;tuvieren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L582" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L583">                props.put( &quot;im.2s=&quot;, w1 + &quot;tÃ©nte&quot; );</span>
+<span class="nc" id="L584">                props.put( &quot;im.3s&quot;, w1 + &quot;tÃ©ngase&quot; );</span>
+<span class="nc" id="L585">                props.put( &quot;im.1p&quot;, w1 + &quot;tengÃ¡monos&quot; );</span>
+<span class="nc" id="L586">                props.put( &quot;im.3p&quot;, w1 + &quot;tÃ©nganse&quot; );</span>
+<span class="nc" id="L587">            } else {</span>
+<span class="nc" id="L588">                props.put( &quot;im.2s=&quot;, w1 + &quot;tÃ©n&quot; );</span>
+<span class="nc" id="L589">                props.put( &quot;im.3s&quot;, w1 + &quot;tenga&quot; );</span>
+<span class="nc" id="L590">                props.put( &quot;im.1p&quot;, w1 + &quot;tengamos&quot; );</span>
+<span class="nc" id="L591">                props.put( &quot;im.3p&quot;, w1 + &quot;tengan&quot; );</span>
+            }
+
+<span class="nc" id="L594">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L596">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.traer&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_traer( String wikiText ) {
+<span class="nc" id="L603">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.traer&quot;, 0 );</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L605">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L608">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc" id="L609">            props.put( &quot;1&quot;, w1 + &quot;tra&quot; );</span>
+<span class="nc" id="L610">            props.put( &quot;2&quot;, w1 + &quot;trÃ¡&quot; );</span>
+
+<span class="nc" id="L612">            props.put( &quot;i.p.1s&quot;, w1 + &quot;traigo&quot; );</span>
+
+<span class="nc" id="L614">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;traje&quot; );</span>
+<span class="nc" id="L615">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;trajiste&quot; );</span>
+<span class="nc" id="L616">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;trajo&quot; );</span>
+<span class="nc" id="L617">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;trajimos&quot; );</span>
+<span class="nc" id="L618">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;trajisteis&quot; );</span>
+<span class="nc" id="L619">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;trajeron&quot; );</span>
+
+            //subjuntivo
+
+<span class="nc" id="L623">            props.put( &quot;s.p.1s&quot;, w1 + &quot;traiga&quot; );</span>
+<span class="nc" id="L624">            props.put( &quot;s.p.2s&quot;, w1 + &quot;traigas&quot; );</span>
+<span class="nc" id="L625">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;traigÃ¡s&quot; );</span>
+<span class="nc" id="L626">            props.put( &quot;s.p.3s&quot;, w1 + &quot;traiga&quot; );</span>
+<span class="nc" id="L627">            props.put( &quot;s.p.1p&quot;, w1 + &quot;traigamos&quot; );</span>
+<span class="nc" id="L628">            props.put( &quot;s.p.2p&quot;, w1 + &quot;traigÃ¡is&quot; );</span>
+<span class="nc" id="L629">            props.put( &quot;s.p.3p&quot;, w1 + &quot;traigan&quot; );</span>
+
+<span class="nc" id="L631">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;trajera&quot; );</span>
+<span class="nc" id="L632">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;trajeras&quot; );</span>
+<span class="nc" id="L633">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;trajera&quot; );</span>
+<span class="nc" id="L634">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;trajÃ©ramos&quot; );</span>
+<span class="nc" id="L635">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;trajerais&quot; );</span>
+<span class="nc" id="L636">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;trajeran&quot; );</span>
+
+<span class="nc" id="L638">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;trajese&quot; );</span>
+<span class="nc" id="L639">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;trajeses&quot; );</span>
+<span class="nc" id="L640">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;trajese&quot; );</span>
+<span class="nc" id="L641">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;trajÃ©semos&quot; );</span>
+<span class="nc" id="L642">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;trajeseis&quot; );</span>
+<span class="nc" id="L643">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;trajesen&quot; );</span>
+
+<span class="nc" id="L645">            props.put( &quot;s.f.1s&quot;, w1 + &quot;trajere&quot; );</span>
+<span class="nc" id="L646">            props.put( &quot;s.f.2s&quot;, w1 + &quot;trajeres&quot; );</span>
+<span class="nc" id="L647">            props.put( &quot;s.f.3s&quot;, w1 + &quot;trajere&quot; );</span>
+<span class="nc" id="L648">            props.put( &quot;s.f.1p&quot;, w1 + &quot;trajÃ©remos&quot; );</span>
+<span class="nc" id="L649">            props.put( &quot;s.f.2p&quot;, w1 + &quot;trajereis&quot; );</span>
+<span class="nc" id="L650">            props.put( &quot;s.f.3p&quot;, w1 + &quot;trajeren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L653" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L654">                props.put( &quot;im.3s&quot;, w1 + &quot;trÃ¡igase&quot; );</span>
+<span class="nc" id="L655">                props.put( &quot;im.1p&quot;, w1 + &quot;traigÃ¡monos&quot; );</span>
+<span class="nc" id="L656">                props.put( &quot;im.3p&quot;, w1 + &quot;trÃ¡iganse&quot; );</span>
+<span class="nc" id="L657">            } else {</span>
+<span class="nc" id="L658">                props.put( &quot;im.3s&quot;, w1 + &quot;traiga&quot; );</span>
+<span class="nc" id="L659">                props.put( &quot;im.1p&quot;, w1 + &quot;traigamos&quot; );</span>
+<span class="nc" id="L660">                props.put( &quot;im.3p&quot;, w1 + &quot;traigan&quot; );</span>
+            }
+
+<span class="nc" id="L663">            es_v_conj_er( props );</span>
+        }
+<span class="nc" id="L665">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.er&amp;action=edit
+     * @param props parsed parameters, can not be null
+     */
+    private void es_v_conj_er( Properties props ) {
+<span class="nc" id="L672">        String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L673">        String nexo = props.getProperty( &quot;nexo&quot;, &quot;&quot; );</span>
+<span class="nc" id="L674">        String part = props.getProperty( &quot;part&quot; );</span>
+<span class="nc" id="L675">        String part2 = props.getProperty( &quot;part2&quot; );</span>
+<span class="nc bnc" id="L676" title="All 2 branches missed.">        boolean impersonal = props.getProperty( &quot;impersonal&quot;, &quot;&quot; ).length() &gt; 0; //plural or singular</span>
+<span class="nc" id="L677">        boolean impersonalPlural = &quot;plural&quot;.equalsIgnoreCase( props.getProperty( &quot;impersonal&quot;, &quot;&quot; ) );</span>
+
+<span class="nc bnc" id="L679" title="All 2 branches missed.">        boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc bnc" id="L681" title="All 2 branches missed.">        addWord( w1 + nexo + &quot;er&quot; + (pronominal ? &quot;se&quot; : &quot;&quot;) );</span>
+<span class="nc" id="L682">        addWord( w1 + nexo + &quot;ido&quot; );</span>
+<span class="nc bnc" id="L683" title="All 2 branches missed.">        addWord( w1 + nexo + (pronominal ? &quot;iÃ©ndose&quot; : &quot;iendo&quot;) ); // Simples Gerundio</span>
+<span class="nc bnc" id="L684" title="All 2 branches missed.">        if( part != null ) {</span>
+<span class="nc" id="L685">            addWord( part );</span>
+        }
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        if( part2 != null ) {</span>
+<span class="nc" id="L688">            addWord( part2 );</span>
+        }
+
+        //indicativo presente
+<span class="nc bnc" id="L692" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L693">            addWord( props.getProperty( &quot;i.p.1s&quot;, w1 + nexo + &quot;o&quot; ) );</span>
+<span class="nc" id="L694">            addWord( props.getProperty( &quot;i.p.2s&quot;, w1 + nexo + &quot;es&quot; ) );</span>
+<span class="nc" id="L695">            addWord( props.getProperty( &quot;i.p.2s2&quot;, w1 + nexo + &quot;Ã©s&quot; ) );</span>
+        }
+<span class="nc" id="L697">        addWord( props.getProperty( &quot;i.p.3s&quot;, w1 + nexo + &quot;e&quot; ) );</span>
+<span class="nc bnc" id="L698" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L699">            addWord( props.getProperty( &quot;i.p.1p&quot;, w1 + nexo + &quot;emos&quot; ) );</span>
+<span class="nc" id="L700">            addWord( props.getProperty( &quot;i.p.2p&quot;, w1 + nexo + &quot;Ã©is&quot; ) );</span>
+        }
+<span class="nc" id="L702">        addWord( props.getProperty( &quot;i.p.3p&quot;, w1 + nexo + &quot;en&quot; ) );</span>
+
+        //imperfecto
+<span class="nc bnc" id="L705" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L706">            addWord( props.getProperty( &quot;i.pi.1s&quot;, w1 + nexo + &quot;Ã­a&quot; ) );</span>
+<span class="nc" id="L707">            addWord( props.getProperty( &quot;i.pi.2s&quot;, w1 + nexo + &quot;Ã­as&quot; ) );</span>
+        }
+<span class="nc" id="L709">        addWord( props.getProperty( &quot;i.pi.3s&quot;, w1 + nexo + &quot;Ã­a&quot; ) );</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L711">            addWord( props.getProperty( &quot;i.pi.1p&quot;, w1 + nexo + &quot;Ã­amos&quot; ) );</span>
+<span class="nc" id="L712">            addWord( props.getProperty( &quot;i.pi.2p&quot;, w1 + nexo + &quot;Ã­ais&quot; ) );</span>
+        }
+<span class="nc" id="L714">        addWord( props.getProperty( &quot;i.pi.3p&quot;, w1 + nexo + &quot;Ã­an&quot; ) );</span>
+
+        //indefinido
+<span class="nc bnc" id="L717" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L718">            addWord( props.getProperty( &quot;i.pp.1s&quot;, w1 + nexo + &quot;Ã­&quot; ) );</span>
+<span class="nc" id="L719">            addWord( props.getProperty( &quot;i.pp.2s&quot;, w1 + nexo + &quot;iste&quot; ) );</span>
+        }
+<span class="nc" id="L721">        addWord( props.getProperty( &quot;i.pp.3s&quot;, w1 + nexo + &quot;iÃ³&quot; ) );</span>
+<span class="nc bnc" id="L722" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L723">            addWord( props.getProperty( &quot;i.pp.1p&quot;, w1 + nexo + &quot;imos&quot; ) );</span>
+<span class="nc" id="L724">            addWord( props.getProperty( &quot;i.pp.2p&quot;, w1 + nexo + &quot;isteis&quot; ) );</span>
+        }
+<span class="nc" id="L726">        addWord( props.getProperty( &quot;i.pp.3p&quot;, w1 + nexo + &quot;ieron&quot; ) );</span>
+
+        //futuro
+<span class="nc bnc" id="L729" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L730">            addWord( props.getProperty( &quot;i.f.1s&quot;, w1 + nexo + &quot;erÃ©&quot; ) );</span>
+<span class="nc" id="L731">            addWord( props.getProperty( &quot;i.f.2s&quot;, w1 + nexo + &quot;erÃ¡s&quot; ) );</span>
+        }
+<span class="nc" id="L733">        addWord( props.getProperty( &quot;i.f.3s&quot;, w1 + nexo + &quot;erÃ¡&quot; ) );</span>
+<span class="nc bnc" id="L734" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L735">            addWord( props.getProperty( &quot;i.f.1p&quot;, w1 + nexo + &quot;eremos&quot; ) );</span>
+<span class="nc" id="L736">            addWord( props.getProperty( &quot;i.f.2p&quot;, w1 + nexo + &quot;erÃ©is&quot; ) );</span>
+        }
+<span class="nc" id="L738">        addWord( props.getProperty( &quot;i.f.3p&quot;, w1 + nexo + &quot;erÃ¡n&quot; ) );</span>
+
+        //condicional
+<span class="nc bnc" id="L741" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L742">            addWord( props.getProperty( &quot;i.c.1s&quot;, w1 + nexo + &quot;erÃ­a&quot; ) );</span>
+<span class="nc" id="L743">            addWord( props.getProperty( &quot;i.c.2s&quot;, w1 + nexo + &quot;erÃ­as&quot; ) );</span>
+        }
+<span class="nc" id="L745">        addWord( props.getProperty( &quot;i.c.3s&quot;, w1 + nexo + &quot;erÃ­a&quot; ) );</span>
+<span class="nc bnc" id="L746" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L747">            addWord( props.getProperty( &quot;i.c.1p&quot;, w1 + nexo + &quot;erÃ­amos&quot; ) );</span>
+<span class="nc" id="L748">            addWord( props.getProperty( &quot;i.c.2p&quot;, w1 + nexo + &quot;erÃ­ais&quot; ) );</span>
+        }
+<span class="nc" id="L750">        addWord( props.getProperty( &quot;i.c.3p&quot;, w1 + nexo + &quot;erÃ­an&quot; ) );</span>
+
+        //subjuntivo presente
+<span class="nc bnc" id="L753" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L754">            addWord( props.getProperty( &quot;s.p.1s&quot;, w1 + nexo + &quot;a&quot; ) );</span>
+<span class="nc" id="L755">            addWord( props.getProperty( &quot;s.p.2s&quot;, w1 + nexo + &quot;as&quot; ) );</span>
+<span class="nc" id="L756">            addWord( props.getProperty( &quot;s.p.2s2&quot;, w1 + nexo + &quot;Ã¡s&quot; ) );</span>
+        }
+<span class="nc" id="L758">        addWord( props.getProperty( &quot;s.p.3s&quot;, w1 + nexo + &quot;a&quot; ) );</span>
+<span class="nc bnc" id="L759" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L760">            addWord( props.getProperty( &quot;s.p.1p&quot;, w1 + nexo + &quot;amos&quot; ) );</span>
+<span class="nc" id="L761">            addWord( props.getProperty( &quot;s.p.2p&quot;, w1 + nexo + &quot;Ã¡is&quot; ) );</span>
+        }
+<span class="nc" id="L763">        addWord( props.getProperty( &quot;s.p.3p&quot;, w1 + nexo + &quot;an&quot; ) );</span>
+
+        //imperfecto (-iera)
+<span class="nc bnc" id="L766" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L767">            addWord( props.getProperty( &quot;s.pi.1s&quot;, w1 + nexo + &quot;iera&quot; ) );</span>
+<span class="nc" id="L768">            addWord( props.getProperty( &quot;s.pi.2s&quot;, w1 + nexo + &quot;ieras&quot; ) );</span>
+        }
+<span class="nc" id="L770">        addWord( props.getProperty( &quot;s.pi.3s&quot;, w1 + nexo + &quot;iera&quot; ) );</span>
+<span class="nc bnc" id="L771" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L772">            addWord( props.getProperty( &quot;s.pi.1p&quot;, w1 + nexo + &quot;iÃ©ramos&quot; ) );</span>
+<span class="nc" id="L773">            addWord( props.getProperty( &quot;s.pi.2p&quot;, w1 + nexo + &quot;ierais&quot; ) );</span>
+        }
+<span class="nc" id="L775">        addWord( props.getProperty( &quot;s.pi.3p&quot;, w1 + nexo + &quot;ieran&quot; ) );</span>
+
+        //imperfecto (-iese)
+<span class="nc bnc" id="L778" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L779">            addWord( props.getProperty( &quot;s.pi2.1s&quot;, w1 + nexo + &quot;iese&quot; ) );</span>
+<span class="nc" id="L780">            addWord( props.getProperty( &quot;s.pi2.2s&quot;, w1 + nexo + &quot;ieses&quot; ) );</span>
+        }
+<span class="nc" id="L782">        addWord( props.getProperty( &quot;s.pi2.3s&quot;, w1 + nexo + &quot;iese&quot; ) );</span>
+<span class="nc bnc" id="L783" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L784">            addWord( props.getProperty( &quot;s.pi2.1p&quot;, w1 + nexo + &quot;iÃ©semos&quot; ) );</span>
+<span class="nc" id="L785">            addWord( props.getProperty( &quot;s.pi2.2p&quot;, w1 + nexo + &quot;ieseis&quot; ) );</span>
+        }
+<span class="nc" id="L787">        addWord( props.getProperty( &quot;s.pi2.3p&quot;, w1 + nexo + &quot;iesen&quot; ) );</span>
+
+        //futuro
+<span class="nc bnc" id="L790" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L791">            addWord( props.getProperty( &quot;s.f.1s&quot;, w1 + nexo + &quot;iere&quot; ) );</span>
+<span class="nc" id="L792">            addWord( props.getProperty( &quot;s.f.2s&quot;, w1 + nexo + &quot;ieres&quot; ) );</span>
+        }
+<span class="nc" id="L794">        addWord( props.getProperty( &quot;s.f.3s&quot;, w1 + nexo + &quot;iere&quot; ) );</span>
+<span class="nc bnc" id="L795" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L796">            addWord( props.getProperty( &quot;s.f.1p&quot;, w1 + nexo + &quot;iÃ©remos&quot; ) );</span>
+<span class="nc" id="L797">            addWord( props.getProperty( &quot;s.f.2p&quot;, w1 + nexo + &quot;iereis&quot; ) );</span>
+        }
+<span class="nc" id="L799">        addWord( props.getProperty( &quot;s.f.3p&quot;, w1 + nexo + &quot;ieren&quot; ) );</span>
+
+        //imperativo
+<span class="nc bnc" id="L802" title="All 2 branches missed.">        if( !impersonalPlural ) {</span>
+<span class="nc" id="L803">            addWord( props.getProperty( &quot;im.2s&quot;, w1 + nexo + &quot;e&quot; ) );</span>
+<span class="nc" id="L804">            addWord( props.getProperty( &quot;im.2s2&quot;, w1 + nexo + &quot;Ã©&quot; ) );</span>
+<span class="nc" id="L805">            addWord( props.getProperty( &quot;im.2p&quot;, w1 + nexo + &quot;ed&quot; ) );</span>
+        }
+<span class="nc" id="L807">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.ir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_ir( String wikiText ) {
+<span class="nc" id="L814">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.ir&quot;, 0 );</span>
+<span class="nc bnc" id="L815" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L816">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L818">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.cir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_cir( String wikiText ) {
+<span class="nc" id="L825">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.cir&quot;, 0 );</span>
+<span class="nc bnc" id="L826" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L827">            props.put( &quot;nexo&quot;, &quot;c&quot; );</span>
+
+<span class="nc" id="L829">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L831">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.zc.cir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_zc_cir( String wikiText ) {
+<span class="nc" id="L838">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.zc.cir&quot;, 0 );</span>
+<span class="nc bnc" id="L839" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L840">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L841">            String w2 = props.getProperty( &quot;2&quot;, &quot;&quot; );</span>
+
+<span class="nc" id="L843">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+<span class="nc" id="L844">            props.put( &quot;nexo&quot;, &quot;c&quot; );</span>
+
+<span class="nc" id="L846">            props.put( &quot;i.p.1s&quot;, w1 + &quot;zco&quot; );</span>
+            //presente de subjuntivo
+<span class="nc" id="L848">            props.put( &quot;s.p.1s&quot;, w1 + &quot;zca&quot; );</span>
+<span class="nc" id="L849">            props.put( &quot;s.p.2s&quot;, w1 + &quot;zcas&quot; );</span>
+<span class="nc" id="L850">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;zcÃ¡s&quot; );</span>
+<span class="nc" id="L851">            props.put( &quot;s.p.3s&quot;, w1 + &quot;zca&quot; );</span>
+<span class="nc" id="L852">            props.put( &quot;s.p.1p&quot;, w1 + &quot;zcamos&quot; );</span>
+<span class="nc" id="L853">            props.put( &quot;s.p.2p&quot;, w1 + &quot;zcÃ¡is&quot; );</span>
+<span class="nc" id="L854">            props.put( &quot;s.p.3p&quot;, w1 + &quot;zcan&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L857" title="All 2 branches missed.">            if( w2.length() &gt; 0 ) {</span>
+<span class="nc" id="L858">                props.put( &quot;im.3s&quot;, w2 + &quot;zcase&quot; );</span>
+<span class="nc" id="L859">                props.put( &quot;im.1p&quot;, w1 + &quot;zcÃ¡monos&quot; );</span>
+<span class="nc" id="L860">                props.put( &quot;im.3p&quot;, w2 + &quot;zcanse&quot; );</span>
+<span class="nc" id="L861">            } else {</span>
+<span class="nc" id="L862">                props.put( &quot;im.3s&quot;, w1 + &quot;zca&quot; );</span>
+<span class="nc" id="L863">                props.put( &quot;im.1p&quot;, w1 + &quot;zcamos&quot; );</span>
+<span class="nc" id="L864">                props.put( &quot;im.3p&quot;, w1 + &quot;zcan&quot; );</span>
+            }
+
+<span class="nc" id="L867">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L869">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.decir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_decir( String wikiText ) {
+<span class="nc" id="L876">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.decir&quot;, 0 );</span>
+<span class="nc bnc" id="L877" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L878">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L879">            String w2 = props.getProperty( &quot;2&quot;, &quot;&quot; );</span>
+<span class="nc bnc" id="L880" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L882">            props.put( &quot;irregular&quot;, &quot;si&quot; );</span>
+<span class="nc" id="L883">            props.put( &quot;1&quot;, w1 + &quot;dec&quot; );</span>
+<span class="nc bnc" id="L884" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L885">                props.put( &quot;2&quot;, w1 + &quot;dÃ­g&quot; );</span>
+            }
+
+<span class="nc" id="L888">            props.put( &quot;i.p.1s&quot;, w1 + &quot;digo&quot; );</span>
+<span class="nc" id="L889">            props.put( &quot;i.p.2s&quot;, w1 + &quot;dices&quot; );</span>
+<span class="nc" id="L890">            props.put( &quot;i.p.3s&quot;, w1 + &quot;dice&quot; );</span>
+<span class="nc" id="L891">            props.put( &quot;i.p.3p&quot;, w1 + &quot;dicen&quot; );</span>
+
+<span class="nc" id="L893">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;dije&quot; );</span>
+<span class="nc" id="L894">            props.put( &quot;i.pp.2s&quot;, w1 + &quot;dijiste&quot; );</span>
+<span class="nc" id="L895">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;dijo&quot; );</span>
+<span class="nc" id="L896">            props.put( &quot;i.pp.1p&quot;, w1 + &quot;dijimos&quot; );</span>
+<span class="nc" id="L897">            props.put( &quot;i.pp.2p&quot;, w1 + &quot;dijisteis&quot; );</span>
+<span class="nc" id="L898">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;dijeron&quot; );</span>
+
+<span class="nc" id="L900">            props.put( &quot;i.f.1s&quot;, w1 + &quot;dirÃ©&quot; );</span>
+<span class="nc" id="L901">            props.put( &quot;i.f.2s&quot;, w1 + &quot;dirÃ¡s&quot; );</span>
+<span class="nc" id="L902">            props.put( &quot;i.f.3s&quot;, w1 + &quot;dirÃ¡&quot; );</span>
+<span class="nc" id="L903">            props.put( &quot;i.f.1p&quot;, w1 + &quot;diremos&quot; );</span>
+<span class="nc" id="L904">            props.put( &quot;i.f.2p&quot;, w1 + &quot;dirÃ©is&quot; );</span>
+<span class="nc" id="L905">            props.put( &quot;i.f.3p&quot;, w1 + &quot;dirÃ¡n&quot; );</span>
+
+<span class="nc" id="L907">            props.put( &quot;i.c.1s&quot;, w1 + &quot;dirÃ­a&quot; );</span>
+<span class="nc" id="L908">            props.put( &quot;i.c.2s&quot;, w1 + &quot;dirÃ­as&quot; );</span>
+<span class="nc" id="L909">            props.put( &quot;i.c.3s&quot;, w1 + &quot;dirÃ­a&quot; );</span>
+<span class="nc" id="L910">            props.put( &quot;i.c.1p&quot;, w1 + &quot;dirÃ­amos&quot; );</span>
+<span class="nc" id="L911">            props.put( &quot;i.c.2p&quot;, w1 + &quot;dirÃ­ais&quot; );</span>
+<span class="nc" id="L912">            props.put( &quot;i.c.3p&quot;, w1 + &quot;dirÃ­an&quot; );</span>
+
+<span class="nc" id="L914">            props.put( &quot;s.p.1s&quot;, w1 + &quot;diga&quot; );</span>
+<span class="nc" id="L915">            props.put( &quot;s.p.2s&quot;, w1 + &quot;digas&quot; );</span>
+<span class="nc" id="L916">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;digÃ¡s&quot; );</span>
+<span class="nc" id="L917">            props.put( &quot;s.p.3s&quot;, w1 + &quot;diga&quot; );</span>
+<span class="nc" id="L918">            props.put( &quot;s.p.1p&quot;, w1 + &quot;digamos&quot; );</span>
+<span class="nc" id="L919">            props.put( &quot;s.p.2p&quot;, w1 + &quot;digÃ¡is&quot; );</span>
+<span class="nc" id="L920">            props.put( &quot;s.p.3p&quot;, w1 + &quot;digan&quot; );</span>
+
+<span class="nc" id="L922">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;dijera&quot; );</span>
+<span class="nc" id="L923">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;dijeras&quot; );</span>
+<span class="nc" id="L924">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;dijera&quot; );</span>
+<span class="nc" id="L925">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;dijÃ©ramos&quot; );</span>
+<span class="nc" id="L926">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;dijerais&quot; );</span>
+<span class="nc" id="L927">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;dijeran&quot; );</span>
+
+<span class="nc" id="L929">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;dijese&quot; );</span>
+<span class="nc" id="L930">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;dijeses&quot; );</span>
+<span class="nc" id="L931">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;dijese&quot; );</span>
+<span class="nc" id="L932">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;dijÃ©semos&quot; );</span>
+<span class="nc" id="L933">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;dijeseis&quot; );</span>
+<span class="nc" id="L934">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;dijesen&quot; );</span>
+
+<span class="nc" id="L936">            props.put( &quot;s.f.1s&quot;, w1 + &quot;dijere&quot; );</span>
+<span class="nc" id="L937">            props.put( &quot;s.f.2s&quot;, w1 + &quot;dijeres&quot; );</span>
+<span class="nc" id="L938">            props.put( &quot;s.f.3s&quot;, w1 + &quot;dijere&quot; );</span>
+<span class="nc" id="L939">            props.put( &quot;s.f.1p&quot;, w1 + &quot;dijÃ©remos&quot; );</span>
+<span class="nc" id="L940">            props.put( &quot;s.f.2p&quot;, w1 + &quot;dijereis&quot; );</span>
+<span class="nc" id="L941">            props.put( &quot;s.f.3p&quot;, w1 + &quot;dijeren&quot; );</span>
+
+<span class="nc" id="L943">            props.put( &quot;im.2s&quot;, w1 + &quot;di&quot; );</span>
+<span class="nc" id="L944">            props.put( &quot;im.1p&quot;, w1 + &quot;digamos&quot; );</span>
+
+<span class="nc" id="L946">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L948">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.gir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_gir( String wikiText ) {
+<span class="nc" id="L955">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.gir&quot;, 0 );</span>
+<span class="nc bnc" id="L956" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L957">            props.put( &quot;nexo&quot;, &quot;g&quot; );</span>
+
+<span class="nc" id="L959">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L961">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.-ie-i-ue-u-.ir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_ie_i_ue_ir( String wikiText ) {
+<span class="nc" id="L968">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.-ie-i-ue-u-.ir&quot;, 0 );</span>
+<span class="nc bnc" id="L969" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L970">            es_v_conj_ie_i_ue_ir( props );</span>
+        }
+<span class="nc" id="L972">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.-ie-i-ue-u-.ir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_ie_i_ue_ir( Properties props ) {
+<span class="nc" id="L979">        String w2 = props.getProperty( &quot;2&quot;, &quot;{{{2}}}&quot; );</span>
+<span class="nc" id="L980">        String w3 = props.getProperty( &quot;3&quot;, &quot;{{{3}}}&quot; );</span>
+<span class="nc" id="L981">        String w4 = props.getProperty( &quot;4&quot;, &quot;{{{4}}}&quot; );</span>
+<span class="nc" id="L982">        String nexo = props.getProperty( &quot;nexo&quot;, &quot;&quot; );</span>
+<span class="nc bnc" id="L983" title="All 2 branches missed.">        boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L985">        props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+
+        //presente de indicativo
+<span class="nc" id="L988">        props.put( &quot;i.p.1s&quot;, w2 + nexo + &quot;o&quot; );</span>
+<span class="nc" id="L989">        props.put( &quot;i.p.2s&quot;, w2 + nexo + &quot;es&quot; );</span>
+<span class="nc" id="L990">        props.put( &quot;i.p.3s&quot;, w2 + nexo + &quot;e&quot; );</span>
+<span class="nc" id="L991">        props.put( &quot;i.p.3p&quot;, w2 + nexo + &quot;en&quot; );</span>
+
+        //pretÃ©rito perfecto simple de indicativo
+<span class="nc" id="L994">        props.put( &quot;i.pp.3s&quot;, w3 + nexo + &quot;iÃ³&quot; );</span>
+<span class="nc" id="L995">        props.put( &quot;i.pp.3p&quot;, w3 + nexo + &quot;ieron&quot; );</span>
+
+        //presente de subjuntivo
+<span class="nc" id="L998">        props.put( &quot;s.p.1s&quot;, w2 + nexo + &quot;a&quot; );</span>
+<span class="nc" id="L999">        props.put( &quot;s.p.2s&quot;, w2 + nexo + &quot;as&quot; );</span>
+<span class="nc" id="L1000">        props.put( &quot;s.p.2s2&quot;, w3 + nexo + &quot;Ã¡s&quot; );</span>
+<span class="nc" id="L1001">        props.put( &quot;s.p.3s&quot;, w2 + nexo + &quot;a&quot; );</span>
+<span class="nc" id="L1002">        props.put( &quot;s.p.1p&quot;, w3 + nexo + &quot;amos&quot; );</span>
+<span class="nc" id="L1003">        props.put( &quot;s.p.2p&quot;, w3 + nexo + &quot;Ã¡is&quot; );</span>
+<span class="nc" id="L1004">        props.put( &quot;s.p.3p&quot;, w2 + nexo + &quot;an&quot; );</span>
+
+        //subjuntivo imperfecto (-iera) 
+<span class="nc" id="L1007">        props.put( &quot;s.pi.1s&quot;, w3 + nexo + &quot;iera&quot; );</span>
+<span class="nc" id="L1008">        props.put( &quot;s.pi.2s&quot;, w3 + nexo + &quot;ieras&quot; );</span>
+<span class="nc" id="L1009">        props.put( &quot;s.pi.3s&quot;, w3 + nexo + &quot;iera&quot; );</span>
+<span class="nc" id="L1010">        props.put( &quot;s.pi.1p&quot;, w3 + nexo + &quot;iÃ©ramos&quot; );</span>
+<span class="nc" id="L1011">        props.put( &quot;s.pi.2p&quot;, w3 + nexo + &quot;ierais&quot; );</span>
+<span class="nc" id="L1012">        props.put( &quot;s.pi.3p&quot;, w3 + nexo + &quot;ieran&quot; );</span>
+
+        //subjuntivo imperfecto (-iese)
+<span class="nc" id="L1015">        props.put( &quot;s.pi2.1s&quot;, w3 + nexo + &quot;iese&quot; );</span>
+<span class="nc" id="L1016">        props.put( &quot;s.pi2.2s&quot;, w3 + nexo + &quot;ieses&quot; );</span>
+<span class="nc" id="L1017">        props.put( &quot;s.pi2.3s&quot;, w3 + nexo + &quot;iese&quot; );</span>
+<span class="nc" id="L1018">        props.put( &quot;s.pi2.1p&quot;, w3 + nexo + &quot;iÃ©semos&quot; );</span>
+<span class="nc" id="L1019">        props.put( &quot;s.pi2.2p&quot;, w3 + nexo + &quot;ieseis&quot; );</span>
+<span class="nc" id="L1020">        props.put( &quot;s.pi2.3p&quot;, w3 + nexo + &quot;iesen&quot; );</span>
+
+        //subjuntivo futuro (-iere)
+<span class="nc" id="L1023">        props.put( &quot;s.f.1s&quot;, w3 + nexo + &quot;iere&quot; );</span>
+<span class="nc" id="L1024">        props.put( &quot;s.f.2s&quot;, w3 + nexo + &quot;ieres&quot; );</span>
+<span class="nc" id="L1025">        props.put( &quot;s.f.3s&quot;, w3 + nexo + &quot;iere&quot; );</span>
+<span class="nc" id="L1026">        props.put( &quot;s.f.1p&quot;, w3 + nexo + &quot;iÃ©remos&quot; );</span>
+<span class="nc" id="L1027">        props.put( &quot;s.f.2p&quot;, w3 + nexo + &quot;iereis&quot; );</span>
+<span class="nc" id="L1028">        props.put( &quot;s.f.3p&quot;, w3 + nexo + &quot;ieren&quot; );</span>
+
+        //imperativo
+<span class="nc bnc" id="L1031" title="All 2 branches missed.">        if( pronominal ) {</span>
+<span class="nc" id="L1032">            props.put( &quot;im.2s&quot;, w4 + nexo + &quot;ete]]|[[{{{2}}}{{{nexo|}}}e&quot; );</span>
+<span class="nc" id="L1033">            props.put( &quot;im.3s&quot;, w4 + nexo + &quot;ase]]|[[{{{3}}}{{mutacion.es.nexo.ei|{{{nexo|}}}}}a&quot; );</span>
+<span class="nc" id="L1034">            props.put( &quot;im.1p&quot;, w3 + nexo + &quot;Ã¡monos]]|[[{{{2}}}{{mutacion.es.nexo.ei|{{{nexo|}}}}}amos&quot; );</span>
+<span class="nc" id="L1035">            props.put( &quot;im.3p&quot;, w4 + nexo + &quot;anse]]|[[{{{3}}}{{mutacion.es.nexo.ei|{{{nexo|}}}}}an&quot; );</span>
+<span class="nc" id="L1036">        } else {</span>
+<span class="nc" id="L1037">            props.put( &quot;im.2s&quot;, w2 + nexo + &quot;e&quot; );</span>
+<span class="nc" id="L1038">            props.put( &quot;im.3s&quot;, w3 + nexo + &quot;a&quot; );</span>
+<span class="nc" id="L1039">            props.put( &quot;im.1p&quot;, w2 + nexo + &quot;amos&quot; );</span>
+<span class="nc" id="L1040">            props.put( &quot;im.3p&quot;, w3 + nexo + &quot;an&quot; );</span>
+        }
+
+<span class="nc" id="L1043">        es_v_conj_ir( props );</span>
+
+<span class="nc" id="L1045">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.Ã±ir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_nir( String wikiText ) {
+<span class="nc" id="L1052">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.Ã±ir&quot;, 0 );</span>
+<span class="nc bnc" id="L1053" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L1054">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+
+<span class="nc" id="L1056">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+
+            //pretÃ©rito indefinido
+<span class="nc" id="L1059">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;Ã³&quot; );</span>
+<span class="nc" id="L1060">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;eron&quot; );</span>
+
+            //subjuntivo imperfecto (-iera) 
+<span class="nc" id="L1063">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;era&quot; );</span>
+<span class="nc" id="L1064">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;eras&quot; );</span>
+<span class="nc" id="L1065">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;era&quot; );</span>
+<span class="nc" id="L1066">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;Ã©ramos&quot; );</span>
+<span class="nc" id="L1067">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;erais&quot; );</span>
+<span class="nc" id="L1068">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;eran&quot; );</span>
+
+            //subjuntivo imperfecto (-iese) 
+<span class="nc" id="L1071">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;ese&quot; );</span>
+<span class="nc" id="L1072">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;eses&quot; );</span>
+<span class="nc" id="L1073">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;ese&quot; );</span>
+<span class="nc" id="L1074">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;Ã©semos&quot; );</span>
+<span class="nc" id="L1075">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;eseis&quot; );</span>
+<span class="nc" id="L1076">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;esen&quot; );</span>
+
+            //subjuntivo futuro (-iere) 
+<span class="nc" id="L1079">            props.put( &quot;s.f.1s&quot;, w1 + &quot;ere&quot; );</span>
+<span class="nc" id="L1080">            props.put( &quot;s.f.2s&quot;, w1 + &quot;eres&quot; );</span>
+<span class="nc" id="L1081">            props.put( &quot;s.f.3s&quot;, w1 + &quot;ere&quot; );</span>
+<span class="nc" id="L1082">            props.put( &quot;s.f.1p&quot;, w1 + &quot;Ã©remos&quot; );</span>
+<span class="nc" id="L1083">            props.put( &quot;s.f.2p&quot;, w1 + &quot;ereis&quot; );</span>
+<span class="nc" id="L1084">            props.put( &quot;s.f.3p&quot;, w1 + &quot;eren&quot; );</span>
+
+<span class="nc" id="L1086">            es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L1088">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.seguir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_seguir( String wikiText ) {
+<span class="nc" id="L1095">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.seguir&quot;, 0 );</span>
+<span class="nc bnc" id="L1096" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L1097">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+
+<span class="nc" id="L1099">            props.put( &quot;1&quot;, w1 + &quot;se&quot; );</span>
+<span class="nc" id="L1100">            props.put( &quot;2&quot;, w1 + &quot;si&quot; );</span>
+<span class="nc" id="L1101">            props.put( &quot;3&quot;, w1 + &quot;si&quot; );</span>
+<span class="nc" id="L1102">            props.put( &quot;4&quot;, w1 + &quot;sÃ­&quot; );</span>
+<span class="nc" id="L1103">            props.put( &quot;nexo&quot;, w1 + &quot;gu&quot; );</span>
+
+<span class="nc" id="L1105">            es_v_conj_ie_i_ue_ir( props );</span>
+        }
+<span class="nc" id="L1107">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.uir&amp;action=edit
+     * @param wikiText the completely wiki text
+     */
+    private void es_v_conj_uir( String wikiText ) {
+<span class="nc" id="L1114">        Properties props = BookUtils.parseRule( wikiText, &quot;es.v.conj.uir&quot;, 0 );</span>
+<span class="nc bnc" id="L1115" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L1116">            String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L1117">            String w2 = props.getProperty( &quot;2&quot;, &quot;{{{2}}}&quot; );</span>
+<span class="nc bnc" id="L1118" title="All 2 branches missed.">            boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc" id="L1120">            props.put( &quot;irregular&quot;, &quot;x&quot; );</span>
+
+            //presente de indicativo
+<span class="nc" id="L1123">            props.put( &quot;i.p.1s&quot;, w1 + &quot;yoo&quot; );</span>
+<span class="nc" id="L1124">            props.put( &quot;i.p.2s&quot;, w1 + &quot;yeses&quot; );</span>
+<span class="nc" id="L1125">            props.put( &quot;i.p.2s2&quot;, w1 + &quot;Ã­s&quot; );</span>
+<span class="nc" id="L1126">            props.put( &quot;i.p.3s&quot;, w1 + &quot;yee&quot; );</span>
+<span class="nc" id="L1127">            props.put( &quot;i.p.2p&quot;, w1 + &quot;Ã­s&quot; );</span>
+<span class="nc" id="L1128">            props.put( &quot;i.p.3p&quot;, w1 + &quot;yen&quot; );</span>
+
+            //pretÃ©rito perfecto simple (indefinido)
+<span class="nc" id="L1131">            props.put( &quot;i.pp.1s&quot;, w1 + &quot;Ã­&quot; );</span>
+<span class="nc" id="L1132">            props.put( &quot;i.pp.3s&quot;, w1 + &quot;yÃ³&quot; );</span>
+<span class="nc" id="L1133">            props.put( &quot;i.pp.3p&quot;, w1 + &quot;yeron&quot; );</span>
+
+            //presente de subjuntivo
+<span class="nc" id="L1136">            props.put( &quot;s.p.1s&quot;, w1 + &quot;ya&quot; );</span>
+<span class="nc" id="L1137">            props.put( &quot;s.p.2s&quot;, w1 + &quot;yas&quot; );</span>
+<span class="nc" id="L1138">            props.put( &quot;s.p.2s2&quot;, w1 + &quot;yÃ¡s&quot; );</span>
+<span class="nc" id="L1139">            props.put( &quot;s.p.3s&quot;, w1 + &quot;ya&quot; );</span>
+<span class="nc" id="L1140">            props.put( &quot;s.p.1p&quot;, w1 + &quot;yamos&quot; );</span>
+<span class="nc" id="L1141">            props.put( &quot;s.p.2p&quot;, w1 + &quot;yÃ¡is&quot; );</span>
+<span class="nc" id="L1142">            props.put( &quot;s.p.3p&quot;, w1 + &quot;yan&quot; );</span>
+
+            //subjuntivo imperfecto (-iera) 
+<span class="nc" id="L1145">            props.put( &quot;s.pi.1s&quot;, w1 + &quot;yera&quot; );</span>
+<span class="nc" id="L1146">            props.put( &quot;s.pi.2s&quot;, w1 + &quot;yeras&quot; );</span>
+<span class="nc" id="L1147">            props.put( &quot;s.pi.3s&quot;, w1 + &quot;yera&quot; );</span>
+<span class="nc" id="L1148">            props.put( &quot;s.pi.1p&quot;, w1 + &quot;yÃ©ramos&quot; );</span>
+<span class="nc" id="L1149">            props.put( &quot;s.pi.2p&quot;, w1 + &quot;yerais&quot; );</span>
+<span class="nc" id="L1150">            props.put( &quot;s.pi.3p&quot;, w1 + &quot;yeran&quot; );</span>
+
+            //subjuntivo imperfecto (-iese) 
+<span class="nc" id="L1153">            props.put( &quot;s.pi2.1s&quot;, w1 + &quot;yese&quot; );</span>
+<span class="nc" id="L1154">            props.put( &quot;s.pi2.2s&quot;, w1 + &quot;yeses&quot; );</span>
+<span class="nc" id="L1155">            props.put( &quot;s.pi2.3s&quot;, w1 + &quot;yese&quot; );</span>
+<span class="nc" id="L1156">            props.put( &quot;s.pi2.1p&quot;, w1 + &quot;yÃ©semos&quot; );</span>
+<span class="nc" id="L1157">            props.put( &quot;s.pi2.2p&quot;, w1 + &quot;yeseis&quot; );</span>
+<span class="nc" id="L1158">            props.put( &quot;s.pi2.3p&quot;, w1 + &quot;yesen&quot; );</span>
+
+            //subjuntivo futuro (-iere) 
+<span class="nc" id="L1161">            props.put( &quot;s.f.1s&quot;, w1 + &quot;yere&quot; );</span>
+<span class="nc" id="L1162">            props.put( &quot;s.f.2s&quot;, w1 + &quot;yeres&quot; );</span>
+<span class="nc" id="L1163">            props.put( &quot;s.f.3s&quot;, w1 + &quot;yere&quot; );</span>
+<span class="nc" id="L1164">            props.put( &quot;s.f.1p&quot;, w1 + &quot;yÃ©remos&quot; );</span>
+<span class="nc" id="L1165">            props.put( &quot;s.f.2p&quot;, w1 + &quot;yereis&quot; );</span>
+<span class="nc" id="L1166">            props.put( &quot;s.f.3p&quot;, w1 + &quot;yeren&quot; );</span>
+
+            //imperativo
+<span class="nc bnc" id="L1169" title="All 2 branches missed.">            if( pronominal ) {</span>
+<span class="nc" id="L1170">                props.put( &quot;im.2s&quot;, w2 + &quot;yete&quot; );</span>
+<span class="nc" id="L1171">                props.put( &quot;im.2s2&quot;, w1 + &quot;ite&quot; );</span>
+<span class="nc" id="L1172">                props.put( &quot;im.3s&quot;, w2 + &quot;yase&quot; );</span>
+<span class="nc" id="L1173">                props.put( &quot;im.1p&quot;, w1 + &quot;yÃ¡monos&quot; );</span>
+<span class="nc" id="L1174">                props.put( &quot;im.3p&quot;, w2 + &quot;yanse&quot; );</span>
+<span class="nc" id="L1175">            } else  {</span>
+<span class="nc" id="L1176">                props.put( &quot;im.2s&quot;, w1 + &quot;ye&quot; );</span>
+<span class="nc" id="L1177">                props.put( &quot;im.2s2&quot;, w1 + &quot;Ã­&quot; );</span>
+<span class="nc" id="L1178">                props.put( &quot;im.3s&quot;, w1 + &quot;ya&quot; );</span>
+<span class="nc" id="L1179">                props.put( &quot;im.1p&quot;, w1 + &quot;yamos&quot; );</span>
+<span class="nc" id="L1180">                props.put( &quot;im.3p&quot;, w2 + &quot;yan&quot; );</span>
+           }
+            
+<span class="nc" id="L1183">           es_v_conj_ir( props );</span>
+        }
+<span class="nc" id="L1185">    }</span>
+
+    /**
+     * http://es.wiktionary.org/w/index.php?title=Plantilla:es.v.conj.ir&amp;action=edit
+     * @param props parsed parameters, can not be null
+     */
+    private void es_v_conj_ir( Properties props ) {
+<span class="nc" id="L1192">        String w1 = props.getProperty( &quot;1&quot;, &quot;{{{1}}}&quot; );</span>
+<span class="nc" id="L1193">        String nexo = props.getProperty( &quot;nexo&quot;, &quot;&quot; );</span>
+<span class="nc" id="L1194">        String part = props.getProperty( &quot;part&quot; );</span>
+<span class="nc" id="L1195">        String part2 = props.getProperty( &quot;part2&quot; );</span>
+<span class="nc bnc" id="L1196" title="All 2 branches missed.">        boolean impersonal = props.getProperty( &quot;impersonal&quot;, &quot;&quot; ).length() &gt; 0; //plural or singular</span>
+<span class="nc" id="L1197">        boolean impersonalPlural = &quot;plural&quot;.equalsIgnoreCase( props.getProperty( &quot;impersonal&quot;, &quot;&quot; ) );</span>
+
+<span class="nc bnc" id="L1199" title="All 2 branches missed.">        boolean pronominal = props.getProperty( &quot;pronominal&quot;, &quot;&quot; ).length() &gt; 0;</span>
+
+<span class="nc bnc" id="L1201" title="All 2 branches missed.">        addWord( w1 + nexo + &quot;ir&quot; + (pronominal ? &quot;se&quot; : &quot;&quot;) );</span>
+<span class="nc" id="L1202">        addWord( w1 + nexo + &quot;ito&quot; );</span>
+<span class="nc bnc" id="L1203" title="All 2 branches missed.">        addWord( w1 + nexo + (pronominal ? &quot;iÃ©ndose&quot; : &quot;iendo&quot;) ); // Simples Gerundio</span>
+<span class="nc bnc" id="L1204" title="All 2 branches missed.">        if( part != null ) {</span>
+<span class="nc" id="L1205">            addWord( part );</span>
+        }
+<span class="nc bnc" id="L1207" title="All 2 branches missed.">        if( part2 != null ) {</span>
+<span class="nc" id="L1208">            addWord( part2 );</span>
+        }
+
+        //indicativo presente
+<span class="nc bnc" id="L1212" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1213">            addWord( props.getProperty( &quot;i.p.1s&quot;, w1 + nexo + &quot;o&quot; ) );</span>
+<span class="nc" id="L1214">            addWord( props.getProperty( &quot;i.p.2s&quot;, w1 + nexo + &quot;es&quot; ) );</span>
+<span class="nc" id="L1215">            addWord( props.getProperty( &quot;i.p.2s2&quot;, w1 + nexo + &quot;Ã­s&quot; ) );</span>
+        }
+<span class="nc" id="L1217">        addWord( props.getProperty( &quot;i.p.3s&quot;, w1 + nexo + &quot;e&quot; ) );</span>
+<span class="nc bnc" id="L1218" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1219">            addWord( props.getProperty( &quot;i.p.1p&quot;, w1 + nexo + &quot;imos&quot; ) );</span>
+<span class="nc" id="L1220">            addWord( props.getProperty( &quot;i.p.2p&quot;, w1 + nexo + &quot;Ã­s&quot; ) );</span>
+        }
+<span class="nc" id="L1222">        addWord( props.getProperty( &quot;i.p.3p&quot;, w1 + nexo + &quot;en&quot; ) );</span>
+
+        //imperfecto
+<span class="nc bnc" id="L1225" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1226">            addWord( props.getProperty( &quot;i.pi.1s&quot;, w1 + nexo + &quot;Ã­a&quot; ) );</span>
+<span class="nc" id="L1227">            addWord( props.getProperty( &quot;i.pi.2s&quot;, w1 + nexo + &quot;Ã­as&quot; ) );</span>
+        }
+<span class="nc" id="L1229">        addWord( props.getProperty( &quot;i.pi.3s&quot;, w1 + nexo + &quot;Ã­a&quot; ) );</span>
+<span class="nc bnc" id="L1230" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1231">            addWord( props.getProperty( &quot;i.pi.1p&quot;, w1 + nexo + &quot;Ã­amos&quot; ) );</span>
+<span class="nc" id="L1232">            addWord( props.getProperty( &quot;i.pi.2p&quot;, w1 + nexo + &quot;Ã­ais&quot; ) );</span>
+        }
+<span class="nc" id="L1234">        addWord( props.getProperty( &quot;i.pi.3p&quot;, w1 + nexo + &quot;Ã­an&quot; ) );</span>
+
+        //indefinido
+<span class="nc bnc" id="L1237" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1238">            addWord( props.getProperty( &quot;i.pp.1s&quot;, w1 + nexo + &quot;Ã­&quot; ) );</span>
+<span class="nc" id="L1239">            addWord( props.getProperty( &quot;i.pp.2s&quot;, w1 + nexo + &quot;iste&quot; ) );</span>
+        }
+<span class="nc" id="L1241">        addWord( props.getProperty( &quot;i.pp.3s&quot;, w1 + nexo + &quot;iÃ³&quot; ) );</span>
+<span class="nc bnc" id="L1242" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1243">            addWord( props.getProperty( &quot;i.pp.1p&quot;, w1 + nexo + &quot;imos&quot; ) );</span>
+<span class="nc" id="L1244">            addWord( props.getProperty( &quot;i.pp.2p&quot;, w1 + nexo + &quot;isteis&quot; ) );</span>
+        }
+<span class="nc" id="L1246">        addWord( props.getProperty( &quot;i.pp.3p&quot;, w1 + nexo + &quot;ieron&quot; ) );</span>
+
+        //futuro
+<span class="nc bnc" id="L1249" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1250">            addWord( props.getProperty( &quot;i.f.1s&quot;, w1 + nexo + &quot;irÃ©&quot; ) );</span>
+<span class="nc" id="L1251">            addWord( props.getProperty( &quot;i.f.2s&quot;, w1 + nexo + &quot;irÃ¡s&quot; ) );</span>
+        }
+<span class="nc" id="L1253">        addWord( props.getProperty( &quot;i.f.3s&quot;, w1 + nexo + &quot;irÃ¡&quot; ) );</span>
+<span class="nc bnc" id="L1254" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1255">            addWord( props.getProperty( &quot;i.f.1p&quot;, w1 + nexo + &quot;iremos&quot; ) );</span>
+<span class="nc" id="L1256">            addWord( props.getProperty( &quot;i.f.2p&quot;, w1 + nexo + &quot;irÃ©is&quot; ) );</span>
+        }
+<span class="nc" id="L1258">        addWord( props.getProperty( &quot;i.f.3p&quot;, w1 + nexo + &quot;irÃ¡n&quot; ) );</span>
+
+        //condicional
+<span class="nc bnc" id="L1261" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1262">            addWord( props.getProperty( &quot;i.c.1s&quot;, w1 + nexo + &quot;irÃ­a&quot; ) );</span>
+<span class="nc" id="L1263">            addWord( props.getProperty( &quot;i.c.2s&quot;, w1 + nexo + &quot;irÃ­as&quot; ) );</span>
+        }
+<span class="nc" id="L1265">        addWord( props.getProperty( &quot;i.c.3s&quot;, w1 + nexo + &quot;irÃ­a&quot; ) );</span>
+<span class="nc bnc" id="L1266" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1267">            addWord( props.getProperty( &quot;i.c.1p&quot;, w1 + nexo + &quot;irÃ­amos&quot; ) );</span>
+<span class="nc" id="L1268">            addWord( props.getProperty( &quot;i.c.2p&quot;, w1 + nexo + &quot;irÃ­ais&quot; ) );</span>
+        }
+<span class="nc" id="L1270">        addWord( props.getProperty( &quot;i.c.3p&quot;, w1 + nexo + &quot;irÃ­an&quot; ) );</span>
+
+        //subjuntivo presente
+<span class="nc bnc" id="L1273" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1274">            addWord( props.getProperty( &quot;s.p.1s&quot;, w1 + nexo + &quot;a&quot; ) );</span>
+<span class="nc" id="L1275">            addWord( props.getProperty( &quot;s.p.2s&quot;, w1 + nexo + &quot;as&quot; ) );</span>
+<span class="nc" id="L1276">            addWord( props.getProperty( &quot;s.p.2s2&quot;, w1 + nexo + &quot;Ã¡s&quot; ) );</span>
+        }
+<span class="nc" id="L1278">        addWord( props.getProperty( &quot;s.p.3s&quot;, w1 + nexo + &quot;a&quot; ) );</span>
+<span class="nc bnc" id="L1279" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1280">            addWord( props.getProperty( &quot;s.p.1p&quot;, w1 + nexo + &quot;amos&quot; ) );</span>
+<span class="nc" id="L1281">            addWord( props.getProperty( &quot;s.p.2p&quot;, w1 + nexo + &quot;Ã¡is&quot; ) );</span>
+        }
+<span class="nc" id="L1283">        addWord( props.getProperty( &quot;s.p.3p&quot;, w1 + nexo + &quot;an&quot; ) );</span>
+
+        //imperfecto (-iera)
+<span class="nc bnc" id="L1286" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1287">            addWord( props.getProperty( &quot;s.pi.1s&quot;, w1 + nexo + &quot;iera&quot; ) );</span>
+<span class="nc" id="L1288">            addWord( props.getProperty( &quot;s.pi.2s&quot;, w1 + nexo + &quot;ieras&quot; ) );</span>
+        }
+<span class="nc" id="L1290">        addWord( props.getProperty( &quot;s.pi.3s&quot;, w1 + nexo + &quot;iera&quot; ) );</span>
+<span class="nc bnc" id="L1291" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1292">            addWord( props.getProperty( &quot;s.pi.1p&quot;, w1 + nexo + &quot;iÃ©ramos&quot; ) );</span>
+<span class="nc" id="L1293">            addWord( props.getProperty( &quot;s.pi.2p&quot;, w1 + nexo + &quot;ierais&quot; ) );</span>
+        }
+<span class="nc" id="L1295">        addWord( props.getProperty( &quot;s.pi.3p&quot;, w1 + nexo + &quot;ieran&quot; ) );</span>
+
+        //imperfecto (-iese)
+<span class="nc bnc" id="L1298" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1299">            addWord( props.getProperty( &quot;s.pi2.1s&quot;, w1 + nexo + &quot;iese&quot; ) );</span>
+<span class="nc" id="L1300">            addWord( props.getProperty( &quot;s.pi2.2s&quot;, w1 + nexo + &quot;ieses&quot; ) );</span>
+        }
+<span class="nc" id="L1302">        addWord( props.getProperty( &quot;s.pi2.3s&quot;, w1 + nexo + &quot;iese&quot; ) );</span>
+<span class="nc bnc" id="L1303" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1304">            addWord( props.getProperty( &quot;s.pi2.1p&quot;, w1 + nexo + &quot;iÃ©semos&quot; ) );</span>
+<span class="nc" id="L1305">            addWord( props.getProperty( &quot;s.pi2.2p&quot;, w1 + nexo + &quot;ieseis&quot; ) );</span>
+        }
+<span class="nc" id="L1307">        addWord( props.getProperty( &quot;s.pi2.3p&quot;, w1 + nexo + &quot;iesen&quot; ) );</span>
+
+        //futuro
+<span class="nc bnc" id="L1310" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1311">            addWord( props.getProperty( &quot;s.f.1s&quot;, w1 + nexo + &quot;iere&quot; ) );</span>
+<span class="nc" id="L1312">            addWord( props.getProperty( &quot;s.f.2s&quot;, w1 + nexo + &quot;ieres&quot; ) );</span>
+        }
+<span class="nc" id="L1314">        addWord( props.getProperty( &quot;s.f.3s&quot;, w1 + nexo + &quot;iere&quot; ) );</span>
+<span class="nc bnc" id="L1315" title="All 2 branches missed.">        if( !impersonal ) {</span>
+<span class="nc" id="L1316">            addWord( props.getProperty( &quot;s.f.1p&quot;, w1 + nexo + &quot;iÃ©remos&quot; ) );</span>
+<span class="nc" id="L1317">            addWord( props.getProperty( &quot;s.f.2p&quot;, w1 + nexo + &quot;iereis&quot; ) );</span>
+        }
+<span class="nc" id="L1319">        addWord( props.getProperty( &quot;s.f.3p&quot;, w1 + nexo + &quot;ieren&quot; ) );</span>
+
+        //imperativo
+<span class="nc bnc" id="L1322" title="All 2 branches missed.">        if( !impersonalPlural ) {</span>
+<span class="nc" id="L1323">            addWord( props.getProperty( &quot;im.2s&quot;, w1 + nexo + &quot;e&quot; ) );</span>
+<span class="nc" id="L1324">            addWord( props.getProperty( &quot;im.2s2&quot;, w1 + nexo + &quot;Ã­&quot; ) );</span>
+<span class="nc" id="L1325">            addWord( props.getProperty( &quot;im.2p&quot;, w1 + nexo + &quot;id&quot; ) );</span>
+        }
+<span class="nc" id="L1327">    }</span>
+
+    private void findRuleAndAddWords( String word, String wikiText, String rule, String[] endingName ) {
+<span class="nc" id="L1330">        findRuleAndAddWords( word, wikiText, rule, endingName, null );</span>
+<span class="nc" id="L1331">    }</span>
+
+    private void findRuleAndAddWords( String word, String wikiText, String rule, String[] endingName, String[] ending1 ) {
+<span class="nc" id="L1334">        findRuleAndAddWords( word, wikiText, rule, endingName, ending1, null );</span>
+<span class="nc" id="L1335">    }</span>
+
+    private void findRuleAndAddWords( String word, String wikiText, String rule, String[] endingName, String[] ending1, String[] ending2 ) {
+<span class="nc" id="L1338">        findRuleAndAddWords( word, wikiText, rule, endingName, ending1, ending2, null, null );</span>
+<span class="nc" id="L1339">    }</span>
+
+    private void findRuleAndAddWords( String word, String wikiText, String rule, String[] endingName, String[] ending1, String[] ending2, String[] ending3, String[] ending4 ) {
+<span class="nc" id="L1342">        int idx = wikiText.indexOf( &quot;{{&quot; + rule + &quot;}}&quot; );</span>
+<span class="nc bnc" id="L1343" title="All 2 branches missed.">        if( idx &lt; 0 ) {</span>
+<span class="nc" id="L1344">            idx = wikiText.indexOf( &quot;{{&quot; + rule + &quot;|&quot; );</span>
+<span class="nc bnc" id="L1345" title="All 2 branches missed.">            if( idx &lt; 0 ) {</span>
+<span class="nc" id="L1346">                return;</span>
+            }
+        }
+<span class="nc bnc" id="L1349" title="All 2 branches missed.">        if( endingName != null ) {</span>
+<span class="nc bnc" id="L1350" title="All 2 branches missed.">            for( String ending : endingName ) {</span>
+<span class="nc" id="L1351">                addWord( word + ending );</span>
+            }
+        }
+<span class="nc bnc" id="L1354" title="All 2 branches missed.">        if( ending1 == null ) {</span>
+<span class="nc" id="L1355">            return;</span>
+        }
+<span class="nc" id="L1357">        idx += rule.length() + 3;</span>
+<span class="nc" id="L1358">        int idx2 = wikiText.indexOf( &quot;}}&quot;, idx );</span>
+<span class="nc" id="L1359">        String params = wikiText.substring( idx, idx2 );</span>
+
+<span class="nc" id="L1361">        StringTokenizer tok = new StringTokenizer( params, &quot;|&quot; );</span>
+<span class="nc bnc" id="L1362" title="All 2 branches missed.">        if( tok.hasMoreElements() ) {</span>
+<span class="nc" id="L1363">            String first = tok.nextToken().trim();</span>
+<span class="nc bnc" id="L1364" title="All 2 branches missed.">            if( ending1 != null ) {</span>
+<span class="nc bnc" id="L1365" title="All 2 branches missed.">                for( String ending : ending1 ) {</span>
+<span class="nc" id="L1366">                    addWord( first + ending );</span>
+                }
+            }
+
+<span class="nc bnc" id="L1370" title="All 2 branches missed.">            if( tok.hasMoreElements() ) {</span>
+<span class="nc" id="L1371">                String second = tok.nextToken().trim();</span>
+<span class="nc bnc" id="L1372" title="All 2 branches missed.">                if( ending2 != null ) {</span>
+<span class="nc bnc" id="L1373" title="All 2 branches missed.">                    for( String ending : ending2 ) {</span>
+<span class="nc" id="L1374">                        addWord( second + ending );</span>
+                    }
+                }
+
+<span class="nc bnc" id="L1378" title="All 2 branches missed.">                if( tok.hasMoreElements() ) {</span>
+<span class="nc" id="L1379">                    String third = tok.nextToken().trim();</span>
+<span class="nc bnc" id="L1380" title="All 2 branches missed.">                    if( ending3 != null ) {</span>
+<span class="nc bnc" id="L1381" title="All 2 branches missed.">                        for( String ending : ending3 ) {</span>
+<span class="nc" id="L1382">                            addWord( third + ending );</span>
+                        }
+                    }
+
+<span class="nc bnc" id="L1386" title="All 2 branches missed.">                    if( tok.hasMoreElements() ) {</span>
+<span class="nc" id="L1387">                        String four = tok.nextToken().trim();</span>
+<span class="nc bnc" id="L1388" title="All 2 branches missed.">                        if( ending4 != null ) {</span>
+<span class="nc bnc" id="L1389" title="All 2 branches missed.">                            for( String ending : ending4 ) {</span>
+<span class="nc" id="L1390">                                addWord( four + ending );</span>
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+<span class="nc" id="L1398">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

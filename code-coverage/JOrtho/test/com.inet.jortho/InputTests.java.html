@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>InputTests.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">test</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">InputTests.java</span></div><h1>InputTests.java</h1><pre class="source lang-java linenums">package com.inet.jortho;
+
+import junit.framework.TestCase;
+
+import javax.swing.*;
+
+<span class="fc" id="L7">public class InputTests extends TestCase {</span>
+
+    static {
+<span class="fc" id="L10">        AllTests.init();</span>
+<span class="fc" id="L11">    }</span>
+
+    /**
+     * Tests that the tokenizer splits on words that have a special character in between them. Expected result is
+     * two results from the tokenizer for every string.
+     */
+    public void testSpecialCharacters() {
+<span class="fc" id="L18">        String breaks = &quot;!\&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~&quot;;</span>
+<span class="fc" id="L19">        String leftWord = &quot;llll&quot;, rightWord = &quot;rrrr&quot;;</span>
+<span class="fc" id="L20">        JEditorPane jText = TestUtils.initDefaultSpellchecker(&quot;&quot;);</span>
+
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        for (char c : breaks.toCharArray()) {</span>
+<span class="fc" id="L23">            jText.setText(leftWord + c + rightWord);</span>
+<span class="fc" id="L24">            int j = 0;</span>
+<span class="fc" id="L25">            Tokenizer tokenizer = TestUtils.getDefaultTokenizer(jText);</span>
+
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            while (tokenizer.nextInvalidWord() != null) {</span>
+<span class="fc" id="L28">                j++;</span>
+            }
+
+<span class="fc" id="L31">            assertEquals(&quot;2 words should be invalid. Character: &quot; + c + &quot; should break a word&quot;, 2, j);</span>
+        }
+<span class="nc" id="L33">    }</span>
+
+    /**
+     * Tests that the {@code Tokenizer} returns invalid words when a {@code String} contains numbers within it.
+     * However, a {@code String} that starts with a number is acceptable.
+     */
+    public void testWithNumbers() {
+<span class="fc" id="L40">        String testString = &quot;aLongStringToTest&quot;;</span>
+<span class="fc" id="L41">        JEditorPane jText = TestUtils.initDefaultSpellchecker(&quot;&quot;);</span>
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (int i = 0; i &lt; testString.length(); i++) {</span>
+<span class="fc" id="L44">            String s = testString.substring(0, i) + i + testString.substring(i + 1);</span>
+<span class="fc" id="L45">            jText.setText(s);</span>
+<span class="fc" id="L46">            Tokenizer tokenizer = TestUtils.getDefaultTokenizer(jText);</span>
+
+<span class="fc bfc" id="L48" title="All 2 branches covered.">            if (i == 0) {</span>
+<span class="fc" id="L49">                assertNull(&quot;Spelling mistake detected when there should not have been. &quot; +</span>
+<span class="fc" id="L50">                        &quot;Strings starting with numbers are valid&quot;, tokenizer.nextInvalidWord());</span>
+<span class="fc" id="L51">            } else {</span>
+<span class="fc" id="L52">                assertNotNull(&quot;Expected invalid string&quot;, tokenizer.nextInvalidWord());</span>
+            }
+        }
+<span class="fc" id="L55">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

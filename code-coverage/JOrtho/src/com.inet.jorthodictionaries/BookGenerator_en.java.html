@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator_en.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator_en.java</span></div><h1>BookGenerator_en.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 13.12.2007
+ */
+package com.inet.jorthodictionaries;
+
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * 
+ * @author Volker Berlin
+ */
+<span class="nc" id="L33">public class BookGenerator_en extends BookGenerator {</span>
+
+<span class="nc" id="L35">    private final Pattern english = Pattern.compile( &quot;^==\\s*English\\s*==$&quot;, Pattern.MULTILINE );</span>
+<span class="nc" id="L36">    private final Pattern languages = Pattern.compile( &quot;^==[^=]*==$&quot;, Pattern.MULTILINE );</span>
+    
+    @Override
+    boolean isValidLanguage( String word, String wikiText ) {
+<span class="nc" id="L40">        Matcher engMatch = english.matcher( wikiText );</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if( !engMatch.find() ) {</span>
+<span class="nc" id="L42">            return false;</span>
+        }
+
+<span class="nc" id="L45">        Matcher matcher = languages.matcher( wikiText );</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if( matcher.find( engMatch.end() ) ) {</span>
+<span class="nc" id="L47">            wikiText = wikiText.substring( engMatch.end(), matcher.start() );</span>
+        }
+
+<span class="nc" id="L50">        int misSpellingWeight = 0;</span>
+<span class="nc" id="L51">        Properties props = BookUtils.parseRule( wikiText, &quot;misspelling of&quot;, 0 );</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if( props != null ) {</span>
+            //we need to split between real misspelling words 
+            //and sometime is a misspelling word
+            //we use the diff and the size of the article
+<span class="nc" id="L56">            String correctWord = props.getProperty( &quot;1&quot; );</span>
+<span class="nc bnc" id="L57" title="All 4 branches missed.">            if(correctWord != null &amp;&amp; BookUtils.calcDiff( word, correctWord ) &lt;= 3){</span>
+<span class="nc" id="L58">                misSpellingWeight += 512;</span>
+            }
+        }
+<span class="nc" id="L61">        props = BookUtils.parseRule( wikiText, &quot;label|en&quot;, 0 );</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc" id="L63">            String labelType = props.getProperty( &quot;1&quot; );</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            if( &quot;obsolete&quot;.equals( labelType ) ) {</span>
+<span class="nc" id="L65">                misSpellingWeight += 512;</span>
+            }
+<span class="nc" id="L67">            String subType = props.getProperty( &quot;2&quot; );</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if( &quot;slang&quot;.equals( subType ) ) {</span>
+<span class="nc" id="L69">                misSpellingWeight += 512;</span>
+            }
+        }
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if( misSpellingWeight &gt; wikiText.length() ) {</span>
+<span class="nc" id="L73">            return false;</span>
+        }
+
+<span class="nc bnc" id="L76" title="All 4 branches missed.">        if( wikiText.indexOf( &quot;{{en-noun}}&quot; ) &gt; 0 || wikiText.indexOf( &quot;{{en-proper noun}}&quot; ) &gt; 0 ) {</span>
+            // http://www.englishclub.com/grammar/nouns-possessive.htm
+<span class="nc" id="L78">            String genetiv = word + &quot;'s&quot;;</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if( isValidWord( genetiv ) ) {</span>
+<span class="nc" id="L80">                addWord( genetiv );</span>
+            }
+<span class="nc" id="L82">            String pluralGenetiv = word + &quot;s'&quot;;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if( isValidWord( pluralGenetiv ) ) {</span>
+<span class="nc" id="L84">                addWord( pluralGenetiv );</span>
+            }
+        }
+
+<span class="nc" id="L88">        int idx = wikiText.indexOf( &quot;{{en-noun|pl=&quot; );</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if( idx &gt; 0 ) {</span>
+            // http://www.englishclub.com/grammar/nouns-possessive.htm
+<span class="nc" id="L91">            idx += &quot;{{en-noun|pl=&quot;.length();</span>
+<span class="nc" id="L92">            int idx2 = wikiText.indexOf( &quot;}}&quot;, idx );</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if( idx2 &gt; 0 ) {</span>
+<span class="nc" id="L94">                String plural = wikiText.substring( idx, idx2 );</span>
+<span class="nc" id="L95">                plural = trim( plural );</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                if( isValidWord( plural ) ) {</span>
+<span class="nc" id="L97">                    addWord( plural );</span>
+<span class="nc" id="L98">                    plural += &quot;'s&quot;;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                    if( isValidWord( plural ) ) {</span>
+<span class="nc" id="L100">                        addWord( plural );</span>
+                    }
+                }
+            }
+        }
+<span class="nc" id="L105">        return true;</span>
+    }
+
+    /**
+     * Removes quotes and parenthesis
+     * 
+     * @param word
+     *            the trimming word
+     * @return the new word
+     */
+    private String trim( String word ) {
+<span class="nc" id="L116">        word = word.trim();</span>
+<span class="nc bnc" id="L117" title="All 6 branches missed.">        if( word.length() &gt;= 6 &amp;&amp; word.startsWith( &quot;'''&quot; ) &amp;&amp; word.endsWith( &quot;'''&quot; ) ) {</span>
+<span class="nc" id="L118">            word = word.substring( 3, word.length() - 3 );</span>
+        }
+<span class="nc" id="L120">        word = word.trim();</span>
+<span class="nc bnc" id="L121" title="All 6 branches missed.">        if( word.length() &gt;= 4 &amp;&amp; word.startsWith( &quot;[[&quot; ) &amp;&amp; word.endsWith( &quot;]]&quot; ) ) {</span>
+<span class="nc" id="L122">            word = word.substring( 2, word.length() - 2 );</span>
+        }
+<span class="nc" id="L124">        word = word.trim();</span>
+<span class="nc" id="L125">        return word;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DictionaryFactory.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">DictionaryFactory.java</span></div><h1>DictionaryFactory.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2010 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 15.06.2007
+ */
+package com.inet.jortho;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Iterator;
+
+/** 
+ * With the DictionaryFactory you can create / load a Dictionary. A Dictionary is list of word with a API for searching. 
+ * The list is saved internal as a tree.
+ * @see Dictionary
+ * @author Volker Berlin
+ */
+class DictionaryFactory {
+
+<span class="fc" id="L37">    private final Node root = new Node( (char)0 );</span>
+    private char[] tree;
+    private int size;
+    
+    /**
+     * Empty Constructor.
+     */
+<span class="fc" id="L44">    public DictionaryFactory(){</span>
+        /* empty */
+<span class="fc" id="L46">    }</span>
+    
+    
+    /**
+     * Load the directory from a compressed list of words with UTF8 encoding. The words must be delimited with
+     * newlines. This method can be called multiple times.
+     * 
+     * @param filename
+     *            the name of the file
+     * @throws IOException
+     *             If an I/O error occurs.
+     * @throws NullPointerException
+     *             If filename is null.
+     */
+    public void loadWordList( URL filename ) throws IOException {
+<span class="fc" id="L61">        loadWords( new WordIterator( filename ) );</span>
+<span class="fc" id="L62">    }</span>
+    
+    public void loadWords( Iterator&lt;String&gt; words ) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        while( words.hasNext() ) {</span>
+<span class="fc" id="L66">            String word = words.next();</span>
+<span class="pc bpc" id="L67" title="2 of 4 branches missed.">            if( word != null &amp;&amp; word.length() &gt; 1 ) {</span>
+<span class="fc" id="L68">                add( word );</span>
+            }
+        }
+<span class="fc" id="L71">    }</span>
+    
+    /**
+     * Add a word to the tree. If it already exist then it has no effect. 
+     * @param word the new word.
+     */
+    public void add(String word){
+<span class="fc" id="L78">        Node node = root;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        for(int i=0; i&lt;word.length(); i++){</span>
+<span class="fc" id="L80">            char c = word.charAt(i);</span>
+<span class="fc" id="L81">            Node entry = node.searchCharOrAdd( c );</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if(i == word.length()-1){</span>
+<span class="fc" id="L83">                entry.isWord = true;</span>
+<span class="fc" id="L84">                return;</span>
+            }
+<span class="fc" id="L86">            node = entry;</span>
+        }
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Create from the data in this factory a Dictionary object. If there 
+     * are no word added then the Dictionary is empty. The Dictionary need fewer memory as the DictionaryFactory.
+     * @return a Dictionary object.
+     */
+    public Dictionary create(){
+<span class="fc" id="L96">        tree = new char[10000];</span>
+        
+<span class="fc" id="L98">        root.save( this );</span>
+        
+        //shrink the array
+<span class="fc" id="L101">        char[] temp = new char[size];</span>
+<span class="fc" id="L102">        System.arraycopy( tree, 0, temp, 0, size );</span>
+<span class="fc" id="L103">        tree = temp;</span>
+        
+<span class="fc" id="L105">        return new Dictionary(tree);</span>
+    }
+    
+    /**
+     * Check the size of the array and resize it if needed.
+     * @param newSize the required size
+     */
+    final void checkSize(int newSize){
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if(newSize &gt; tree.length){</span>
+<span class="fc" id="L114">            char[] puffer = new char[Math.max(newSize, 2*tree.length)];</span>
+<span class="fc" id="L115">            System.arraycopy(tree, 0, puffer, 0, size);</span>
+<span class="fc" id="L116">            tree = puffer;</span>
+        }
+<span class="fc" id="L118">    }</span>
+    
+    /**
+     * A node in the search tree. Every Node can include a list of NodeEnties
+     */
+    private final static class Node extends LowMemoryArrayList&lt;Node&gt;{
+
+        private final char c;
+        private boolean isWord;
+        
+<span class="fc" id="L128">        Node(char c){</span>
+<span class="fc" id="L129">            this.c = c;</span>
+<span class="fc" id="L130">        }</span>
+        
+                
+        Node searchCharOrAdd( char c ) {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            for(int i=0; i&lt;size(); i++){</span>
+<span class="fc" id="L135">                Node entry = get( i );</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">                if(entry.c &lt; c){</span>
+<span class="fc" id="L137">                    continue;</span>
+                }
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                if(entry.c == c){</span>
+<span class="fc" id="L140">                    return entry;</span>
+                }
+<span class="nc" id="L142">                entry = new Node(c);</span>
+<span class="nc" id="L143">                add( i, entry );</span>
+<span class="nc" id="L144">                return entry;</span>
+            }
+<span class="fc" id="L146">            Node entry = new Node(c);</span>
+<span class="fc" id="L147">            add( entry );</span>
+<span class="fc" id="L148">            return entry;</span>
+        }
+        
+        int save(DictionaryFactory factory){
+            int idx;
+<span class="fc" id="L153">            int start = idx = factory.size;</span>
+            //reserve the needed memory
+<span class="fc" id="L155">            int newSize = factory.size + size() * 3 + 1;</span>
+<span class="fc" id="L156">            factory.checkSize( newSize );</span>
+<span class="fc" id="L157">            factory.size = newSize;</span>
+            
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            for(int i=0; i&lt;size(); i++){</span>
+<span class="fc" id="L160">                Node entry = get( i );</span>
+<span class="fc" id="L161">                factory.tree[idx++] = entry.c;</span>
+<span class="fc" id="L162">                int offset = 0;</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                if(entry.size() != 0){</span>
+<span class="fc" id="L164">                    offset = entry.save(factory);</span>
+                }
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                if(entry.isWord){</span>
+<span class="fc" id="L167">                    offset |= 0x80000000;</span>
+                }
+<span class="fc" id="L169">                factory.tree[idx++] = (char)(offset &gt;&gt; 16);</span>
+<span class="fc" id="L170">                factory.tree[idx++] = (char)(offset);</span>
+            }
+<span class="fc" id="L172">            factory.tree[idx] = DictionaryBase.LAST_CHAR;</span>
+<span class="fc" id="L173">            return start;</span>
+        }
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

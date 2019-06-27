@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WordIterator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WordIterator (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WordIterator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80.8%
+  </span>
+  <span class="absValue">
+    (21/ 26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2009 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; * Created on 20.05.2009
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import java.io.BufferedInputStream;
+<i>26</i>&nbsp;import java.io.BufferedReader;
+<i>27</i>&nbsp;import java.io.IOException;
+<i>28</i>&nbsp;import java.io.InputStream;
+<i>29</i>&nbsp;import java.io.InputStreamReader;
+<i>30</i>&nbsp;import java.io.Reader;
+<i>31</i>&nbsp;import java.net.URL;
+<i>32</i>&nbsp;import java.net.URLConnection;
+<i>33</i>&nbsp;import java.util.Iterator;
+<i>34</i>&nbsp;import java.util.NoSuchElementException;
+<i>35</i>&nbsp;import java.util.zip.InflaterInputStream;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;/**
+<i>38</i>&nbsp; * A implementation of an Iterator which split a large text into lines. It is used to read words lists.
+<i>39</i>&nbsp; * @author Volker Berlin
+<i>40</i>&nbsp; */
+<i>41</i>&nbsp;public class WordIterator implements Iterator&lt;String&gt; {
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    private BufferedReader input;
+<i>44</i>&nbsp;    private String word;
+<i>45</i>&nbsp;    
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Load the directory from a compressed list of words with UTF8 encoding. The words must be delimmited with
+<i>48</i>&nbsp;     * newlines.
+<i>49</i>&nbsp;     * 
+<i>50</i>&nbsp;     * @param filename
+<i>51</i>&nbsp;     *            the name of the file
+<i>52</i>&nbsp;     * @throws IOException
+<i>53</i>&nbsp;     *             If an I/O error occurs.
+<i>54</i>&nbsp;     * @throws NullPointerException
+<i>55</i>&nbsp;     *             If filename is null.
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public WordIterator( URL filename ) throws IOException {
+<b class="fc"><i>58</i>&nbsp;        this( createInflaterStream(filename), &quot;UTF8&quot; );</b>
+<b class="fc"><i>59</i>&nbsp;    }</b>
+<i>60</i>&nbsp;    
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * Load the directory from plain a list of words. The words must be delimmited with newlines.
+<i>63</i>&nbsp;     * 
+<i>64</i>&nbsp;     * @param stream
+<i>65</i>&nbsp;     *            a InputStream with words
+<i>66</i>&nbsp;     * @param charsetName
+<i>67</i>&nbsp;     *            the name of a codepage for example &quot;UTF8&quot; or &quot;Cp1252&quot;
+<i>68</i>&nbsp;     * @throws IOException
+<i>69</i>&nbsp;     *             If an I/O error occurs.
+<i>70</i>&nbsp;     * @throws NullPointerException
+<i>71</i>&nbsp;     *             If stream or charsetName is null.
+<i>72</i>&nbsp;     */
+<i>73</i>&nbsp;    public WordIterator( InputStream stream, String charsetName ) throws IOException {
+<b class="fc"><i>74</i>&nbsp;       this( new InputStreamReader( stream, charsetName ) );</b>
+<b class="fc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Load the directory from plain a list of words. The words must be delimmited with newlines.
+<i>79</i>&nbsp;     * 
+<i>80</i>&nbsp;     * @param reader
+<i>81</i>&nbsp;     *            a Reader with words
+<i>82</i>&nbsp;     * @throws IOException
+<i>83</i>&nbsp;     *             If an I/O error occurs.
+<i>84</i>&nbsp;     * @throws NullPointerException
+<i>85</i>&nbsp;     *             If reader is null.
+<i>86</i>&nbsp;     */
+<b class="fc"><i>87</i>&nbsp;    public WordIterator( Reader reader ) throws IOException {</b>
+<b class="fc"><i>88</i>&nbsp;        input = new BufferedReader( reader );</b>
+<b class="fc"><i>89</i>&nbsp;        word = input.readLine();</b>
+<b class="fc"><i>90</i>&nbsp;    }</b>
+<i>91</i>&nbsp;    
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * Create a plain stream from a compressed file.
+<i>94</i>&nbsp;     * @param filename the file of a JOrtho dictionary
+<i>95</i>&nbsp;     * @return the stream
+<i>96</i>&nbsp;     * @throws IOException If an I/O error occurs.
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    private static InputStream createInflaterStream( URL filename ) throws IOException{
+<b class="fc"><i>99</i>&nbsp;        URLConnection conn = filename.openConnection();</b>
+<b class="fc"><i>100</i>&nbsp;        conn.setReadTimeout( 5000 );</b>
+<b class="fc"><i>101</i>&nbsp;        InputStream input = conn.getInputStream();</b>
+<b class="fc"><i>102</i>&nbsp;        input = new InflaterInputStream( input );</b>
+<b class="fc"><i>103</i>&nbsp;        return new BufferedInputStream( input );</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;    
+<i>106</i>&nbsp;    /**
+<i>107</i>&nbsp;     * {@inheritDoc}
+<i>108</i>&nbsp;     */
+<i>109</i>&nbsp;    public boolean hasNext() {
+<b class="fc"><i>110</i>&nbsp;        return word != null;</b>
+<i>111</i>&nbsp;    }
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    /**
+<i>114</i>&nbsp;     * {@inheritDoc}
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    public String next() {
+<b class="fc"><i>117</i>&nbsp;        if(!hasNext()){</b>
+<b class="nc"><i>118</i>&nbsp;            throw new NoSuchElementException();</b>
+<i>119</i>&nbsp;        }
+<b class="fc"><i>120</i>&nbsp;        String next = word;</b>
+<i>121</i>&nbsp;        try {
+<b class="fc"><i>122</i>&nbsp;            word = input.readLine();</b>
+<b class="fc"><i>123</i>&nbsp;            if(word == null){</b>
+<b class="fc"><i>124</i>&nbsp;                input.close();</b>
+<i>125</i>&nbsp;            }
+<b class="nc"><i>126</i>&nbsp;        } catch( IOException e ) {</b>
+<b class="nc"><i>127</i>&nbsp;            word = null;</b>
+<b class="nc"><i>128</i>&nbsp;        	SpellChecker.getMessageHandler().handleException( e );</b>
+<b class="fc"><i>129</i>&nbsp;        }</b>
+<b class="fc"><i>130</i>&nbsp;        return next;</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    /**
+<i>134</i>&nbsp;     * {@inheritDoc}
+<i>135</i>&nbsp;     */
+<i>136</i>&nbsp;    public void remove() {
+<b class="nc"><i>137</i>&nbsp;        throw new UnsupportedOperationException();</b>
+<i>138</i>&nbsp;    }
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

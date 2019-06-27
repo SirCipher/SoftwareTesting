@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DictionaryEditDialog.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">DictionaryEditDialog.java</span></div><h1>DictionaryEditDialog.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 24.12.2007
+ */
+package com.inet.jortho;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import javax.swing.*;
+
+
+
+/**
+ * Implements edit dialog for the user dictionary.
+ * @author Volker Berlin
+ */
+class DictionaryEditDialog extends JDialog{
+    
+    private final JList list;
+    private final JButton delete;
+    private final JButton export;
+    private final JButton importBtn;
+    final private JButton close;
+    private boolean isModify;
+
+    DictionaryEditDialog( JDialog parent ){
+<span class="nc" id="L61">        super( parent, Utils.getResource(&quot;userDictionary&quot;), true );</span>
+<span class="nc" id="L62">        setDefaultCloseOperation( WindowConstants.DISPOSE_ON_CLOSE );</span>
+<span class="nc" id="L63">        Container content = getContentPane();</span>
+<span class="nc" id="L64">        content.setLayout( new GridBagLayout() );</span>
+<span class="nc" id="L65">        DefaultListModel data = new DefaultListModel();</span>
+<span class="nc" id="L66">        loadWordList( data );</span>
+<span class="nc" id="L67">        list = new JList( data );</span>
+<span class="nc" id="L68">        content.add( new JScrollPane(list), new GridBagConstraints( 1, 1, 1, 5, 1.0, 1.0, GridBagConstraints.NORTH ,GridBagConstraints.BOTH, new Insets( 8,8,8,8 ), 0, 0) );</span>
+        
+<span class="nc" id="L70">        delete = Utils.getButton( &quot;delete&quot; );</span>
+<span class="nc" id="L71">        content.add( delete, new GridBagConstraints( 2, 1, 1, 1, 0, 0, GridBagConstraints.NORTH ,GridBagConstraints.BOTH, new Insets( 8,0,0,8 ), 0, 0) );</span>
+<span class="nc" id="L72">        DeleteAction deleteAction = new DeleteAction();</span>
+<span class="nc" id="L73">        delete.addActionListener( deleteAction );</span>
+        // DELETE Key
+<span class="nc" id="L75">        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( KeyEvent.VK_DELETE, 0, false ), &quot;DELETE&quot; );</span>
+<span class="nc" id="L76">        getRootPane().getActionMap().put( &quot;DELETE&quot;, deleteAction );</span>
+
+<span class="nc" id="L78">        export = Utils.getButton( &quot;export&quot; );</span>
+<span class="nc" id="L79">        content.add( export, new GridBagConstraints( 2, 2, 1, 1, 0, 0, GridBagConstraints.NORTH ,GridBagConstraints.BOTH, new Insets( 8,0,0,8 ), 0, 0) );</span>
+<span class="nc" id="L80">        export.addActionListener( new ExportAction() );</span>
+
+<span class="nc" id="L82">        importBtn = Utils.getButton( &quot;import&quot; );</span>
+<span class="nc" id="L83">        content.add( importBtn, new GridBagConstraints( 2, 3, 1, 1, 0, 0, GridBagConstraints.NORTH ,GridBagConstraints.BOTH, new Insets( 8,0,0,8 ), 0, 0) );</span>
+<span class="nc" id="L84">        importBtn.addActionListener( new ImportAction() );</span>
+
+<span class="nc" id="L86">        close       = Utils.getButton( &quot;close&quot; );</span>
+<span class="nc" id="L87">        content.add( close, new GridBagConstraints( 2, 4, 1, 1, 0, 0, GridBagConstraints.NORTH ,GridBagConstraints.BOTH, new Insets( 8,0,0,8 ), 0, 0) );</span>
+<span class="nc" id="L88">        AbstractAction closeAction = new AbstractAction() {</span>
+            public void actionPerformed( ActionEvent e ) {
+<span class="nc" id="L90">                dispose();</span>
+<span class="nc" id="L91">            }</span>
+        };
+<span class="nc" id="L93">        close.addActionListener( closeAction );</span>
+
+<span class="nc" id="L95">        content.add( Utils.getLabel( null ), new GridBagConstraints( 2, 5, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, new Insets(8,0,0,8), 0, 0));</span>
+
+        //ESCAPE Key
+<span class="nc" id="L98">        getRootPane().getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0, false ), &quot;ESCAPE&quot; );</span>
+<span class="nc" id="L99">        getRootPane().getActionMap().put( &quot;ESCAPE&quot;, closeAction );</span>
+
+<span class="nc" id="L101">        pack();</span>
+<span class="nc" id="L102">        setLocationRelativeTo( parent );</span>
+<span class="nc" id="L103">    }</span>
+    
+    /**
+     * A hack for the layout manger to prevent that the dialog is to small to show the title line. The problem occur
+     * only if there are small words in the list. With a empty list there are no problems.
+     */
+    @Override
+    public Dimension getPreferredSize() {
+<span class="nc" id="L111">        Dimension dim = super.getPreferredSize();</span>
+<span class="nc" id="L112">        String title = getTitle();</span>
+<span class="nc" id="L113">        int titleWidth = getFontMetrics(getFont()).stringWidth(title) + 80;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if( dim.width &lt; titleWidth ){</span>
+<span class="nc" id="L115">            dim.width = titleWidth;</span>
+        }
+<span class="nc" id="L117">        return dim;</span>
+    }
+
+    /**
+     * Load all words from the user dictionary if available
+     * @param data the target of the words
+     */
+    private void loadWordList( DefaultListModel data ){
+<span class="nc" id="L125">        UserDictionaryProvider provider = SpellChecker.getUserDictionaryProvider();</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if( provider != null ) {</span>
+<span class="nc" id="L127">            Iterator&lt;String&gt; userWords = provider.getWords( SpellChecker.getCurrentLocale() );</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if( userWords != null ) {</span>
+<span class="nc" id="L129">                HashSet&lt;String&gt; wordList = new HashSet&lt;String&gt;();</span>
+<span class="nc" id="L130">                loadWordList( data, wordList, userWords );</span>
+            }
+        }
+<span class="nc" id="L133">    }</span>
+
+    /**
+     * Load all words from wordList and the userWords in the ModelList. The list will be clear before.
+     * @param model the target of the words
+     * @param wordSet set with words, can be empty
+     * @param wordIterator iterator with words
+     */
+    private void loadWordList( DefaultListModel model, HashSet&lt;String&gt; wordSet, Iterator&lt;String&gt; wordIterator ){
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        while(wordIterator.hasNext()){</span>
+<span class="nc" id="L143">            String word = wordIterator.next();</span>
+<span class="nc bnc" id="L144" title="All 4 branches missed.">            if( word != null &amp;&amp; word.length() &gt; 1 ) {</span>
+<span class="nc" id="L145">                wordSet.add( word );</span>
+            }
+        }
+
+        // List alphabetical sorting with the user language
+<span class="nc" id="L150">        Object[] wordArray = wordSet.toArray();</span>
+<span class="nc" id="L151">        Arrays.sort( wordArray, Collator.getInstance() );</span>
+<span class="nc" id="L152">        model.clear();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        for(Object str : wordArray){</span>
+<span class="nc" id="L154">            model.addElement( str );</span>
+        }
+<span class="nc" id="L156">    }</span>
+
+<span class="nc" id="L158">    private class DeleteAction extends AbstractAction{</span>
+        /**
+         * Delete the selected entries. The &quot;Delete&quot; Button it the only Listener.
+         */
+        public void actionPerformed(ActionEvent e){
+<span class="nc" id="L163">            int[] selected = list.getSelectedIndices();</span>
+<span class="nc" id="L164">            Arrays.sort( selected );</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            for( int i=selected.length-1; i&gt;=0; i-- ){</span>
+<span class="nc" id="L166">                ((DefaultListModel)list.getModel()).remove( selected[i] );</span>
+<span class="nc" id="L167">                isModify = true;</span>
+            }
+<span class="nc" id="L169">        }</span>
+    }
+
+    /**
+     * The suggested file name for export and import.
+     * @return a file without path
+     */
+    private static File getSuggestedFile() {
+<span class="nc" id="L177">        return new File( Utils.getResource( &quot;userDictionary&quot; ) + &quot;_&quot; + SpellChecker.getCurrentLocale() + &quot;.txt&quot; );</span>
+    }
+    
+<span class="nc" id="L180">    private class ExportAction extends AbstractAction{</span>
+        /**
+         * Export the list. The &quot;Export&quot; Button it the only Listener.
+         */
+        public void actionPerformed(ActionEvent e){
+<span class="nc" id="L185">            JFileChooser chooser = new JFileChooser();</span>
+<span class="nc" id="L186">            chooser.setSelectedFile( getSuggestedFile() );</span>
+<span class="nc" id="L187">            int returnVal = chooser.showSaveDialog( DictionaryEditDialog.this );</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (returnVal == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L189">                File selectedFile = chooser.getSelectedFile();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if( selectedFile == null ){</span>
+<span class="nc" id="L191">                    return;</span>
+                }
+                try {
+<span class="nc" id="L194">                    Writer writer = new OutputStreamWriter(  new FileOutputStream( selectedFile ), &quot;UTF8&quot; );</span>
+<span class="nc" id="L195">                    writer.write( getWordList() );</span>
+<span class="nc" id="L196">                    writer.close();</span>
+<span class="nc" id="L197">                } catch( Exception ex ) {</span>
+<span class="nc" id="L198">                    ex.printStackTrace();</span>
+<span class="nc" id="L199">                    JOptionPane.showMessageDialog( DictionaryEditDialog.this, ex.toString(), &quot;Error&quot;, JOptionPane.ERROR_MESSAGE );</span>
+                }
+            }
+<span class="nc" id="L202">        }</span>
+    }
+
+<span class="nc" id="L205">    private class ImportAction extends AbstractAction{</span>
+        /**
+         * Import a word list. The &quot;Import&quot; Button it the only Listener.
+         */
+        public void actionPerformed(ActionEvent e){
+<span class="nc" id="L210">            JFileChooser chooser = new JFileChooser();</span>
+<span class="nc" id="L211">            chooser.setSelectedFile( getSuggestedFile() );</span>
+<span class="nc" id="L212">            int returnVal = chooser.showOpenDialog( DictionaryEditDialog.this );</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">            if (returnVal == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L214">                File selectedFile = chooser.getSelectedFile();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                if( selectedFile == null ){</span>
+<span class="nc" id="L216">                    return;</span>
+                }
+                try {
+<span class="nc" id="L219">                    HashSet&lt;String&gt; wordSet = new HashSet&lt;String&gt;();</span>
+<span class="nc" id="L220">                    DefaultListModel&lt;String&gt; model = (DefaultListModel&lt;String&gt;)list.getModel();</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                    for( int i=0; i&lt;model.getSize(); i++){</span>
+<span class="nc" id="L222">                        wordSet.add( model.getElementAt(i) );</span>
+                    }
+
+<span class="nc" id="L225">                    FileInputStream input = new FileInputStream( selectedFile );</span>
+<span class="nc" id="L226">                    Iterator&lt;String&gt; words = new WordIterator( input, &quot;UTF8&quot; );</span>
+
+<span class="nc" id="L228">                    loadWordList( model, wordSet, words );</span>
+<span class="nc" id="L229">                } catch( Exception ex ) {</span>
+<span class="nc" id="L230">                    ex.printStackTrace();</span>
+<span class="nc" id="L231">                    JOptionPane.showMessageDialog( DictionaryEditDialog.this, ex.toString(), &quot;Error&quot;, JOptionPane.ERROR_MESSAGE );</span>
+                }
+            }
+<span class="nc" id="L234">        }</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose(){
+<span class="nc" id="L242">        super.dispose();</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if( isModify ) {</span>
+            // save the user dictionary
+<span class="nc" id="L245">            UserDictionaryProvider provider = SpellChecker.getUserDictionaryProvider();</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">            if( provider != null ) {</span>
+<span class="nc" id="L247">                provider.setUserWords( getWordList() );</span>
+            }
+            // reload the dictionary
+<span class="nc" id="L250">            JMenu menu = SpellChecker.createLanguagesMenu( null );</span>
+<span class="nc" id="L251">            Component[] comps = menu.getMenuComponents();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            for( Component comp : comps ) {</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                if( comp instanceof JRadioButtonMenuItem ){</span>
+<span class="nc" id="L254">                    JRadioButtonMenuItem item = (JRadioButtonMenuItem)comp;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">                    if( item.isSelected() ){</span>
+<span class="nc" id="L256">                        item.doClick();</span>
+                    }
+                }
+            }
+        }
+<span class="nc" id="L261">    }</span>
+    
+    /**
+     * Get a List of all words as String
+     * @return the word list.
+     */
+    private String getWordList() {
+<span class="nc" id="L268">        ListModel model = list.getModel();</span>
+<span class="nc" id="L269">        StringBuilder builder = new StringBuilder();</span>
+<span class="nc" id="L270">        String lineSeparator = System.getProperty(&quot;line.separator&quot;);</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        for( int i=0; i&lt;model.getSize(); i++){</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">            if( builder.length() != 0 ){</span>
+<span class="nc" id="L273">                builder.append( lineSeparator );</span>
+            }
+<span class="nc" id="L275">            builder.append( model.getElementAt(i) );</span>
+        }
+<span class="nc" id="L277">        return builder.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

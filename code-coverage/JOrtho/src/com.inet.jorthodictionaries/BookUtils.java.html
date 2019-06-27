@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookUtils.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookUtils.java</span></div><h1>BookUtils.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2016 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 16.06.2009
+ */
+package com.inet.jorthodictionaries;
+
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+<span class="nc" id="L29">public class BookUtils {</span>
+
+    /**
+     * Read the information of the template placeholder
+     * 
+     * @return null if nothing find
+     */
+    static Properties parseRule( String wikiText, String tempalateName, int fromIndex ) {
+<span class="nc" id="L37">        int start = findTemplate( wikiText, tempalateName, fromIndex );</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if( start &gt; 0 ) {</span>
+<span class="nc" id="L39">            final int length = wikiText.length();</span>
+<span class="nc" id="L40">            int braces = 2;</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            for( int end = start; end &lt; length; end++ ) {</span>
+    
+<span class="nc bnc" id="L43" title="All 3 branches missed.">                switch( wikiText.charAt( end ) ) {</span>
+                    case '{':
+<span class="nc" id="L45">                        braces++;</span>
+<span class="nc" id="L46">                        break;</span>
+                    case '}':
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                        if( --braces == 0 ) {</span>
+<span class="nc" id="L49">                            return BookUtils.parseRule( wikiText, start, end - 1 );</span>
+                        }
+                        break;
+                }
+            }
+        }
+<span class="nc" id="L55">        return null;</span>
+    }
+
+    /**
+     * Read the information of the template placeholder
+     */
+    static Properties parseRule( String wikiText, int idxStart, int idxEnd ) {
+<span class="nc" id="L62">        Properties props = new Properties();</span>
+<span class="nc" id="L63">        int idxName = 1;</span>
+        
+<span class="nc" id="L65">        int bracket = 0;</span>
+<span class="nc" id="L66">        int braces = 0;</span>
+<span class="nc" id="L67">        int valueStart = idxStart;</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        for( ; idxStart &lt; idxEnd; idxStart++ ) {</span>
+<span class="nc" id="L69">            char ch = wikiText.charAt( idxStart );</span>
+<span class="nc bnc" id="L70" title="All 6 branches missed.">            switch( ch ) {</span>
+                case '[':
+<span class="nc" id="L72">                    bracket++;</span>
+<span class="nc" id="L73">                    break;</span>
+                case ']':
+<span class="nc" id="L75">                    bracket--;</span>
+<span class="nc" id="L76">                    break;</span>
+                case '{':
+<span class="nc" id="L78">                    braces++;</span>
+<span class="nc" id="L79">                    break;</span>
+                case '}':
+<span class="nc" id="L81">                    braces--;</span>
+<span class="nc" id="L82">                    break;</span>
+                case '|':
+<span class="nc bnc" id="L84" title="All 4 branches missed.">                    if( bracket == 0 &amp;&amp; braces == 0 ) {</span>
+<span class="nc" id="L85">                        String value = wikiText.substring( valueStart, idxStart ).trim();</span>
+<span class="nc" id="L86">                        int idx = value.indexOf( '=' );</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                        if( idx &gt; 0 ) {</span>
+<span class="nc" id="L88">                            String name = value.substring( 0, idx );</span>
+<span class="nc" id="L89">                            value = value.substring( idx + 1 );</span>
+<span class="nc" id="L90">                            props.setProperty( name.trim(), value.trim() );</span>
+<span class="nc" id="L91">                        } else {</span>
+<span class="nc" id="L92">                            props.setProperty( Integer.toString( idxName++ ), value.trim() );</span>
+                        }
+<span class="nc" id="L94">                        valueStart = idxStart + 1;</span>
+                    }
+            }
+        }
+<span class="nc" id="L98">        String value = wikiText.substring( valueStart, idxEnd ).trim();</span>
+<span class="nc" id="L99">        int idx = value.indexOf( '=' );</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if( idx &gt; 0 ) {</span>
+<span class="nc" id="L101">            String name = value.substring( 0, idx );</span>
+<span class="nc" id="L102">            value = value.substring( idx + 1 );</span>
+<span class="nc" id="L103">            props.setProperty( name.trim(), value.trim() );</span>
+<span class="nc" id="L104">        } else {</span>
+<span class="nc" id="L105">            props.setProperty( Integer.toString( idxName++ ), value.trim() );</span>
+        }
+<span class="nc" id="L107">        return props;</span>
+    }
+
+    /**
+     * Find a template name in the wiki text. the problem are possible whitespaces.
+     * 
+     * @param wikiText
+     * @param tempalateName
+     * @return the index after the first | or -1.
+     */
+    static int findTemplate( String wikiText, String tempalateName, int fromIndex ) {
+        //find {{  tempalateName  |
+<span class="nc" id="L119">        Pattern pattern = Pattern.compile( &quot;\\{\\{\\s*\\Q&quot; + tempalateName.replace( &quot; &quot;, &quot;\\E\\s+\\Q&quot; ) + &quot;\\E\\s*\\|&quot; );</span>
+<span class="nc" id="L120">        Matcher matcher = pattern.matcher( wikiText );</span>
+    
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if( matcher.find( fromIndex ) ) {</span>
+<span class="nc" id="L123">            return matcher.end();</span>
+        }
+    
+<span class="nc" id="L126">        return -1;</span>
+    }
+    
+    /**
+     * Very simple algorithm to calc the diff betwenn 2 words.
+     */
+    public static int calcDiff(String word1, String word2){
+<span class="nc" id="L133">        int diff = 0;</span>
+<span class="nc" id="L134">        int j=0;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for(int i=0; i&lt;word1.length(); i++){</span>
+<span class="nc" id="L136">            char ch1 = word1.charAt( i );</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if(word2.length()&lt;=j){</span>
+<span class="nc" id="L138">                diff++;</span>
+<span class="nc" id="L139">                continue;</span>
+            }
+<span class="nc" id="L141">            char ch2 = word2.charAt( j++ );</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if(ch1 == ch2){</span>
+<span class="nc" id="L143">                continue;</span>
+            }
+<span class="nc" id="L145">            diff++;</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">            if(word2.length() &gt; j &amp;&amp; word2.charAt( j ) == ch1){</span>
+<span class="nc" id="L147">                j++;</span>
+<span class="nc" id="L148">                continue;</span>
+            }
+<span class="nc bnc" id="L150" title="All 4 branches missed.">            if(word1.length() &gt; (i+1) &amp;&amp; word1.charAt( i+1 ) == ch2){</span>
+<span class="nc" id="L151">                i++;</span>
+                continue;
+            }
+        }
+<span class="nc" id="L155">        diff += word2.length()-j;</span>
+<span class="nc" id="L156">        return diff;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

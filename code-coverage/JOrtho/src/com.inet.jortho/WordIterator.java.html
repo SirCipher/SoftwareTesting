@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>WordIterator.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">WordIterator.java</span></div><h1>WordIterator.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 20.05.2009
+ */
+package com.inet.jortho;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.zip.InflaterInputStream;
+
+/**
+ * A implementation of an Iterator which split a large text into lines. It is used to read words lists.
+ * @author Volker Berlin
+ */
+public class WordIterator implements Iterator&lt;String&gt; {
+
+    private BufferedReader input;
+    private String word;
+    
+    /**
+     * Load the directory from a compressed list of words with UTF8 encoding. The words must be delimmited with
+     * newlines.
+     * 
+     * @param filename
+     *            the name of the file
+     * @throws IOException
+     *             If an I/O error occurs.
+     * @throws NullPointerException
+     *             If filename is null.
+     */
+    public WordIterator( URL filename ) throws IOException {
+<span class="fc" id="L58">        this( createInflaterStream(filename), &quot;UTF8&quot; );</span>
+<span class="fc" id="L59">    }</span>
+    
+    /**
+     * Load the directory from plain a list of words. The words must be delimmited with newlines.
+     * 
+     * @param stream
+     *            a InputStream with words
+     * @param charsetName
+     *            the name of a codepage for example &quot;UTF8&quot; or &quot;Cp1252&quot;
+     * @throws IOException
+     *             If an I/O error occurs.
+     * @throws NullPointerException
+     *             If stream or charsetName is null.
+     */
+    public WordIterator( InputStream stream, String charsetName ) throws IOException {
+<span class="fc" id="L74">       this( new InputStreamReader( stream, charsetName ) );</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Load the directory from plain a list of words. The words must be delimmited with newlines.
+     * 
+     * @param reader
+     *            a Reader with words
+     * @throws IOException
+     *             If an I/O error occurs.
+     * @throws NullPointerException
+     *             If reader is null.
+     */
+<span class="fc" id="L87">    public WordIterator( Reader reader ) throws IOException {</span>
+<span class="fc" id="L88">        input = new BufferedReader( reader );</span>
+<span class="fc" id="L89">        word = input.readLine();</span>
+<span class="fc" id="L90">    }</span>
+    
+    /**
+     * Create a plain stream from a compressed file.
+     * @param filename the file of a JOrtho dictionary
+     * @return the stream
+     * @throws IOException If an I/O error occurs.
+     */
+    private static InputStream createInflaterStream( URL filename ) throws IOException{
+<span class="fc" id="L99">        URLConnection conn = filename.openConnection();</span>
+<span class="fc" id="L100">        conn.setReadTimeout( 5000 );</span>
+<span class="fc" id="L101">        InputStream input = conn.getInputStream();</span>
+<span class="fc" id="L102">        input = new InflaterInputStream( input );</span>
+<span class="fc" id="L103">        return new BufferedInputStream( input );</span>
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasNext() {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        return word != null;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String next() {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if(!hasNext()){</span>
+<span class="nc" id="L118">            throw new NoSuchElementException();</span>
+        }
+<span class="fc" id="L120">        String next = word;</span>
+        try {
+<span class="fc" id="L122">            word = input.readLine();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            if(word == null){</span>
+<span class="fc" id="L124">                input.close();</span>
+            }
+<span class="pc" id="L126">        } catch( IOException e ) {</span>
+<span class="nc" id="L127">            word = null;</span>
+<span class="nc" id="L128">        	SpellChecker.getMessageHandler().handleException( e );</span>
+        }
+<span class="fc" id="L130">        return next;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void remove() {
+<span class="nc" id="L137">        throw new UnsupportedOperationException();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

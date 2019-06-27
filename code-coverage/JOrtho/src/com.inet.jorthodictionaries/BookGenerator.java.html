@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator.java</span></div><h1>BookGenerator.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2016 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 02.11.2005
+ */
+package com.inet.jorthodictionaries;
+
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.*;
+
+
+/**
+ * How to use
+ * &lt;li&gt;Download the latest Wiktionary file &quot;pages_articles.xml&quot;.
+ * It is typical compressed. The position changed. We found it last at:
+ * &lt;ul&gt;
+ * &lt;li&gt;http://dumps.wikimedia.org/arwiktionary/latest/arwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/dewiktionary/latest/dewiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/elwiktionary/latest/elwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/enwiktionary/latest/enwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/eswiktionary/latest/eswiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/frwiktionary/latest/frwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/itwiktionary/latest/itwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/nlwiktionary/latest/nlwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/plwiktionary/latest/plwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/ptwiktionary/latest/ptwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/ruwiktionary/latest/ruwiktionary-latest-pages-articles.xml.bz2
+ * &lt;li&gt;http://dumps.wikimedia.org/svwiktionary/latest/svwiktionary-latest-pages-articles.xml.bz2
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * 
+ * &lt;li&gt;start the Generator with follow command line:&lt;br&gt;
+ * java -Xmx256m com.inet.spell.wiktionary.BookGenerator de &lt;folder with file&gt;&lt;/li&gt;
+ * @author Volker
+ */
+public abstract class BookGenerator {
+
+    private final Book book;
+
+    
+    public static void main(String[] args) throws Exception {
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        String languagesList = (args.length&gt;0) ? args[0] : &quot;en&quot;;</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        String dirName  = (args.length&gt;1) ? args[1].replace( '\\', '/' ) : &quot;&quot;;</span>
+<span class="nc bnc" id="L65" title="All 4 branches missed.">        if(dirName.length() &gt; 0 &amp;&amp; !dirName.endsWith( &quot;/&quot; )){</span>
+<span class="nc" id="L66">            dirName += '/';</span>
+        }
+<span class="nc" id="L68">        String[] languages = languagesList.split(&quot;,&quot;);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        for(int i = 0; i &lt; languages.length; i++){</span>
+<span class="nc" id="L70">            String language = languages[i];</span>
+            
+<span class="nc" id="L72">            String filename = dirName + language+&quot;wiktionary-latest-pages-articles.xml&quot;;</span>
+<span class="nc" id="L73">            File file = new File(filename);</span>
+<span class="nc" id="L74">            BookGenerator generator = (BookGenerator)Class.forName( BookGenerator.class.getName()+&quot;_&quot; + language ).newInstance();</span>
+<span class="nc" id="L75">            generator.start(file);</span>
+<span class="nc" id="L76">            generator.save(language);</span>
+            
+<span class="nc" id="L78">            generator.createPackage( language );</span>
+        }
+<span class="nc" id="L80">    }</span>
+    
+    BookGenerator(){
+<span class="nc" id="L83">        this(new Book());</span>
+<span class="nc" id="L84">    }</span>
+    
+<span class="nc" id="L86">    BookGenerator(Book book){</span>
+<span class="nc" id="L87">        this.book = book;</span>
+<span class="nc" id="L88">    }</span>
+    
+    /**
+     * Beginn des einlesend der Daten von dem XML stream
+     * @param stream Daten im XML format
+     */
+    void start(File file) throws Exception{
+<span class="nc" id="L95">        InputStream stream = new FileInputStream(file);</span>
+<span class="nc" id="L96">        System.out.println(&quot;=== Start Parsing XML stream ===&quot;);</span>
+<span class="nc" id="L97">        new Parser(this, stream);</span>
+
+<span class="nc" id="L99">        stream.close();</span>
+<span class="nc" id="L100">    }</span>
+    
+    
+    final void save(String language) throws Exception{
+<span class="nc" id="L104">        File dictFile = new File(&quot;dictionary_&quot;+language+&quot;.ortho&quot;);</span>
+<span class="nc" id="L105">        OutputStream dict = new FileOutputStream(dictFile);</span>
+<span class="nc" id="L106">        dict = new BufferedOutputStream(dict);</span>
+<span class="nc" id="L107">        Deflater deflater = new Deflater();</span>
+<span class="nc" id="L108">        deflater.setLevel(Deflater.BEST_COMPRESSION);</span>
+<span class="nc" id="L109">        dict = new DeflaterOutputStream(dict, deflater);</span>
+<span class="nc" id="L110">        dict = new BufferedOutputStream(dict);</span>
+<span class="nc" id="L111">        PrintStream dictPs = new PrintStream(dict, false, &quot;UTF8&quot;);</span>
+        
+<span class="nc" id="L113">        OutputStream txt = new FileOutputStream(&quot;IncludedWords.txt&quot;);</span>
+<span class="nc" id="L114">        txt = new BufferedOutputStream(txt);</span>
+<span class="nc" id="L115">        PrintStream ps = new PrintStream(txt, false, &quot;UTF8&quot;);</span>
+        
+        //Save as word list
+<span class="nc" id="L118">        String[] words = book.getWords();</span>
+<span class="nc" id="L119">        Arrays.sort( words );</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        for(int i=0; i&lt;words.length; i++){</span>
+<span class="nc" id="L121">            ps.print( words[i] +'\n' );</span>
+<span class="nc" id="L122">            dictPs.print( words[i] +'\n' );</span>
+        }
+<span class="nc" id="L124">        ps.close();</span>
+<span class="nc" id="L125">        dictPs.close();</span>
+<span class="nc" id="L126">        saveStatistics(dictFile);</span>
+<span class="nc" id="L127">    }</span>
+    
+    /**
+     * Create statistics data and save it in statistics.txt
+     * @param dictFile the created ortho file.
+     * @throws Exception if an error occur
+     */
+    private final void saveStatistics(File dictFile) throws Exception{
+<span class="nc" id="L135">        String statistics = &quot;&quot;;</span>
+<span class="nc" id="L136">        statistics += &quot;Total Wiktionary Title count: &quot;+book.getTitleCount()+&quot;\r\n&quot;;</span>
+<span class="nc" id="L137">        statistics += &quot;Language Title count: &quot;+book.getLanguageTitleCount()+&quot;\r\n&quot;;</span>
+<span class="nc" id="L138">        statistics += &quot;Word count in dictionary: &quot;+book.getWordCount()+&quot;\r\n&quot;;</span>
+<span class="nc" id="L139">        statistics += &quot;Char count in dictionary: &quot;+book.getCharCount()+&quot;\r\n&quot;;</span>
+<span class="nc" id="L140">        statistics += &quot;Dictionary size on disk (bytes): &quot; + dictFile.length()+&quot;\r\n&quot;;</span>
+        
+        // we use reflection, because the methods are not public and should not be public
+<span class="nc" id="L143">        Class clazz = Class.forName(&quot;com.inet.jortho.DictionaryFactory&quot;);</span>
+<span class="nc" id="L144">        Constructor constructor = clazz.getConstructor();</span>
+<span class="nc" id="L145">        constructor.setAccessible(true);</span>
+<span class="nc" id="L146">        Object factory = constructor.newInstance();</span>
+<span class="nc" id="L147">        Method loadWordList = clazz.getDeclaredMethod( &quot;loadWordList&quot;, URL.class );</span>
+<span class="nc" id="L148">        loadWordList.setAccessible(true);</span>
+<span class="nc" id="L149">        loadWordList.invoke(factory, dictFile.toURL());</span>
+<span class="nc" id="L150">        Method create = clazz.getDeclaredMethod( &quot;create&quot; );</span>
+<span class="nc" id="L151">        create.setAccessible(true);</span>
+<span class="nc" id="L152">        Object dictionary = create.invoke( factory );</span>
+<span class="nc" id="L153">        Method getDataSize = dictionary.getClass().getDeclaredMethod( &quot;getDataSize&quot; );</span>
+<span class="nc" id="L154">        getDataSize.setAccessible(true);</span>
+<span class="nc" id="L155">        Integer size = (Integer)getDataSize.invoke( dictionary );</span>
+<span class="nc" id="L156">        statistics += &quot;Dictionary size in memory (bytes): &quot; + size+&quot;\r\n&quot;;</span>
+        
+<span class="nc" id="L158">        System.out.println(statistics);</span>
+<span class="nc" id="L159">        FileOutputStream out = new FileOutputStream(&quot;statistics.txt&quot;);</span>
+<span class="nc" id="L160">        out.write( statistics.getBytes() );</span>
+<span class="nc" id="L161">        out.close();</span>
+<span class="nc" id="L162">    }</span>
+    
+    /**
+     * Generate the distribution package 
+     * @throws Exception 
+     */
+    private final void createPackage(String language) throws Exception{
+<span class="nc" id="L169">        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(&quot;dictionary_&quot;+language+&quot;_&quot; + new SimpleDateFormat(&quot;yyyy_MM&quot;).format( new Date() )+ &quot;.zip&quot;));</span>
+        
+<span class="nc" id="L171">        out.setLevel( Deflater.BEST_COMPRESSION );</span>
+<span class="nc" id="L172">        addFileToZip( out, &quot;license.txt&quot;, false );</span>
+<span class="nc" id="L173">        addFileToZip( out, &quot;dictionary_&quot;+language+&quot;.ortho&quot;, true );</span>
+<span class="nc" id="L174">        addFileToZip( out, &quot;statistics.txt&quot;, true );</span>
+<span class="nc" id="L175">        addFileToZip( out, &quot;IncludedWords.txt&quot;, true );</span>
+        
+<span class="nc" id="L177">        out.close();</span>
+<span class="nc" id="L178">    }</span>
+    
+    private final void addFileToZip(ZipOutputStream out, String filename, boolean delete) throws Exception{
+<span class="nc" id="L181">        File file = new File(filename);</span>
+<span class="nc" id="L182">        FileInputStream fin = new FileInputStream( file );</span>
+<span class="nc" id="L183">        ZipEntry entry = new ZipEntry(filename);</span>
+<span class="nc" id="L184">        entry.setTime( file.lastModified() );</span>
+<span class="nc" id="L185">        out.putNextEntry( entry );</span>
+<span class="nc" id="L186">        byte[] buffer = new byte[16384];</span>
+        int count;
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        while((count = fin.read(buffer)) &gt; 0){</span>
+<span class="nc" id="L189">            out.write(  buffer, 0, count );</span>
+        }
+<span class="nc" id="L191">        out.closeEntry();</span>
+<span class="nc" id="L192">        fin.close();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if(delete){</span>
+<span class="nc" id="L194">            file.delete();</span>
+        }
+<span class="nc" id="L196">    }</span>
+    
+    /**
+     * Help function for parsing the Wiktinary formats.
+     * @param string zu durchsuchender String
+     * @param chars the searching charchters, can not be empty
+     * @param fromIndex Startposition der Suche. Index beginnt bei 0.
+     * @return erstes vorkommen einer der Zeichen in chars oder -1, wenn nicht gefunden.
+     */
+    protected final int indexOf(String string, char[] chars, int fromIndex){
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        for(; fromIndex &lt; string.length(); fromIndex++){</span>
+<span class="nc" id="L207">            char c = string.charAt(fromIndex);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            for(int i=0; i&lt;chars.length; i++){</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                if(c == chars[i]) return fromIndex;</span>
+            }
+        }
+<span class="nc" id="L212">        return -1;</span>
+    }
+    
+    
+    /**
+     * Check if the word is valid word. This exclude help pages and some phrases.
+     * It should be call ever before addWord(String)
+     * @param word the to check
+     * @return true, if the word is valid
+     */
+    protected boolean isValidWord(String word){
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if( word == null ){</span>
+<span class="nc" id="L224">            return false;</span>
+        }
+<span class="nc" id="L226">        final int length = word.length();</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        if(length &lt;= 1) return false;</span>
+<span class="nc" id="L228">        int last = length - 1;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        for( int i = last; i &gt;= 0; i-- ) {</span>
+<span class="nc" id="L230">            char ch = word.charAt( i );</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            if( Character.isLetter( ch ) ) {</span>
+<span class="nc" id="L232">                continue;</span>
+            }
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if( ch == '\'' ) {</span>
+<span class="nc bnc" id="L235" title="All 4 branches missed.">                if( i == last &amp;&amp; word.charAt( 0 ) == '\'' ) {</span>
+<span class="nc" id="L236">                    return false;</span>
+                }
+<span class="nc bnc" id="L238" title="All 4 branches missed.">                if( i &gt; 0 &amp;&amp; word.charAt( i - 1 ) == '\'' ) {</span>
+<span class="nc" id="L239">                    return false;</span>
+                }
+                continue;
+            }
+
+            //Bei AbkÃ¼rzungen einen Punkt am Ende
+<span class="nc bnc" id="L245" title="All 4 branches missed.">            if( ch == '.' &amp;&amp; i == last ) {</span>
+<span class="nc" id="L246">                continue;</span>
+            }
+
+            //Bindestriche nur in der Wortmitte
+<span class="nc bnc" id="L250" title="All 6 branches missed.">            if( ch == '-' &amp;&amp; i != 0 &amp;&amp; i != last ) {</span>
+<span class="nc" id="L251">                continue;</span>
+            }
+
+<span class="nc" id="L254">            return false;</span>
+        }
+<span class="nc" id="L256">        return true;</span>
+    }    
+    
+    /**
+     * Add a word to the tree.
+     * @param word can not be null
+     */
+    final protected void addWord(String word){
+<span class="nc" id="L264">        book.addWord( word );</span>
+<span class="nc" id="L265">    }</span>
+    
+    /**
+     * Get the resulting book for the current generator.
+     * @return the book
+     */
+    Book getBook(){
+<span class="nc" id="L272">        return book;</span>
+    }
+    
+    /**
+     * Check if a word is a valid word of the current language.
+     * With function getBook().addWord() you can add additional Flexion of the word.
+     * The current word self does not need added. 
+     * @param word the test word
+     * @param wikiText die decription from Wiktionary
+     * @return true if valid
+     */
+    abstract boolean isValidLanguage(String word, String wikiText); 
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

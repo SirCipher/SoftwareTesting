@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;JOrtho&apos;&#x0D;&#x0A;- Original project: &apos;JOrtho&apos;&#x0D;&#x0A;- Original element: &apos;JOrtho/test/com.Y3507677.sote&apos;" description="Delete element" element1="/test&lt;com.Y3507677.sote" element2="/test&lt;com.Y3507677" elements="2" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1554663127562" subPackages="false" version="1.0"/>
+</session>

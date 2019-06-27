@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AllTests</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AllTests (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AllTests</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.6%
+  </span>
+  <span class="absValue">
+    (19/ 23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.inet.jortho;
+<i>2</i>&nbsp;/*
+<i>3</i>&nbsp; *  JOrtho
+<i>4</i>&nbsp; *
+<i>5</i>&nbsp; *  Copyright (C) 2005-2009 by i-net software
+<i>6</i>&nbsp; *
+<i>7</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>8</i>&nbsp; *  modify it under the terms of the GNU General Public License as
+<i>9</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>10</i>&nbsp; *  License, or (at your option) any later version.
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>13</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>14</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>15</i>&nbsp; *  General Public License for more details.
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>18</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>19</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>20</i>&nbsp; *  USA.
+<i>21</i>&nbsp; *
+<i>22</i>&nbsp; * Created on 14.10.2008
+<i>23</i>&nbsp; */
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;import com.inet.jorthodictionaries.BookUtilsTest;
+<i>27</i>&nbsp;import junit.framework.Test;
+<i>28</i>&nbsp;import junit.framework.TestSuite;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;public class AllTests {</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    private static boolean isInit;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * register the dictionaries
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    static void init() {
+<b class="fc"><i>38</i>&nbsp;        if (!isInit) {</b>
+<b class="fc"><i>39</i>&nbsp;            isInit = true;</b>
+<b class="fc"><i>40</i>&nbsp;            int threadCount = Thread.activeCount();</b>
+<b class="fc"><i>41</i>&nbsp;            SpellChecker.registerDictionaries(null, null);</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;            // wait until the dictionaries are loaded.
+<b class="fc"><i>44</i>&nbsp;            for (int i = 0; i &lt; 50; i++) {</b>
+<b class="fc"><i>45</i>&nbsp;                if (threadCount &gt;= Thread.activeCount()) {</b>
+<b class="fc"><i>46</i>&nbsp;                    break;</b>
+<i>47</i>&nbsp;                }
+<i>48</i>&nbsp;                try {
+<b class="fc"><i>49</i>&nbsp;                    Thread.sleep(100);</b>
+<b class="nc"><i>50</i>&nbsp;                } catch (InterruptedException e) {</b>
+<b class="nc"><i>51</i>&nbsp;                    break;</b>
+<b class="fc"><i>52</i>&nbsp;                }</b>
+<i>53</i>&nbsp;            }
+<i>54</i>&nbsp;        }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;        // Clear any previously stored words
+<b class="fc"><i>57</i>&nbsp;        UserDictionaryProvider provider = SpellChecker.getUserDictionaryProvider();</b>
+<i>58</i>&nbsp;
+<b class="fc"><i>59</i>&nbsp;        if (provider != null) {</b>
+<b class="nc"><i>60</i>&nbsp;            provider.setUserWords(null);</b>
+<i>61</i>&nbsp;        }
+<b class="fc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public static Test suite() {
+<b class="fc"><i>65</i>&nbsp;        TestSuite suite = new TestSuite(&quot;JOrtho Tests&quot;);</b>
+<i>66</i>&nbsp;        ////////////////////////
+<i>67</i>&nbsp;//        suite.addTestSuite(EventTest.class);
+<i>68</i>&nbsp;//        suite.addTestSuite(MemoryTest.class);
+<i>69</i>&nbsp;//        suite.addTestSuite(UtilsTest.class);
+<i>70</i>&nbsp;//        suite.addTestSuite(BookUtilsTest.class);
+<i>71</i>&nbsp;        ////////////////////////
+<b class="fc"><i>72</i>&nbsp;        suite.addTestSuite(InputTests.class);</b>
+<b class="fc"><i>73</i>&nbsp;        suite.addTestSuite(DictionaryTest.class);</b>
+<b class="fc"><i>74</i>&nbsp;        suite.addTestSuite(DictionaryBaseTest.class);</b>
+<b class="fc"><i>75</i>&nbsp;        suite.addTestSuite(HighlighterTest.class);</b>
+<b class="fc"><i>76</i>&nbsp;        suite.addTestSuite(TokenizerTest.class);</b>
+<i>77</i>&nbsp;
+<b class="fc"><i>78</i>&nbsp;        return suite;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Parser.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">Parser.java</span></div><h1>Parser.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 04.11.2005
+ */
+package com.inet.jorthodictionaries;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+
+import com.inet.jortho.Utils;
+
+
+/**
+ * This class parse the XML file from a dump of the Wiktionary.
+ * 
+ * @author Volker Berlin
+ */
+public class Parser extends DefaultHandler{
+
+    
+    private final BookGenerator generator;
+    
+<span class="nc" id="L47">    private final int NONE  = 0;</span>
+<span class="nc" id="L48">    private final int TITLE = 1;</span>
+<span class="nc" id="L49">    private final int TEXT = 2;</span>
+    
+    
+    private int currentTag;
+<span class="nc" id="L53">    private final StringBuilder data = new StringBuilder();</span>
+    private String word;
+    private String text;
+    
+<span class="nc" id="L57">    Parser(BookGenerator generator, InputStream stream) throws Exception{</span>
+<span class="nc" id="L58">        this.generator = generator;</span>
+        
+<span class="nc" id="L60">        System.setProperty(&quot;entityExpansionLimit&quot;, &quot;100000000&quot;);</span>
+        //InputSource input = new InputSource(stream); 
+<span class="nc" id="L62">        InputSource input = new InputSource( new InputStreamReader(stream, &quot;utf8&quot;) ); // hack for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7156085</span>
+<span class="nc" id="L63">        SAXParserFactory spf = SAXParserFactory.newInstance();</span>
+<span class="nc" id="L64">        SAXParser sp = spf.newSAXParser();</span>
+<span class="nc" id="L65">        ParserAdapter pa = new ParserAdapter(sp.getParser());</span>
+<span class="nc" id="L66">        pa.setContentHandler(this);</span>
+<span class="nc" id="L67">        pa.parse(input);</span>
+<span class="nc" id="L68">    }</span>
+    
+    
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        switch(currentTag){</span>
+            case TITLE:
+            case TEXT:
+<span class="nc" id="L76">                data.append( ch, start, length );</span>
+                break;
+        }
+<span class="nc" id="L79">    }</span>
+
+    
+    
+    @Override
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+<span class="nc" id="L85">        data.setLength( 0 );</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if(&quot;title&quot;.equals(localName)){</span>
+<span class="nc" id="L87">            currentTag = TITLE;</span>
+<span class="nc" id="L88">        }else</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if(&quot;text&quot;.equals(localName)){</span>
+<span class="nc" id="L90">            currentTag = TEXT;</span>
+        }
+<span class="nc" id="L92">    }</span>
+    
+    
+    @Override
+    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+<span class="nc bnc" id="L97" title="All 3 branches missed.">        switch(currentTag){</span>
+            case TITLE:
+<span class="nc" id="L99">                word = data.toString();</span>
+<span class="nc" id="L100">                word = Utils.replaceUnicodeQuotation( word );</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                if(!generator.isValidWord(word)){</span>
+<span class="nc" id="L102">                    word = null;</span>
+                }
+<span class="nc" id="L104">                break;</span>
+            case TEXT:
+<span class="nc" id="L106">                text = data.toString();</span>
+<span class="nc" id="L107">                break;</span>
+            default:
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                if(&quot;page&quot;.equals(localName)){</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                    if(word != null){</span>
+                        try{
+<span class="nc" id="L112">                            generator.getBook().incTitleCount();</span>
+<span class="nc" id="L113">                            text = Utils.replaceUnicodeQuotation( text );</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                            if(generator.isValidLanguage(word, text)){</span>
+<span class="nc" id="L115">                                generator.getBook().incLanguageTitleCount();</span>
+<span class="nc" id="L116">                                generator.addWord(word);</span>
+                            }
+<span class="nc" id="L118">                        }catch(Throwable th){</span>
+<span class="nc" id="L119">                            th.printStackTrace();</span>
+                        }
+                    }
+                }
+        }
+<span class="nc" id="L124">        currentTag = NONE;</span>
+<span class="nc" id="L125">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

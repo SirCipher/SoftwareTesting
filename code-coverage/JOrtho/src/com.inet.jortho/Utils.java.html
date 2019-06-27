@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Utils.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">Utils.java</span></div><h1>Utils.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 10.11.2005
+ */
+package com.inet.jortho;
+
+import java.awt.Dialog;
+import java.awt.Image;
+import java.util.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JTextField;
+
+/**
+ * @author Volker Berlin
+ */
+<span class="nc" id="L39">public class Utils {</span>
+
+    /**
+     * Translate a GUI string in one of the supported languages. If the value was not find then the key is returned.
+     * 
+     * @param value
+     *            the key of the language resource.
+     * @return the translation result
+     */
+    static String getResource( String value ) {
+        try {
+<span class="fc" id="L50">            ResourceBundle resource = ResourceBundle.getBundle( &quot;com.inet.jortho.i18n.resource&quot; );</span>
+<span class="fc" id="L51">            return resource.getString( value );</span>
+<span class="nc" id="L52">        } catch( Exception e ) {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            if( !value.endsWith( &quot;.tooltip&quot; ) ) { // Tooltip is something extra. Ignore it if not there</span>
+<span class="nc" id="L54">                SpellChecker.getMessageHandler().handleException( e );</span>
+            }
+        }
+<span class="nc" id="L57">        return value;</span>
+    }
+
+    /**
+     * Creates a JButton with a text, tooltip and a key modifier as needed
+     * @param resource the key of the language resource.
+     * @return a new JButton based on the resource
+     */
+    static JButton getButton( String resource ) {
+        JButton button;
+
+<span class="nc" id="L68">        CustomUIProvider customProvider = SpellChecker.getCustomUIProvider();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if( customProvider != null ) {</span>
+<span class="nc" id="L70">            button = customProvider.getButton( resource );</span>
+<span class="nc" id="L71">        } else {</span>
+<span class="nc" id="L72">            button = new JButton( Utils.getResource( resource ) );</span>
+
+<span class="nc" id="L74">            String tooltipKey = resource + &quot;.tooltip&quot;;</span>
+<span class="nc" id="L75">            String tooltip = Utils.getResource( tooltipKey );</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if( tooltip != tooltipKey ) {</span>
+<span class="nc" id="L77">                button.setToolTipText( tooltip );</span>
+            }
+        }
+
+<span class="nc" id="L81">        return button;</span>
+    }
+
+    /**
+     * Creates a JTextField as needed
+     * @return a new JTextField based on the resource
+     */
+    static JTextField getTextField() {
+        JTextField textField;
+
+<span class="nc" id="L91">        CustomUIProvider customProvider = SpellChecker.getCustomUIProvider();</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if( customProvider != null ) {</span>
+<span class="nc" id="L93">            textField = customProvider.getTextField();</span>
+<span class="nc" id="L94">        } else {</span>
+<span class="nc" id="L95">            textField = new JTextField();</span>
+        }
+
+<span class="nc" id="L98">        return textField;</span>
+    }
+
+    /**
+     * Creates a JLabel as needed
+     *
+     * @param text The text to be on the label
+     * @return a new JLabel based on the resource
+     */
+    static JLabel getLabel( String text ) {
+        JLabel label;
+
+<span class="nc" id="L110">        CustomUIProvider customProvider = SpellChecker.getCustomUIProvider();</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if( customProvider != null ) {</span>
+<span class="nc" id="L112">            label = customProvider.getLabel( text );</span>
+<span class="nc" id="L113">        } else {</span>
+<span class="nc" id="L114">            label = new JLabel( text );</span>
+        }
+
+<span class="nc" id="L117">        return label;</span>
+    }
+
+    
+    /**
+     * Creates a JList as needed
+     *
+     * @return a new JList based on the resource
+     */
+    static JList getList() {
+<span class="nc" id="L127">        CustomUIProvider customProvider = SpellChecker.getCustomUIProvider();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if( customProvider != null ) {</span>
+<span class="nc" id="L129">            return customProvider.getList();</span>
+        } else {
+<span class="nc" id="L131">            return new JList();</span>
+        }
+    }
+    
+    /**
+     * Set the Icon for an dialog
+     * @param dlg the dialog
+     */
+    static void setDialogIcon(JDialog dlg) {
+        try {
+<span class="nc" id="L141">            Image image = ImageIO.read( dlg.getClass().getResourceAsStream( &quot;icon.png&quot; ) );</span>
+            // setIconImage appeared in Java 6.0 so use reflection to be compatible
+            // with earlier JVMs. Equivalent to calling setIcomImage(image);
+<span class="nc" id="L144">            Class cls = Dialog.class;</span>
+<span class="nc" id="L145">            java.lang.reflect.Method m = cls.getMethod( &quot;setIconImage&quot;, new Class[] { Image.class } );</span>
+<span class="nc" id="L146">            m.invoke( dlg, new Object[] { image } );</span>
+<span class="nc" id="L147">        } catch( Throwable e1 ) {</span>
+            // can occur in Java 5 or if the icon was removed, then use the default
+        }
+<span class="nc" id="L150">    }</span>
+    
+    /**
+     * Create a String where the first letter is written with a uppercase.
+     * 
+     * @param word
+     *            the word that should be change
+     * @return the new String if needed
+     */
+    static String getCapitalized( String word ) {
+<span class="nc bnc" id="L160" title="All 4 branches missed.">        if( (word.length() &gt; 0) &amp;&amp; Character.isLowerCase( word.charAt( 0 ) ) ) {</span>
+<span class="nc" id="L161">            return word.substring( 0, 1 ).toUpperCase() + word.substring( 1 );</span>
+        }
+<span class="nc" id="L163">        return word;</span>
+    }
+
+    /**
+     * Create a String with inverted case for the first letter. If it is lowercase then it will change to uppercase and
+     * vice versa.
+     * 
+     * @param word
+     *            the word that should be change
+     * @return the new String if needed
+     */
+    static String getInvertedCapitalizion( String word ) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if( word.length() &gt; 0 ) {</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if( Character.isLowerCase( word.charAt( 0 ) ) ) {</span>
+<span class="nc" id="L177">                return word.substring( 0, 1 ).toUpperCase() + word.substring( 1 );</span>
+            }
+<span class="nc bnc" id="L179" title="All 2 branches missed.">            if( Character.isUpperCase( word.charAt( 0 ) ) ) {</span>
+<span class="nc" id="L180">                return word.substring( 0, 1 ).toLowerCase() + word.substring( 1 );</span>
+            }
+        }
+<span class="nc" id="L183">        return word;</span>
+    }
+
+    /**
+     * Check if the first character is a uppcase letter
+     * 
+     * @param word
+     *            the word that should be check. It can not be null.
+     * @return true if the first character is a uppercase letter
+     */
+    static boolean isFirstCapitalized( String word ) {
+<span class="nc bnc" id="L194" title="All 4 branches missed.">        return (word.length() &gt; 0) &amp;&amp; Character.isUpperCase( word.charAt( 0 ) );</span>
+    }
+
+    /**
+     * Check if all letter are uppercase. Character that are not letters are ignored.
+     * 
+     * @param word
+     *            the word that should be check. It can not be null or empty.
+     * @return if all character are a uppercase letter
+     */
+    static boolean isAllCapitalized( String word ) {
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        for( int i = 0; i &lt; word.length(); i++ ) {</span>
+<span class="fc" id="L206">            char ch = word.charAt( i );</span>
+
+<span class="pc bpc" id="L208" title="2 of 4 branches missed.">            if( Character.isLetter( ch ) &amp;&amp; !Character.isUpperCase( ch ) ) {</span>
+<span class="fc" id="L209">                return false;</span>
+            }
+        }
+<span class="nc" id="L212">        return true;</span>
+    }
+
+    /**
+     * Check if the word include a digit.
+     * 
+     * @param word
+     *            the word that should be check. It can not be null.
+     * @return if there is any number in the word.
+     */
+    static boolean isIncludeNumbers( String word ) {
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        for( int i = 0; i &lt; word.length(); i++ ) {</span>
+<span class="nc" id="L224">            char ch = word.charAt( i );</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            if( Character.isDigit( ch ) ) {</span>
+<span class="nc" id="L226">                return true;</span>
+            }
+        }
+<span class="nc" id="L229">        return false;</span>
+    }
+    
+    /**
+     * Check and replace Unicode variants of quotation marks and hyphens. Unicode characters for general punctuation can
+     * be seen here: http://www.unicodemap.org/range/40/General_Punctuation/
+     * 
+     * @param word
+     *            the word that should be check. It can not be null.
+     * @return A new string of the same length as the original.
+     */
+    public static String replaceUnicodeQuotation( String word ) {
+<span class="fc" id="L241">        char[] newWord = null;</span>
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for( int i = 0; i &lt; word.length(); i++ ) {</span>
+<span class="fc" id="L244">            char ch = word.charAt( i );</span>
+
+<span class="pc bpc" id="L246" title="2 of 3 branches missed.">            switch( ch ) {</span>
+                case '\u2018': // LEFT SINGLE QUOTATION MARK
+                case '\u2019': // RIGHT SINGLE QUOTATION MARK
+                case '\u201a': // SINGLE LOW-9 QUOTATION MARK
+                case '\u201b': // SINGLE HIGH-REVERSED-9 QUOTATION MARK
+                case '´': // These last two should probably not be included,
+                case '`': // they are not really quotation marks.
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                    if( newWord == null ){</span>
+<span class="nc" id="L254">                        newWord = word.toCharArray();</span>
+                    }
+<span class="nc" id="L256">                    newWord[i] = '\'';</span>
+<span class="nc" id="L257">                    break;</span>
+                case '\u2011': // NON-BREAKING HYPHEN
+                case '\u2012': // FIGURE DASH
+                case '\u2013': // EN DASH
+                case '\u2014': // EM DASH
+                case '\u2015': // HORIZONTAL BAR
+<span class="nc bnc" id="L263" title="All 2 branches missed.">                    if( newWord == null ){</span>
+<span class="nc" id="L264">                        newWord = word.toCharArray();</span>
+                    }
+<span class="nc" id="L266">                    newWord[i] = '-';</span>
+                    break;
+            }
+        }
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        return ( newWord == null ) ? word : new String( newWord );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LanguageBundle.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">LanguageBundle.java</span></div><h1>LanguageBundle.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2012 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 31.05.2012
+ */
+package com.inet.jortho;
+
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+/**
+ * This class implements some language specific methods. 
+ * @author Volker Berlin
+ */
+<span class="fc" id="L33">public class LanguageBundle extends ResourceBundle {</span>
+
+    /**
+     * Get a implementations of this class for the given locale
+     * @param locale the current spell checking language
+     * @return an instance, never null
+     */
+    static LanguageBundle get( Locale locale ){
+<span class="fc" id="L41">        return (LanguageBundle)ResourceBundle.getBundle( LanguageBundle.class.getName(), locale );</span>
+    }
+    
+    /**
+     * Check if the word is in the current dictionary. It verify the options isCaseSensitive, getIgnoreCapitalization and the first word of sentence
+     * @param word current word
+     * @param dictionary the current dictionary
+     * @param options the current options
+     * @param isFirstWordInSentence if the word is the first in a sentence
+     * @return true, if the word is in the dictionary
+     */
+    boolean existInDictionary( String word, Dictionary dictionary, SpellCheckerOptions options, boolean isFirstWordInSentence ) {
+<span class="fc" id="L53">        boolean exist = dictionary.exist( word );</span>
+<span class="pc bpc" id="L54" title="1 of 4 branches missed.">        if( !exist &amp;&amp; !options.isCaseSensitive() ) {</span>
+<span class="nc" id="L55">            exist = dictionary.exist( Utils.getInvertedCapitalizion( word ) );</span>
+<span class="pc bpc" id="L56" title="4 of 8 branches missed.">        } else if( !exist &amp;&amp; (isFirstWordInSentence || options.getIgnoreCapitalization()) &amp;&amp; Character.isUpperCase( word.charAt( 0 ) ) ) {</span>
+            // Uppercase check on starting of sentence
+<span class="nc" id="L58">            String capitalizeWord = word.substring( 0, 1 ).toLowerCase() + word.substring( 1 );</span>
+<span class="nc" id="L59">            exist = dictionary.exist( capitalizeWord );</span>
+        }
+<span class="fc" id="L61">        return exist;</span>
+    }
+    
+    @Override
+    protected Object handleGetObject( String key ) {
+<span class="nc" id="L66">        return null;</span>
+    }
+
+    @Override
+    public Enumeration&lt;String&gt; getKeys() {
+<span class="nc" id="L71">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

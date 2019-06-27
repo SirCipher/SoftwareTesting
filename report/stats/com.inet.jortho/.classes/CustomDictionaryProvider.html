@@ -1,0 +1,93 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CustomDictionaryProvider</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CustomDictionaryProvider (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CustomDictionaryProvider</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2009 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; * Created on 04.04.2009
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import java.util.Iterator;
+<i>26</i>&nbsp;import java.util.Locale;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;/**
+<i>31</i>&nbsp; * Interface to be implemented by an additional dictionary. This can be used to add an expert
+<i>32</i>&nbsp; * dictionary like a medical dictionary or a chemical dictionary.
+<i>33</i>&nbsp; * @author Volker Berlin
+<i>34</i>&nbsp; */
+<i>35</i>&nbsp;public interface CustomDictionaryProvider{
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Gets the list of custom words for this locale. The implementation can decide if there is a
+<i>39</i>&nbsp;     * custom dictionary for each available language or only one. This method is called before the
+<i>40</i>&nbsp;     * language change event is fired if the language is changed and the dictionary is loaded.
+<i>41</i>&nbsp;     * 
+<i>42</i>&nbsp;     * @param locale The locale of the selected language.
+<i>43</i>&nbsp;     * @return A list of words delimited with line breaks. It can be null.
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    Iterator&lt;String&gt; getWords(Locale locale);
+<i>46</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

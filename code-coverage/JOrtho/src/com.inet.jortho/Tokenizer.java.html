@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Tokenizer.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">Tokenizer.java</span></div><h1>Tokenizer.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 07.11.2005
+ */
+package com.inet.jortho;
+
+import java.text.BreakIterator;
+import java.util.Locale;
+
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Utilities;
+
+/**
+ * Break the text and words and search for misspelling.
+ * @author Volker Berlin
+ */
+class Tokenizer {
+    
+    private final Document doc;
+    private final SpellCheckerOptions options;
+    private final LanguageBundle bundle;
+    /** start offset of current paragraph */
+    private int paragraphOffset;
+    /** end offset of current paragraph */
+    private int endOffset;
+    
+    private String phrase;
+    private final Dictionary dictionary;
+    private BreakIterator sentences;
+    private int startSentence, endSentence, startWord, endWord;
+    private String sentence;
+    private BreakIterator words;
+    private int wordOffset;
+    private boolean isFirstWordInSentence;
+    
+    /**
+     * Create a tokenizer for the completely text document. 
+     */
+    Tokenizer( JTextComponent jText, Dictionary dictionary, Locale locale, SpellCheckerOptions options ) {
+<span class="fc" id="L61">        this( jText, dictionary, locale, 0, jText.getDocument().getLength(), options );</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Create a Tokenizer for the current paragraph
+     * @param jText the checking JTextComponent
+     * @param dictionary the used Dictionary
+     * @param locale the used Locale, is needed for the word and sentence breaker
+     * @param offset the current offset.
+     */
+    Tokenizer( JTextComponent jText, Dictionary dictionary, Locale locale, int offset, SpellCheckerOptions options ) {
+<span class="nc" id="L72">        this( jText, dictionary, locale, Utilities.getParagraphElement( jText, offset ).getStartOffset(), </span>
+<span class="nc" id="L73">                                         Utilities.getParagraphElement( jText, offset ).getEndOffset(), options );</span>
+<span class="nc" id="L74">    }</span>
+
+        /**
+     * Create a tokenizer for the selected range.
+     */
+<span class="fc" id="L79">    Tokenizer( JTextComponent jText, Dictionary dictionary, Locale locale, int startOffset, int endOffset, SpellCheckerOptions options ) {</span>
+
+<span class="fc" id="L81">        this.dictionary = dictionary;</span>
+<span class="fc" id="L82">        doc = jText.getDocument();</span>
+<span class="fc" id="L83">        bundle = LanguageBundle.get( locale );</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        this.options = options == null ? SpellChecker.getOptions() : options;</span>
+<span class="fc" id="L85">        sentences = BreakIterator.getSentenceInstance( locale );</span>
+<span class="fc" id="L86">        words = BreakIterator.getWordInstance( locale );</span>
+
+<span class="fc" id="L88">        paragraphOffset = startOffset;</span>
+<span class="fc" id="L89">        this.endOffset = endOffset;</span>
+        //loadSentences();
+<span class="fc" id="L91">        setSentencesText();</span>
+<span class="fc" id="L92">        endSentence = sentences.first();</span>
+<span class="fc" id="L93">        endWord = BreakIterator.DONE;</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Get the next misspelling word. If not found then it return null.
+     */
+    String nextInvalidWord() {
+<span class="fc" id="L100">        isFirstWordInSentence = false;</span>
+<span class="fc" id="L101">        while( true ) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if( endWord == BreakIterator.DONE ) {</span>
+<span class="fc" id="L103">                startSentence = endSentence;</span>
+<span class="fc" id="L104">                endSentence = sentences.next();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                if( endSentence == BreakIterator.DONE ) {</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                    if(!nextParagraph()){</span>
+<span class="fc" id="L107">                        return null;</span>
+                    }
+                }else{
+<span class="fc" id="L110">                    nextSentence();</span>
+                }
+            }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            while( endWord != BreakIterator.DONE ) {</span>
+<span class="fc" id="L114">                String word = sentence.substring( startWord, endWord ).trim();</span>
+<span class="fc" id="L115">                wordOffset = startSentence + startWord;</span>
+<span class="fc" id="L116">                startWord = endWord;</span>
+<span class="fc" id="L117">                endWord = words.next();</span>
+                //only words with 2 or more characters are checked
+<span class="fc bfc" id="L119" title="All 4 branches covered.">                if( word.length() &gt; 1 &amp;&amp; Character.isLetter( word.charAt( 0 ) )){</span>
+<span class="fc" id="L120">                    boolean exist = bundle.existInDictionary( word, dictionary, options, isFirstWordInSentence );</span>
+                    
+<span class="pc bpc" id="L122" title="2 of 6 branches missed.">                    if( !exist &amp;&amp; options.isIgnoreAllCapsWords() &amp;&amp; Utils.isAllCapitalized( word ) ){</span>
+<span class="nc" id="L123">                        exist = true;</span>
+                    }
+                    
+<span class="pc bpc" id="L126" title="3 of 6 branches missed.">                    if( !exist &amp;&amp; options.isIgnoreWordsWithNumbers() &amp;&amp; Utils.isIncludeNumbers( word ) ){</span>
+<span class="nc" id="L127">                        exist = true;</span>
+                    }
+                    
+<span class="pc bpc" id="L130" title="1 of 4 branches missed.">                    if( !exist &amp;&amp; startWord + 1 == endWord ) {</span>
+<span class="fc" id="L131">                        char nextChar = sentence.charAt( startWord );</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                        switch( nextChar ) {</span>
+                            case '.':
+                            case '\'':
+<span class="nc" id="L135">                                exist = bundle.existInDictionary( word + nextChar, dictionary, options, isFirstWordInSentence );</span>
+                        }
+                    }
+                    
+<span class="pc bpc" id="L139" title="1 of 4 branches missed.">                    if( !exist &amp;&amp; !isWebAddress( word )) {</span>
+<span class="fc" id="L140">                        return word;</span>
+                    }
+<span class="fc" id="L142">                    isFirstWordInSentence = false;</span>
+<span class="fc" id="L143">                } else {</span>
+                    // Handle a colon like a point. The next word can start with upper case.
+<span class="pc bpc" id="L145" title="2 of 4 branches missed.">                    if( &quot;:&quot;.equals( word ) || &quot;(&quot;.equals( word ) ){</span>
+<span class="nc" id="L146">                        isFirstWordInSentence = true;</span>
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Check if the word is a web address. This means a email address or web page address.
+     * 
+     * @param word
+     *            the word that should be check. It can not be null and can not include any whitespace.
+     * @return true if it is a web address.
+     */
+    private boolean isWebAddress( String word ){
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if( startWord &gt;= sentence.length() ){</span>
+<span class="nc" id="L162">            return false;</span>
+        }
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if( sentence.charAt( startWord ) == '@' ){</span>
+<span class="nc" id="L165">            word += '@';</span>
+<span class="nc" id="L166">            startWord = endWord;</span>
+<span class="nc" id="L167">            endWord = words.next();</span>
+<span class="nc" id="L168">            String domaine = sentence.substring( startWord, endWord ).trim();</span>
+<span class="nc bnc" id="L169" title="All 4 branches missed.">            if( domaine.length()&gt;3 &amp;&amp; domaine.indexOf( '.' ) &gt; 0 ){</span>
+<span class="nc" id="L170">                startWord = endWord;</span>
+<span class="nc" id="L171">                endWord = words.next();</span>
+<span class="nc" id="L172">                return true;</span>
+            }
+<span class="nc" id="L174">            return false;</span>
+        }
+<span class="pc bpc" id="L176" title="7 of 8 branches missed.">        if( startWord + 3 &lt; sentence.length() &amp;&amp; sentence.charAt( startWord ) == ':' &amp;&amp; sentence.charAt( startWord + 1 ) == '/' &amp;&amp; sentence.charAt( startWord + 2 ) == '/' ) {</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            while(startWord &lt; endWord){</span>
+<span class="nc" id="L178">                String next = sentence.substring( startWord, endWord ).trim();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                if( next.length() &gt; 0 ){</span>
+<span class="nc" id="L180">                    word += next;</span>
+<span class="nc" id="L181">                    startWord = endWord;</span>
+<span class="nc" id="L182">                    endWord = words.next();</span>
+                } else {
+                    break;
+                }
+            }
+<span class="nc" id="L187">            return true;</span>
+        }
+<span class="fc" id="L189">        return false;</span>
+    }
+    
+    /**
+     * Was the last invalid word the first word in a sentence.
+     * 
+     * @return true if it was the first word.
+     */
+    boolean isFirstWordInSentence(){
+<span class="nc" id="L198">        return isFirstWordInSentence;</span>
+    }
+    
+    /**
+     * Initialize the variables for the next paragraph.
+     * @return true, if there is a next paragraph
+     */
+    private boolean nextParagraph(){
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if(doc instanceof AbstractDocument){</span>
+<span class="fc" id="L207">            paragraphOffset = ((AbstractDocument)doc).getParagraphElement( paragraphOffset ).getEndOffset();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if(paragraphOffset &gt;= endOffset){</span>
+<span class="fc" id="L209">                return false;</span>
+            }
+        }else{
+<span class="nc" id="L212">            return false;</span>
+        }
+<span class="nc" id="L214">        loadSentences();</span>
+<span class="nc" id="L215">        return true;</span>
+    }
+    
+    /**
+     * Loads the sentences of the current paragraph.
+     */
+    private void loadSentences(){
+<span class="nc" id="L222">        setSentencesText();</span>
+
+<span class="nc" id="L224">        startSentence = sentences.first();</span>
+<span class="nc" id="L225">        endSentence = sentences.next();</span>
+<span class="nc" id="L226">        nextSentence();</span>
+<span class="nc" id="L227">    }</span>
+    
+    /**
+     * Call sentences.setText( String ) based on the current value of paragraphOffset.
+     */
+    private void setSentencesText(){
+<span class="fc" id="L233">        int end = endOffset;</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if(doc instanceof AbstractDocument){</span>
+<span class="fc" id="L235">            end = ((AbstractDocument)doc).getParagraphElement( paragraphOffset ).getEndOffset();</span>
+        }
+        try {
+<span class="fc" id="L238">            phrase = doc.getText( paragraphOffset, end-paragraphOffset );</span>
+<span class="fc" id="L239">            phrase = Utils.replaceUnicodeQuotation( phrase );</span>
+<span class="pc" id="L240">        } catch( BadLocationException e ) {</span>
+<span class="nc" id="L241">        	SpellChecker.getMessageHandler().handleException( e );</span>
+        }
+<span class="fc" id="L243">        sentences.setText( phrase );</span>
+<span class="fc" id="L244">    }</span>
+
+    /**
+     * Load the next Sentence in the word breaker.
+     */
+    private void nextSentence() {
+<span class="fc" id="L250">        sentence = phrase.substring( startSentence, endSentence );</span>
+<span class="fc" id="L251">        words.setText( sentence );</span>
+<span class="fc" id="L252">        startWord = words.first();</span>
+<span class="fc" id="L253">        endWord = words.next();</span>
+<span class="fc" id="L254">        isFirstWordInSentence = true;</span>
+<span class="fc" id="L255">    }</span>
+
+    /**
+     * Get start offset of the last misspelling in the JTextComponent.
+     */
+    int getWordOffset() {
+<span class="fc" id="L261">        return paragraphOffset + wordOffset;</span>
+    }
+
+    /**
+     * Update the text after a word was replaced. The changes in the text should be only after the current word offset.
+     */
+    void updatePhrase() {
+<span class="nc" id="L268">        endOffset = doc.getLength();</span>
+<span class="nc" id="L269">        setSentencesText();</span>
+        
+<span class="nc" id="L271">        endSentence = sentences.following( startSentence );</span>
+<span class="nc" id="L272">        sentence = phrase.substring( startSentence, endSentence );</span>
+        
+<span class="nc" id="L274">        words.setText( sentence );</span>
+<span class="nc" id="L275">        startWord = words.following( wordOffset - startSentence );</span>
+<span class="nc" id="L276">        endWord = words.next();</span>
+<span class="nc" id="L277">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

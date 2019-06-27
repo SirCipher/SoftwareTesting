@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>AboutDialog.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">AboutDialog.java</span></div><h1>AboutDialog.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2013 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 15.02.2013
+ */
+package com.inet.jortho;
+
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Properties;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+
+/**
+ * A small about dialog
+ */
+class AboutDialog extends JDialog {
+
+    /**
+     * Create a new instance
+     * @param parent
+     */
+    AboutDialog( JDialog parent ) {
+<span class="nc" id="L51">        super( parent, Utils.getResource( &quot;about&quot; ), true );</span>
+<span class="nc" id="L52">        Utils.setDialogIcon( this );</span>
+<span class="nc" id="L53">        setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );</span>
+<span class="nc" id="L54">        Container content = getContentPane();</span>
+<span class="nc" id="L55">        content.setLayout( new GridBagLayout() );</span>
+<span class="nc" id="L56">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L57">        gbc.weightx = 1;</span>
+<span class="nc" id="L58">        gbc.insets = new Insets( 5, 5, 5, 5 );</span>
+<span class="nc" id="L59">        gbc.gridwidth = GridBagConstraints.REMAINDER;</span>
+
+<span class="nc" id="L61">        String licensee = null;</span>
+<span class="nc" id="L62">        String license = null;</span>
+<span class="nc" id="L63">        URL url = getClass().getResource( &quot;/jortho-license.properties&quot; );</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if( url != null ) {</span>
+<span class="nc" id="L65">            Properties props = new Properties();</span>
+            try {
+<span class="nc" id="L67">                props.load( url.openStream() );</span>
+<span class="nc" id="L68">                licensee = props.getProperty( &quot;Licensee&quot; );</span>
+<span class="nc" id="L69">                license = props.getProperty( &quot;License&quot; );</span>
+<span class="nc" id="L70">            } catch( IOException ex ) {</span>
+<span class="nc" id="L71">                ex.printStackTrace();</span>
+            }
+        }
+
+<span class="nc" id="L75">        String copyright = &quot;2005 - 2016 \u00a9 i-net software, Berlin, Germany&quot;;</span>
+<span class="nc bnc" id="L76" title="All 6 branches missed.">        if( licensee != null &amp;&amp; licensee.length() &gt; 0 &amp;&amp; &quot;Commercial License&quot;.equalsIgnoreCase( license ) ) {</span>
+            // Commercial License
+<span class="nc" id="L78">            content.add( Utils.getLabel( &quot;JOrtho - Commercial License&quot; ), gbc );</span>
+<span class="nc" id="L79">            content.add( Utils.getLabel( &quot;Licensee: &quot; + licensee ), gbc );</span>
+<span class="nc" id="L80">            content.add( Utils.getLabel( copyright ), gbc );</span>
+<span class="nc" id="L81">        } else {</span>
+            // GPL License
+<span class="nc" id="L83">            content.add( Utils.getLabel( &quot;JOrtho - GNU General Public License (GPL)&quot; ), gbc );</span>
+
+<span class="nc" id="L85">            content.add( Utils.getLabel( copyright ), gbc );</span>
+<span class="nc" id="L86">            JLabel link = Utils.getLabel( &quot;&lt;html&gt;&lt;u&gt;https://www.inetsoftware.de/other-products/jortho&lt;/u&gt;&lt;/html&gt;&quot; );</span>
+<span class="nc" id="L87">            content.add( link, gbc );</span>
+<span class="nc" id="L88">            link.addMouseListener( new MouseAdapter() {</span>
+
+                @Override
+                public void mouseClicked( MouseEvent e ) {
+                    try {
+<span class="nc" id="L93">                        Desktop.getDesktop().browse( new URI( &quot;http://www.inetsoftware.de/other-products/jortho&quot; ) );</span>
+<span class="nc" id="L94">                    } catch( Exception ex ) {</span>
+<span class="nc" id="L95">                        ex.printStackTrace();</span>
+                    }
+<span class="nc" id="L97">                }</span>
+            } );
+<span class="nc" id="L99">            link.setCursor( new Cursor( Cursor.HAND_CURSOR ) );</span>
+        }
+<span class="nc" id="L101">        pack();</span>
+<span class="nc" id="L102">        setLocationRelativeTo( parent );</span>
+<span class="nc" id="L103">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

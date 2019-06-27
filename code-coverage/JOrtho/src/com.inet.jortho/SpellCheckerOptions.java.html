@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>SpellCheckerOptions.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">SpellCheckerOptions.java</span></div><h1>SpellCheckerOptions.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 20.02.2008
+ */
+package com.inet.jortho;
+
+/**
+ * This class contains some options for spell checking. You can change it globally(see ({@link SpellChecker#getOptions()}) or
+ * for every JTextComponent individually on registering.
+ *
+ * @author Volker Berlin
+ */
+public class SpellCheckerOptions {
+
+<span class="fc" id="L33">    private int     suggestionsLimitMenu   = 15;</span>
+
+<span class="fc" id="L35">    private int     suggestionsLimitDialog = 15;</span>
+
+<span class="fc" id="L37">    private boolean caseSensitive          = true;</span>
+
+<span class="fc" id="L39">    private boolean ignoreCapitalization   = false;</span>
+
+<span class="fc" id="L41">    private boolean ignoreAllCaps          = true;</span>
+
+<span class="fc" id="L43">    private boolean ignoreNumbers          = false;</span>
+
+<span class="fc" id="L45">    private boolean languageDisableVisible = false;</span>
+
+    /**
+     * Create SpellCheckerOptions with default values.
+     */
+<span class="fc" id="L50">    public SpellCheckerOptions() {</span>
+        //empty block
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Set the maximun count of entries for the suggestion menu. The default is 15.
+     * 
+     * @param count
+     *            the suggestion limit for the suggestion menu
+     */
+    public void setSuggestionsLimitMenu( int count ) {
+<span class="nc" id="L61">        this.suggestionsLimitMenu = count;</span>
+<span class="nc" id="L62">    }</span>
+
+    /**
+     * Get the maximum count of entries for the suggestion menu.
+     *
+     * @return the suggestion limit
+     */
+    public int getSuggestionsLimitMenu() {
+<span class="nc" id="L70">        return suggestionsLimitMenu;</span>
+    }
+
+    /**
+     * Set the maximun count of entries for the suggestion list in the spell checker dialog. The default is 15.
+     * 
+     * @param count
+     *            the suggestion limit for the spell checker dialog
+     */
+    public void setSuggestionsLimitDialog( int count ) {
+<span class="nc" id="L80">        this.suggestionsLimitDialog = count;</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * Get the maximun count of enties for the suggestion list in the spell checker dialog.
+     * 
+     * @return the suggestions limit
+     */
+    public int getSuggestionsLimitDialog() {
+<span class="nc" id="L89">        return suggestionsLimitDialog;</span>
+    }
+
+    /**
+     * Set whether the spell checker is case-sensitive. This only has an effect on the first letter of a word. The default
+     * value is true.
+     *
+     * @param caseSensitive whether the spell checker is to be case-sensitive for the first letter of each word.
+     */
+    public void setCaseSensitive( boolean caseSensitive ) {
+<span class="nc" id="L99">        this.caseSensitive = caseSensitive;</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Return whether the spell checker is case-sensitive. This only has an effect on the first letter of a word.
+     *
+     * @return whether the spell checker is case-sensitive.
+     */
+    public boolean isCaseSensitive() {
+<span class="fc" id="L108">        return caseSensitive;</span>
+    }
+
+    /**
+     * Set whether capitalized words should be correct if the word is in the dictionary as lower-case. This is often used in a title or in
+     * names. The first word of a sentence will always ignore the capitalization. The default is false.
+     *
+     * @param ignore
+     *            the new value
+     */
+    public void setIgnoreCapitalization( boolean ignore ) {
+<span class="nc" id="L119">        ignoreCapitalization = ignore;</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Return whether capitalized words should be correct if the word is in the dictionary as lower-case.
+     *
+     * @return true, if capitalization is to be ignored
+     */
+    public boolean getIgnoreCapitalization() {
+<span class="nc" id="L128">        return ignoreCapitalization;</span>
+    }
+
+    /**
+     * Set if words that are entirely in uppercase should be ignored for spell checking. This is most often used for
+     * abbreviations such DNS or HTTP. The default value is true.
+     *
+     * @param ignore
+     *            the new value
+     */
+    public void setIgnoreAllCapsWords( boolean ignore ) {
+<span class="nc" id="L139">        ignoreAllCaps = ignore;</span>
+<span class="nc" id="L140">    }</span>
+
+    /**
+     * Whether words entirely in upper-case should be ignored for spell checking.
+     * 
+     * @return true, if all entirely upper-case words are to be ignored
+     */
+    public boolean isIgnoreAllCapsWords() {
+<span class="fc" id="L148">        return ignoreAllCaps;</span>
+    }
+
+    /**
+     * Set if words that include a number in any position should be ignored for spell checking. The default is false.
+     *
+     * @param ignore
+     *            the new value
+     */
+    public void setIgnoreWordsWithNumbers( boolean ignore ) {
+<span class="nc" id="L158">        ignoreNumbers = ignore;</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Whether words that include a number in any position should be ignored for spell checking.
+     *
+     * @return true, if words with numbers in any position are to be ignored
+     */
+    public boolean isIgnoreWordsWithNumbers() {
+<span class="fc" id="L167">        return ignoreNumbers;</span>
+    }
+    
+    /**
+     * Set if the disbale menu item visble in the language menu. The default is false.
+     * 
+     * @param visible
+     *            the new value
+     */
+    public void setLanguageDisableVisible( boolean visible ) {
+<span class="nc" id="L177">        languageDisableVisible = visible;</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * If in the language menu the menu item disable visible.
+     * 
+     * @return true, if visible
+     */
+    public boolean isLanguageDisableVisible() {
+<span class="fc" id="L186">        return languageDisableVisible;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

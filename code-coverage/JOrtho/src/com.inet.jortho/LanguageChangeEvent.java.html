@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LanguageChangeEvent.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">LanguageChangeEvent.java</span></div><h1>LanguageChangeEvent.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 06.12.2007
+ */
+package com.inet.jortho;
+
+import java.util.Locale;
+
+/**
+ * This Event is used by &lt;code&gt;LanguageChangeListener&lt;/code&gt;.
+ * @see LanguageChangeListener
+ * @author Volker Berlin
+ */
+public class LanguageChangeEvent{
+
+    private final Locale currentLocale;
+    private final Locale oldLocale;
+    
+    /**
+     * Creates a new LanguageChangeEvent
+     * @param currentLocale the new Locale
+     * @param oldLocale the old Locale
+     */
+<span class="fc" id="L42">    public LanguageChangeEvent( Locale currentLocale, Locale oldLocale ) {</span>
+<span class="fc" id="L43">        this.currentLocale = currentLocale;</span>
+<span class="fc" id="L44">        this.oldLocale = oldLocale;</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Gets the value of the old Locale before the firing this Event.
+     * @return the old Locale
+     * @see SpellChecker#getCurrentLocale()
+     */
+    public Locale getOldLocale() {
+<span class="nc" id="L53">        return oldLocale;</span>
+    }
+
+    /**
+     * Get the value of the current Locale after firing this Event.
+     * It general it should be equal to {@link SpellChecker#getCurrentLocale()}.
+     * @return the current Locale
+     * @see SpellChecker#getCurrentLocale()
+     */
+    public Locale getCurrentLocale() {
+<span class="nc" id="L63">        return currentLocale;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

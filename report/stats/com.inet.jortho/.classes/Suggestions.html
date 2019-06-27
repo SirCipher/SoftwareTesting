@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Suggestions</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Suggestions (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Suggestions</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2008 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; *  Created on 12.12.2007
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import java.util.List;
+<i>26</i>&nbsp;import java.util.ArrayList;
+<i>27</i>&nbsp;import java.util.HashMap;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;/**
+<i>30</i>&nbsp; * A hash list of Suggestions. The list is cut with a max dissimilarity. If a suggestion already exist then the
+<i>31</i>&nbsp; * suggestion with the lower dissimilarity will be hold.
+<i>32</i>&nbsp; * 
+<i>33</i>&nbsp; * @author Volker Berlin
+<i>34</i>&nbsp; */
+<i>35</i>&nbsp;class Suggestions {
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    private final int maxDiff;
+<b class="fc"><i>38</i>&nbsp;    private final HashMap&lt;Suggestion,Suggestion&gt; map = new HashMap&lt;Suggestion,Suggestion&gt;();</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * Create a suggestions list. Suggestion with a larger dissimilarity can not be added.
+<i>42</i>&nbsp;     * @param maxDiff the max dissimilarity
+<i>43</i>&nbsp;     */
+<b class="fc"><i>44</i>&nbsp;    Suggestions(int maxDiff){</b>
+<b class="fc"><i>45</i>&nbsp;        this.maxDiff = maxDiff;</b>
+<b class="fc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;    
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * Add a suggestion. 
+<i>50</i>&nbsp;     * @param suggestion the suggestion 
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    void add(Suggestion suggestion){
+<b class="fc"><i>53</i>&nbsp;        if(suggestion.getDissimilarity() &gt; maxDiff){</b>
+<b class="fc"><i>54</i>&nbsp;            return;</b>
+<i>55</i>&nbsp;        }
+<b class="fc"><i>56</i>&nbsp;        Suggestion oldSuggestion = map.get( suggestion );</b>
+<b class="fc"><i>57</i>&nbsp;        if(oldSuggestion != null &amp;&amp; oldSuggestion.getDissimilarity() &lt;= suggestion.getDissimilarity()){</b>
+<b class="fc"><i>58</i>&nbsp;            return;</b>
+<i>59</i>&nbsp;        }
+<b class="fc"><i>60</i>&nbsp;        map.put( suggestion, suggestion );</b>
+<b class="fc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;    
+<i>63</i>&nbsp;    
+<i>64</i>&nbsp;    List&lt;Suggestion&gt; getlist(){
+<b class="fc"><i>65</i>&nbsp;        ArrayList&lt;Suggestion&gt; list = new ArrayList&lt;Suggestion&gt;();</b>
+<b class="fc"><i>66</i>&nbsp;        for(Suggestion sugg : map.values()){</b>
+<b class="fc"><i>67</i>&nbsp;            list.add( sugg );</b>
+<b class="fc"><i>68</i>&nbsp;        }</b>
+<b class="fc"><i>69</i>&nbsp;        return list;</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * Get the max dissimilarity. Suggestion with a larger value can not be added.
+<i>74</i>&nbsp;     * @return
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    int getMaxDissimilarity() {
+<b class="fc"><i>77</i>&nbsp;        return maxDiff;</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

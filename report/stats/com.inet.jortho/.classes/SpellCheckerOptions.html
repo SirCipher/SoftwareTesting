@@ -1,0 +1,271 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SpellCheckerOptions</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SpellCheckerOptions (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpellCheckerOptions</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (5/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.3%
+  </span>
+  <span class="absValue">
+    (13/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2008 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; * Created on 20.02.2008
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * This class contains some options for spell checking. You can change it globally(see ({@link SpellChecker#getOptions()}) or
+<i>27</i>&nbsp; * for every JTextComponent individually on registering.
+<i>28</i>&nbsp; *
+<i>29</i>&nbsp; * @author Volker Berlin
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;public class SpellCheckerOptions {
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;    private int     suggestionsLimitMenu   = 15;</b>
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;    private int     suggestionsLimitDialog = 15;</b>
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;    private boolean caseSensitive          = true;</b>
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;    private boolean ignoreCapitalization   = false;</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;    private boolean ignoreAllCaps          = true;</b>
+<i>42</i>&nbsp;
+<b class="fc"><i>43</i>&nbsp;    private boolean ignoreNumbers          = false;</b>
+<i>44</i>&nbsp;
+<b class="fc"><i>45</i>&nbsp;    private boolean languageDisableVisible = false;</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Create SpellCheckerOptions with default values.
+<i>49</i>&nbsp;     */
+<b class="fc"><i>50</i>&nbsp;    public SpellCheckerOptions() {</b>
+<i>51</i>&nbsp;        //empty block
+<b class="fc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Set the maximun count of entries for the suggestion menu. The default is 15.
+<i>56</i>&nbsp;     * 
+<i>57</i>&nbsp;     * @param count
+<i>58</i>&nbsp;     *            the suggestion limit for the suggestion menu
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void setSuggestionsLimitMenu( int count ) {
+<b class="nc"><i>61</i>&nbsp;        this.suggestionsLimitMenu = count;</b>
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Get the maximum count of entries for the suggestion menu.
+<i>66</i>&nbsp;     *
+<i>67</i>&nbsp;     * @return the suggestion limit
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public int getSuggestionsLimitMenu() {
+<b class="nc"><i>70</i>&nbsp;        return suggestionsLimitMenu;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * Set the maximun count of entries for the suggestion list in the spell checker dialog. The default is 15.
+<i>75</i>&nbsp;     * 
+<i>76</i>&nbsp;     * @param count
+<i>77</i>&nbsp;     *            the suggestion limit for the spell checker dialog
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    public void setSuggestionsLimitDialog( int count ) {
+<b class="nc"><i>80</i>&nbsp;        this.suggestionsLimitDialog = count;</b>
+<b class="nc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Get the maximun count of enties for the suggestion list in the spell checker dialog.
+<i>85</i>&nbsp;     * 
+<i>86</i>&nbsp;     * @return the suggestions limit
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public int getSuggestionsLimitDialog() {
+<b class="nc"><i>89</i>&nbsp;        return suggestionsLimitDialog;</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * Set whether the spell checker is case-sensitive. This only has an effect on the first letter of a word. The default
+<i>94</i>&nbsp;     * value is true.
+<i>95</i>&nbsp;     *
+<i>96</i>&nbsp;     * @param caseSensitive whether the spell checker is to be case-sensitive for the first letter of each word.
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public void setCaseSensitive( boolean caseSensitive ) {
+<b class="nc"><i>99</i>&nbsp;        this.caseSensitive = caseSensitive;</b>
+<b class="nc"><i>100</i>&nbsp;    }</b>
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Return whether the spell checker is case-sensitive. This only has an effect on the first letter of a word.
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @return whether the spell checker is case-sensitive.
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public boolean isCaseSensitive() {
+<b class="fc"><i>108</i>&nbsp;        return caseSensitive;</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    /**
+<i>112</i>&nbsp;     * Set whether capitalized words should be correct if the word is in the dictionary as lower-case. This is often used in a title or in
+<i>113</i>&nbsp;     * names. The first word of a sentence will always ignore the capitalization. The default is false.
+<i>114</i>&nbsp;     *
+<i>115</i>&nbsp;     * @param ignore
+<i>116</i>&nbsp;     *            the new value
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    public void setIgnoreCapitalization( boolean ignore ) {
+<b class="nc"><i>119</i>&nbsp;        ignoreCapitalization = ignore;</b>
+<b class="nc"><i>120</i>&nbsp;    }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    /**
+<i>123</i>&nbsp;     * Return whether capitalized words should be correct if the word is in the dictionary as lower-case.
+<i>124</i>&nbsp;     *
+<i>125</i>&nbsp;     * @return true, if capitalization is to be ignored
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    public boolean getIgnoreCapitalization() {
+<b class="nc"><i>128</i>&nbsp;        return ignoreCapitalization;</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    /**
+<i>132</i>&nbsp;     * Set if words that are entirely in uppercase should be ignored for spell checking. This is most often used for
+<i>133</i>&nbsp;     * abbreviations such DNS or HTTP. The default value is true.
+<i>134</i>&nbsp;     *
+<i>135</i>&nbsp;     * @param ignore
+<i>136</i>&nbsp;     *            the new value
+<i>137</i>&nbsp;     */
+<i>138</i>&nbsp;    public void setIgnoreAllCapsWords( boolean ignore ) {
+<b class="nc"><i>139</i>&nbsp;        ignoreAllCaps = ignore;</b>
+<b class="nc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    /**
+<i>143</i>&nbsp;     * Whether words entirely in upper-case should be ignored for spell checking.
+<i>144</i>&nbsp;     * 
+<i>145</i>&nbsp;     * @return true, if all entirely upper-case words are to be ignored
+<i>146</i>&nbsp;     */
+<i>147</i>&nbsp;    public boolean isIgnoreAllCapsWords() {
+<b class="fc"><i>148</i>&nbsp;        return ignoreAllCaps;</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    /**
+<i>152</i>&nbsp;     * Set if words that include a number in any position should be ignored for spell checking. The default is false.
+<i>153</i>&nbsp;     *
+<i>154</i>&nbsp;     * @param ignore
+<i>155</i>&nbsp;     *            the new value
+<i>156</i>&nbsp;     */
+<i>157</i>&nbsp;    public void setIgnoreWordsWithNumbers( boolean ignore ) {
+<b class="nc"><i>158</i>&nbsp;        ignoreNumbers = ignore;</b>
+<b class="nc"><i>159</i>&nbsp;    }</b>
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * Whether words that include a number in any position should be ignored for spell checking.
+<i>163</i>&nbsp;     *
+<i>164</i>&nbsp;     * @return true, if words with numbers in any position are to be ignored
+<i>165</i>&nbsp;     */
+<i>166</i>&nbsp;    public boolean isIgnoreWordsWithNumbers() {
+<b class="fc"><i>167</i>&nbsp;        return ignoreNumbers;</b>
+<i>168</i>&nbsp;    }
+<i>169</i>&nbsp;    
+<i>170</i>&nbsp;    /**
+<i>171</i>&nbsp;     * Set if the disbale menu item visble in the language menu. The default is false.
+<i>172</i>&nbsp;     * 
+<i>173</i>&nbsp;     * @param visible
+<i>174</i>&nbsp;     *            the new value
+<i>175</i>&nbsp;     */
+<i>176</i>&nbsp;    public void setLanguageDisableVisible( boolean visible ) {
+<b class="nc"><i>177</i>&nbsp;        languageDisableVisible = visible;</b>
+<b class="nc"><i>178</i>&nbsp;    }</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    /**
+<i>181</i>&nbsp;     * If in the language menu the menu item disable visible.
+<i>182</i>&nbsp;     * 
+<i>183</i>&nbsp;     * @return true, if visible
+<i>184</i>&nbsp;     */
+<i>185</i>&nbsp;    public boolean isLanguageDisableVisible() {
+<b class="fc"><i>186</i>&nbsp;        return languageDisableVisible;</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:13</div>
+</div>
+</body>
+</html>

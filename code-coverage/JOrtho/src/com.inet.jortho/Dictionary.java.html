@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Dictionary.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">Dictionary.java</span></div><h1>Dictionary.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 02.11.2005
+ */
+package com.inet.jortho;
+
+import java.io.*;
+import java.util.zip.*;
+
+/**
+ * A container for a word list.
+ * @author Volker Berlin
+ */
+final class Dictionary extends DictionaryBase{
+
+   
+    /**
+     * Create an empty Dictionary.
+     */
+<span class="nc" id="L38">    public Dictionary(){</span>
+<span class="nc" id="L39">        tree = new char[10000];</span>
+<span class="nc" id="L40">        tree[size++] = LAST_CHAR;</span>
+<span class="nc" id="L41">    }</span>
+    
+    
+    /**
+     * Create an Dictionary from a serialize Dictionary. This is used from the DictionaryFactory.
+     * @see #toArray()
+     * @see DictionaryFactory
+     */
+    public Dictionary(char[] tree){
+<span class="fc" id="L50">        super(tree);</span>
+<span class="fc" id="L51">    }</span>
+    
+    
+    /**
+     * Save this dictionary to a compressed file.
+     * @param filename the name of the file.
+     * @return the size in bytes that was needed.
+     * @throws IOException if an I/O error occurs.
+     */
+    public long save(String filename) throws IOException{
+        // Daten komprimieren und speichern
+<span class="nc" id="L62">        File file = new File(filename);</span>
+<span class="nc" id="L63">        FileOutputStream fos = new FileOutputStream(file);</span>
+<span class="nc" id="L64">        save(fos);</span>
+<span class="nc" id="L65">        return file.length();</span>
+    }
+    
+    
+    /**
+     * Save this dictionary to the OutputStream. The data will be compressed. After finish the OutputStream is closed.
+     * @param stream the OutputStream
+     * @throws IOException if an I/O error occurs.
+     */
+    public void save(OutputStream stream) throws IOException{
+<span class="nc" id="L75">        Deflater deflater = new Deflater();</span>
+<span class="nc" id="L76">        deflater.setLevel(Deflater.BEST_COMPRESSION);</span>
+<span class="nc" id="L77">        DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for(int i=0; i&lt;size; i++){</span>
+<span class="nc" id="L79">            zip.write(tree[i]);</span>
+<span class="nc" id="L80">            zip.write(tree[i] &gt;&gt; 8);</span>
+        }
+        
+<span class="nc" id="L83">        zip.flush();</span>
+<span class="nc" id="L84">        zip.close();</span>
+<span class="nc" id="L85">    }</span>
+    
+    
+    /**
+     * Load the directory from a compressed file.
+     * @param filename the name of the file.
+     * @throws IOException if an I/O error occurs.
+     */
+    public void load(String filename) throws IOException{
+<span class="nc" id="L94">        FileInputStream fos = new FileInputStream(filename);</span>
+<span class="nc" id="L95">        load(fos);</span>
+<span class="nc" id="L96">    }</span>
+
+    
+    /**
+     * Load the directory from a compressed stream.
+     * @param stream the InputStream
+     * @throws IOException if an I/O error occurs.
+     */
+    public void load(InputStream stream)  throws IOException{
+<span class="nc" id="L105">        InputStream zip = new InflaterInputStream(stream);</span>
+<span class="nc" id="L106">        zip = new BufferedInputStream(zip);</span>
+<span class="nc" id="L107">        size = 0;</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        while(zip.available() &gt; 0){</span>
+<span class="nc" id="L109">            char c = (char)(zip.read() + (zip.read() &lt;&lt; 8));</span>
+<span class="nc" id="L110">            checkSize(size+1);</span>
+<span class="nc" id="L111">            tree[size++] = c;</span>
+        }
+<span class="nc" id="L113">        zip.close();</span>
+        // Shrinken
+<span class="nc" id="L115">        trimToSize();</span>
+<span class="nc" id="L116">    }</span>
+    
+    
+    /**
+     * Trims the capacity of this &lt;tt&gt;Dictionary&lt;/tt&gt; instance to be the
+     * current size.  An application can use this operation to minimize
+     * the storage of an &lt;tt&gt;Dictionary&lt;/tt&gt; instance.
+     * The load methods already call it.
+     */
+    void trimToSize(){
+<span class="fc" id="L126">        char[] temp = new char[size];</span>
+<span class="fc" id="L127">        System.arraycopy( tree, 0, temp, 0, size );</span>
+<span class="fc" id="L128">        tree = temp;</span>
+<span class="fc" id="L129">    }</span>
+
+
+    /**
+     * Add a word to the tree. If it already exist then it has no effect. 
+     * @param word the new word.
+     */
+    public void add(String word){
+<span class="fc" id="L137">        idx = 0;</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        for(int i=0; i&lt;word.length(); i++){</span>
+<span class="fc" id="L139">            char c = word.charAt(i);</span>
+<span class="fc" id="L140">            searchCharOrAdd( c );</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if(i == word.length()-1){</span>
+<span class="fc" id="L142">                tree[idx+1] |= 0x8000;</span>
+<span class="fc" id="L143">                return;</span>
+            }
+<span class="fc" id="L145">            int nextIdx = readIndex();</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if(nextIdx == 0){</span>
+<span class="fc" id="L147">                idx = createNewNode();</span>
+<span class="fc" id="L148">            }else{</span>
+<span class="fc" id="L149">                idx = nextIdx;</span>
+            }
+        }
+<span class="nc" id="L152">    }</span>
+    
+    
+    /**
+     * Convert the directory tree to char array.
+     * @return a char array that include the data of the dictionary.
+     */
+    public char[] toArray(){
+<span class="nc" id="L160">        char[] puffer = new char[size];</span>
+<span class="nc" id="L161">        System.arraycopy(tree, 0, puffer, 0, size);</span>
+<span class="nc" id="L162">        return puffer; </span>
+    }
+    
+    
+    /**
+     * Get the size of chars that this dictionary need in memory.
+     */
+    public int getDataSize(){
+<span class="nc" id="L170">        return size;</span>
+    }
+    
+    
+    private void searchCharOrAdd(char c){
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if(c == LAST_CHAR)</span>
+<span class="nc" id="L176">            throw new RuntimeException(&quot;Invalid Character&quot;);</span>
+<span class="pc bpc" id="L177" title="1 of 4 branches missed.">        while(idx&lt;size &amp;&amp; tree[idx] &lt; c){</span>
+<span class="fc" id="L178">            idx += 3;</span>
+        }
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if(idx&gt;=size)</span>
+<span class="nc" id="L181">            throw new RuntimeException(&quot;Internal Error&quot;);</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if(tree[idx] == c){</span>
+<span class="fc" id="L183">            return;</span>
+        }
+<span class="fc" id="L185">        insertChar(c);</span>
+<span class="fc" id="L186">        return;</span>
+    }
+
+
+    private void insertChar(char c) {
+<span class="fc" id="L191">        checkSize(size+3);</span>
+<span class="fc" id="L192">        System.arraycopy(tree, idx, tree, idx+3, size-idx);</span>
+<span class="fc" id="L193">        tree[idx] = c;</span>
+<span class="fc" id="L194">        tree[idx+1] = 0;</span>
+<span class="fc" id="L195">        tree[idx+2] = 0;</span>
+<span class="fc" id="L196">        size += 3;</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for(int i=0; i&lt;size; ){</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            if(tree[i] == LAST_CHAR){</span>
+<span class="fc" id="L199">                i++;</span>
+<span class="fc" id="L200">            }else{</span>
+<span class="fc" id="L201">                int index = (tree[i+1]&lt;&lt;16) + tree[i+2];</span>
+<span class="fc" id="L202">                int indexValue = index &amp; 0x7fffffff;</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                if(indexValue &gt; idx){</span>
+<span class="fc" id="L204">                    index += 3;</span>
+<span class="fc" id="L205">                    tree[i+1] = (char)(index &gt;&gt; 16);</span>
+<span class="fc" id="L206">                    tree[i+2] = (char)(index);</span>
+                }
+<span class="fc" id="L208">                i += 3;</span>
+            }
+        }
+<span class="fc" id="L211">    }</span>
+    
+    
+    /**
+     * Create a new node at end of the array.
+     * On the current idx position is writing the pointer.
+     * The pointer on the current idx position must be 0 without some word end flags (0x8000 on idx+1)
+     * @return Pointer on new node.
+     */
+    private final int createNewNode() {
+<span class="fc" id="L221">        checkSize(size+1);</span>
+<span class="fc" id="L222">        tree[idx+1] |= (char)(size &gt;&gt; 16);</span>
+<span class="fc" id="L223">        tree[idx+2] |= (char)(size);</span>
+<span class="fc" id="L224">        idx = size;</span>
+<span class="fc" id="L225">        tree[idx  ] = LAST_CHAR;</span>
+<span class="fc" id="L226">        size += 1;</span>
+<span class="fc" id="L227">        return idx;</span>
+    }
+
+
+    /**
+     * Check the size of the array and resize it if needed.
+     * @param newSize the requied size
+     */
+    private final void checkSize(int newSize){
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        if(newSize &gt; tree.length){</span>
+<span class="fc" id="L237">            char[] puffer = new char[Math.max(newSize, 2*tree.length)];</span>
+<span class="fc" id="L238">            System.arraycopy(tree, 0, puffer, 0, size);</span>
+<span class="fc" id="L239">            tree = puffer;</span>
+        }
+<span class="fc" id="L241">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

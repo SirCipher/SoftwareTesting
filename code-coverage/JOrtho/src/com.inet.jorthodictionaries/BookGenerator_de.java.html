@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator_de.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator_de.java</span></div><h1>BookGenerator_de.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2010 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 03.11.2005
+ */
+package com.inet.jorthodictionaries;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+/**
+ * @author Volker Berlin
+ */
+public class BookGenerator_de extends BookGenerator {
+
+<span class="nc" id="L38">    public BookGenerator_de(){</span>
+<span class="nc" id="L39">        addWord( &quot;Ihnen&quot; );</span>
+<span class="nc" id="L40">        addWord( &quot;Ihrer&quot; );</span>
+<span class="nc" id="L41">        addWord( &quot;Ihre&quot; );</span>
+<span class="nc" id="L42">        addWord( &quot;Ihres&quot; );</span>
+<span class="nc" id="L43">        addWord( &quot;Ihrem&quot; );</span>
+<span class="nc" id="L44">        addWord( &quot;Ihren&quot; );</span>
+<span class="nc" id="L45">        addWord( &quot;Sie&quot; );</span>
+<span class="nc" id="L46">        addWord( &quot;Du&quot; );</span>
+<span class="nc" id="L47">    }</span>
+    
+    @Override
+    protected boolean isValidWord(String word){
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if(super.isValidWord( word )){</span>
+<span class="nc" id="L52">            return true;</span>
+        }
+<span class="nc bnc" id="L54" title="All 6 branches missed.">        return word.endsWith( &quot;(Deklination)&quot; ) || word.endsWith( &quot;(Konjugation)&quot; ) || word.equals( &quot;Wiktionary:Wunschliste&quot; );</span>
+    }
+    
+    @Override
+    boolean isValidLanguage(String word, String wikiText) {   
+<span class="nc" id="L59">        wikiText = removeHtmlFormating(wikiText);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if( word.equals( &quot;Wiktionary:Wunschliste&quot; ) ) {</span>
+<span class="nc" id="L61">            addLinkWords( word, wikiText, &quot;Wunschliste&quot; );</span>
+<span class="nc" id="L62">            return false;</span>
+        }
+<span class="nc" id="L64">        int idxGerman = wikiText.indexOf(&quot;{{Sprache|Deutsch}}&quot;);</span>
+<span class="nc bnc" id="L65" title="All 6 branches missed.">        if( idxGerman &lt; 0 || word.endsWith( &quot;(Deklination)&quot; ) || word.endsWith( &quot;(Konjugation)&quot; )){</span>
+            /*
+            if(wikiText.indexOf(&quot;{{Sprache|&quot;) &gt;= 0){
+                return false;
+            }
+            if(wikiText.indexOf(&quot;{{Schweizer Schreibweise|&quot;) &gt;= 0){
+                return false;
+            }
+            if(wikiText.indexOf(&quot;{{Alte Schreibweise|&quot;) &gt;= 0){
+                return false;
+            }
+            if(wikiText.indexOf(&quot;{{anpassen}}&quot;) &gt;= 0){
+                return false;
+            }
+            if(wikiText.toUpperCase().indexOf(&quot;#REDIRECT&quot;) &gt;= 0){
+                return false;
+            }*/
+<span class="nc" id="L82">            Properties props = BookUtils.parseRule(wikiText,&quot;Deklinationsseite Adjektiv&quot;, 0);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L84">                addDeklinationAdjektiv(props);</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L86">                return false;</span>
+            }
+            
+<span class="nc" id="L89">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb unregelmÃ¤ÃŸig&quot;, 0 );</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L91">                addKonjugationVerbUnregular( props );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L93">                return false;</span>
+            }
+            
+<span class="nc" id="L96">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb schwach untrennbar&quot;, 0 );</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L98">                addKonjugationVerbSchwachUntrennbar( props, false );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L100">                return false;</span>
+            }
+            
+<span class="nc" id="L103">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb schwach untrennbar reflexiv&quot;, 0 );</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L105">                addKonjugationVerbSchwachUntrennbar( props, true );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L107">                return false;</span>
+            }
+            
+<span class="nc" id="L110">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb schwach trennbar&quot;, 0 );</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L112">                addKonjugationVerbSchwachTrennbar( props, false );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L114">                return false;</span>
+            }
+            
+<span class="nc" id="L117">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb schwach trennbar reflexiv&quot;, 0 );</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L119">                addKonjugationVerbSchwachTrennbar( props, true );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L121">                return false;</span>
+            }
+            
+<span class="nc" id="L124">            props = BookUtils.parseRule( wikiText, &quot;Deutsch Verb schwach doppelt trennbar&quot;, 0 );</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L126">                addKonjugationVerbSchwachDoppeltTrennbar( props );</span>
+                // The declinations are valid, but the lemma (word) not.
+<span class="nc" id="L128">                return false;</span>
+            }
+
+//            if( word.endsWith( &quot;(Konjugation)&quot; ) &amp;&amp; wikiText.indexOf( &quot;Deutsch&quot; ) &gt; 0 ){
+//                System.err.println();
+//            }
+            
+<span class="nc" id="L135">            return false;</span>
+        }
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        do{</span>
+<span class="nc" id="L138">            String chapter = getChapter(wikiText, idxGerman);</span>
+<span class="nc" id="L139">            searchFlexion( word, chapter );</span>
+<span class="nc" id="L140">            idxGerman = wikiText.indexOf(chapter) + chapter.length();</span>
+            //should not occur but it occur
+<span class="nc" id="L142">            idxGerman = wikiText.indexOf(&quot;{{Sprache|Deutsch}}&quot;, idxGerman );</span>
+<span class="nc" id="L143">        }while(idxGerman &gt; 0);</span>
+<span class="nc" id="L144">        return true;</span>
+    }
+    
+    private final void searchFlexion( String word, String wikiText ){
+<span class="nc" id="L148">        int idx = wikiText.indexOf(&quot;{{Wortart|Verb|Deutsch}}&quot;);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        while(idx &gt; 0){</span>
+            //ascertain flexion of the verbs
+<span class="nc" id="L151">            String table = getTable( wikiText, &quot;Verb-Tabelle&quot;, idx );</span>
+<span class="nc bnc" id="L152" title="All 4 branches missed.">            if(table.length() &gt; 0 &amp;&amp; searchWordAndAdd( word, table, &quot;Gegenwart_ich=&quot;, 0)){</span>
+<span class="nc" id="L153">                searchWordAndAdd( word, table, &quot;Gegenwart_du=&quot;, 0);</span>
+<span class="nc" id="L154">                searchWordAndAdd( word, table, &quot;Gegenwart_er, sie, es=&quot;, 0);</span>
+<span class="nc" id="L155">                searchWordAndAdd( word, table, &quot;1.Vergangenheit_ich=&quot;, 0);</span>
+<span class="nc" id="L156">                searchWordAndAdd( word, table, &quot;Partizip II=&quot;, 0);</span>
+<span class="nc" id="L157">                searchWordAndAdd( word, table, &quot;Konjunktiv II_ich=&quot;, 0);</span>
+<span class="nc" id="L158">                searchWordAndAdd( word, table, &quot;Befehl_du=&quot;, 0);</span>
+<span class="nc" id="L159">                searchWordAndAdd( word, table, &quot;Befehl_ihr=&quot;, 0);</span>
+            }
+<span class="nc" id="L161">            int lastIdx = idx+1;</span>
+<span class="nc" id="L162">            idx = wikiText.indexOf(&quot;{{Wortart|Verb|Deutsch}}&quot;, lastIdx);</span>
+        }
+        
+        
+<span class="nc" id="L166">        idx = wikiText.indexOf(&quot;{{Wortart|Substantiv}}&quot;);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if(idx &lt;0){</span>
+<span class="nc" id="L168">            idx = wikiText.indexOf(&quot;{{Wortart|Substantiv|Deutsch}}&quot;);</span>
+        }
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        while(idx &gt; 0){</span>
+<span class="nc" id="L171">            String chapter = getChapter(wikiText, idx);</span>
+<span class="nc" id="L172">            if( !addDeklinationSubstTable( chapter, 0, word ) ){</span>
+                // no Deklination found
+            }
+<span class="nc" id="L175">            int lastIdx = idx+1;</span>
+<span class="nc" id="L176">            idx = wikiText.indexOf(&quot;{{Wortart|Substantiv}}&quot;, lastIdx);</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if(idx &lt;0){</span>
+<span class="nc" id="L178">                idx = wikiText.indexOf(&quot;{{Wortart|Substantiv|Deutsch}}&quot;, lastIdx);</span>
+            }
+        }
+        
+        
+<span class="nc" id="L183">        idx = wikiText.indexOf(&quot;{{Wortart|Adjektiv|Deutsch}}&quot;);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        while(idx &gt; 0){</span>
+            // finding the conjugation of the Adjective 
+<span class="nc" id="L186">            Properties props = BookUtils.parseRule( wikiText, &quot;Deutsch Adjektiv Ãœbersicht&quot;, idx);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            if(props != null){</span>
+<span class="nc" id="L188">                String grundform = props.getProperty( &quot;Positiv&quot; );</span>
+<span class="nc" id="L189">                addFormatedWordPhrase(word, &quot;Positiv&quot;, grundform );</span>
+<span class="nc" id="L190">                addFormatedWordPhrase(word, &quot;Komparativ&quot;, props.getProperty( &quot;Komparativ&quot; ) );</span>
+<span class="nc" id="L191">                addFormatedWordPhrase(word, &quot;Superlativ&quot;, props.getProperty( &quot;Superlativ&quot; ) );</span>
+<span class="nc bnc" id="L192" title="All 4 branches missed.">                if(grundform == null || !super.isValidWord(grundform)){</span>
+<span class="nc" id="L193">                    grundform = word;</span>
+                }
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                if(!grundform.endsWith( &quot;e&quot; )){</span>
+<span class="nc" id="L196">                    addDeklinationAdjektiv(grundform);</span>
+                }
+            }
+<span class="nc" id="L199">            int lastIdx = idx+1;</span>
+<span class="nc" id="L200">            idx = wikiText.indexOf(&quot;{{Wortart|Adjektiv|Deutsch}}&quot;, lastIdx);</span>
+        }
+        
+        
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if( wikiText.indexOf( &quot;{{Wortart|Partizip I|Deutsch}}&quot; ) &gt;= 0 ) {</span>
+<span class="nc" id="L205">            addDeklinationAdjektiv( word );</span>
+        }
+
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if( wikiText.indexOf( &quot;{{Wortart|Partizip II|Deutsch}}&quot; ) &gt;= 0 ) {</span>
+<span class="nc" id="L209">            addDeklinationAdjektiv( word );</span>
+        }
+
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if( wikiText.indexOf( &quot;{{Wortart|Indefinitpronomen|Deutsch}}&quot; ) &gt;= 0 ) {</span>
+<span class="nc" id="L213">            addIndefinitpronomen( word, wikiText );</span>
+        }
+        
+<span class="nc" id="L216">        searchExtendsWords( word, wikiText, &quot;{{Synonyme}}&quot; );</span>
+<span class="nc" id="L217">        searchExtendsWords( word, wikiText, &quot;{{Unterbegriffe}}&quot; );</span>
+<span class="nc" id="L218">        searchExtendsWords( word, wikiText, &quot;{{Abgeleitete Begriffe}}&quot; );</span>
+<span class="nc" id="L219">    }</span>
+    
+    /**
+     * Get the chapter on the current position. If a next chapter line is not find
+     * then the completely wikiText is return.
+     * @param wikiText
+     * @param headerIdx position in the header line
+     * @return a chapter or all text.
+     */
+    private String getChapter(String wikiText, int headerIdx){
+<span class="nc" id="L229">        int startIdx = wikiText.lastIndexOf('\n', headerIdx) + 1;</span>
+<span class="nc" id="L230">        int endIdx = wikiText.indexOf('\n', headerIdx);</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if(endIdx == -1){</span>
+<span class="nc" id="L232">            return wikiText.substring(startIdx);</span>
+        }
+<span class="nc" id="L234">        String header = wikiText.substring(startIdx, endIdx).trim();</span>
+<span class="nc" id="L235">        int prefixSize = 0;</span>
+<span class="nc bnc" id="L236" title="All 4 branches missed.">        while(header.length() &gt; prefixSize &amp;&amp; header.charAt(prefixSize) == '='){</span>
+<span class="nc" id="L237">            prefixSize++;</span>
+        }
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if(prefixSize == 0){</span>
+<span class="nc" id="L240">            return wikiText.substring(startIdx);</span>
+        }
+<span class="nc" id="L242">        String marker = header.substring(0,prefixSize);</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if(!header.endsWith(marker)){</span>
+<span class="nc" id="L244">            return wikiText.substring(startIdx);</span>
+        }
+
+<span class="nc" id="L247">        Pattern pattern = Pattern.compile( &quot;^&quot; + marker + &quot;[^=].*[^=]&quot; + marker + &quot;\\s*$&quot;, Pattern.MULTILINE );</span>
+<span class="nc" id="L248">        Matcher matcher = pattern.matcher( wikiText );</span>
+
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if( matcher.find( endIdx ) ) {</span>
+<span class="nc" id="L251">            String chapter = wikiText.substring(startIdx, matcher.start() ).trim();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if(header.equals(chapter)){</span>
+<span class="nc" id="L253">                return wikiText.substring(startIdx); //there is some things wrong in the structure</span>
+            }
+<span class="nc" id="L255">            return chapter;</span>
+        }
+            
+<span class="nc" id="L258">        return wikiText.substring(startIdx);</span>
+    }
+    
+    /**
+     * Liefert einen Substring mit der aktuellen Konjugation/Flexion Tabelle des Wikitextes
+     */
+    private String getTable( String wikiText, String tableName, int fromIndex ){
+<span class="nc" id="L265">        int start = wikiText.indexOf( &quot;{{&quot; + tableName, fromIndex);</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if(start &gt; 0){</span>
+<span class="nc" id="L267">            final int length = wikiText.length();</span>
+<span class="nc" id="L268">            int braces = 0;</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">            for(int end = start; end&lt;length; end++){</span>
+                
+<span class="nc bnc" id="L271" title="All 3 branches missed.">                switch(wikiText.charAt( end )){</span>
+                    case '{':
+<span class="nc" id="L273">                        braces++;</span>
+<span class="nc" id="L274">                        break;</span>
+                    case '}':
+<span class="nc bnc" id="L276" title="All 2 branches missed.">                        if(--braces == 0){</span>
+<span class="nc" id="L277">                            return wikiText.substring( start, end+1 );</span>
+                        }
+                        break;
+                }
+            }
+        }
+<span class="nc" id="L283">        return &quot;&quot;;</span>
+    }
+    
+    /**
+     * Die Flexionen und Konjugationen eines Wortes sind durch bestimmte Phrasen gemarked.
+     * @param baseWord Hauptwort, Name des Artikels
+     * @param wikiText der gesamte Wikiartikel in Wikisyntax 
+     * @param marker die Phrase, die eine bestimmte Konjugation markiert
+     * @param fromIndex Startposition ab der die Phrase gesucht werden soll
+     * @return true, wenn ein richtiges Wort gefunden werden konnte.
+     */
+    private final boolean searchWordAndAdd(String baseWord, String wikiText, String marker, int fromIndex){
+<span class="nc" id="L295">        int idx1 = wikiText.indexOf( marker, fromIndex);</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">        if(idx1&gt;0){</span>
+<span class="nc" id="L297">            idx1 += marker.length();</span>
+<span class="nc" id="L298">            int idx2 = indexOf( wikiText, new char[]{'|', '&lt;', '}', '{'}, idx1);</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">            if(idx2&gt;0){</span>
+<span class="nc" id="L300">                String word = wikiText.substring( idx1, idx2).trim();</span>
+<span class="nc" id="L301">                addFormatedWordPhrase( baseWord, marker, word );</span>
+<span class="nc" id="L302">                return true;</span>
+            }else{
+<span class="nc" id="L304">                System.out.println(&quot;End not found for marker '&quot; + marker + &quot;' for base word '&quot; + baseWord + &quot;'&quot;);</span>
+            }
+<span class="nc" id="L306">        }else{</span>
+<span class="nc" id="L307">            System.out.println(&quot;Marker '&quot; + marker + &quot;' was not found for base word '&quot; + baseWord + &quot;'&quot;);</span>
+        }
+<span class="nc" id="L309">        return false;</span>
+    }
+    
+    
+    private boolean searchExtendsWords(String baseWord, String wikiText, String marker){
+<span class="nc" id="L314">        int idx1 = wikiText.indexOf( marker );</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if(idx1 &gt;= 0){</span>
+<span class="nc" id="L316">            idx1 += marker.length();</span>
+<span class="nc" id="L317">            int idx2 = indexOf( wikiText, new char[]{'{', '='}, idx1);</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">            if(idx2&lt;0){</span>
+<span class="nc" id="L319">                idx2 = wikiText.length();</span>
+            }
+<span class="nc" id="L321">            String extendsWords = wikiText.substring( idx1, idx2 ); </span>
+<span class="nc" id="L322">            addLinkWords( baseWord, extendsWords, marker );</span>
+<span class="nc" id="L323">            return true;</span>
+        }
+<span class="nc" id="L325">        return false;</span>
+    }
+    
+    /**
+     * Add all valid word that are in links (double brackets like [[word]]).
+     * @param baseWord
+     * @param wikiText the searching text
+     * @param marker
+     */
+    private void addLinkWords( String baseWord, String wikiText, String marker ){
+<span class="nc" id="L335">        int idx3 = wikiText.indexOf( &quot;[[&quot; );</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        while(idx3 &gt; 0){</span>
+<span class="nc" id="L337">            int idx4 = wikiText.indexOf( &quot;]]&quot;, idx3 );</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">            if(idx4 &gt; 0){</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">                if(idx3+2 &lt; idx4){//leere Werte die vom Template entstehen, aus Performance gleich skippen </span>
+<span class="nc" id="L340">                    String word = wikiText.substring( idx3+2, idx4 );</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">                    if (word.startsWith(&quot;WikiSaurus:&quot;)) {</span>
+<span class="nc" id="L342">                        word = word.substring(11).trim();</span>
+                    }
+<span class="nc bnc" id="L344" title="All 2 branches missed.">                    if (word.startsWith(&quot;Thesaurus:&quot;)) {</span>
+<span class="nc" id="L345">                        word = word.substring(10).trim();</span>
+                    }
+<span class="nc bnc" id="L347" title="All 2 branches missed.">                    if( word.indexOf( '|' ) &gt; 0){</span>
+<span class="nc" id="L348">                        word = word.substring( 0, word.indexOf( '|' ) );</span>
+                    }
+<span class="nc bnc" id="L350" title="All 2 branches missed.">                    if(!addWordPhrase(word)){</span>
+<span class="nc" id="L351">                        System.out.println(&quot;Invalid Extend Word '&quot; + word + &quot;' for marker '&quot; + marker + &quot;' for base word '&quot; + baseWord + &quot;'&quot;);</span>
+                    }
+                }
+<span class="nc" id="L354">                idx3 = wikiText.indexOf( &quot;[[&quot;, idx4 );</span>
+<span class="nc" id="L355">            }else{</span>
+<span class="nc" id="L356">                idx3 = -1;</span>
+            }
+        }
+<span class="nc" id="L359">    }</span>
+    
+    /**
+     * Add a formated word phrase like it used in some format tables.
+     * @param baseWord the lemma word, for debugging
+     * @param key the key of the format table, for debugging
+     * @param phrase the word or phrase, can also be null or empty
+     */
+    private final void addFormatedWordPhrase( String baseWord, String key, String phrase ){
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        if( phrase == null ) {</span>
+<span class="nc" id="L369">            return;</span>
+        }
+<span class="nc bnc" id="L371" title="All 4 branches missed.">        if( phrase.endsWith( &quot;!&quot; ) || phrase.endsWith(&quot;â€™&quot;)) {</span>
+<span class="nc" id="L372">            phrase = phrase.substring( 0, phrase.length() - 1 );</span>
+        }
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        if( phrase.length() &lt;= 1 ) {</span>
+            //empty Entry
+<span class="nc" id="L376">            return;</span>
+        }
+<span class="nc bnc" id="L378" title="All 8 branches missed.">        if( phrase.equals( &quot;{{fehlend}}&quot; ) || phrase.equals( &quot;---&quot; ) || phrase.equals( &quot;--&quot; ) || phrase.equals(&quot;{{center&quot;)) {</span>
+<span class="nc" id="L379">            return;</span>
+        }
+<span class="nc" id="L381">        int idx3 = phrase.indexOf( &quot;(&quot; );</span>
+<span class="nc" id="L382">        int idx4 = phrase.indexOf( &quot;)&quot;, idx3 );</span>
+<span class="nc bnc" id="L383" title="All 4 branches missed.">        if( idx3 &gt;= 0 &amp;&amp; idx4 &gt; 0 ) {</span>
+<span class="nc" id="L384">            String word1 = phrase.substring( 0, idx3 );</span>
+<span class="nc" id="L385">            String word2 = phrase.substring( idx4 + 1 );</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">            String word3 = word1.length() + word2.length() &gt; 0 ? word1 + word2 : phrase.substring( idx3 + 1, idx4 );</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            if( addWordPhrase( word3 ) ) {</span>
+<span class="nc" id="L388">                addWordPhrase( word1 + phrase.substring( idx3 + 1, idx4 ) + word2 );</span>
+<span class="nc" id="L389">                return;</span>
+            } else {
+<span class="nc" id="L391">                System.out.println( &quot;Invalid Word '&quot; + phrase + &quot;' for marker '&quot; + key + &quot;' for base word '&quot;</span>
+<span class="nc" id="L392">                                + baseWord + &quot;'&quot; );</span>
+            }
+<span class="nc" id="L394">        } else {</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">            if( addWordPhrase( phrase ) ) {</span>
+<span class="nc" id="L396">                return;</span>
+            } else {
+<span class="nc" id="L398">                System.out.println( &quot;Invalid Word '&quot; + phrase + &quot;' for marker '&quot; + key + &quot;' for base word '&quot;</span>
+<span class="nc" id="L399">                                + baseWord + &quot;'&quot; );</span>
+            }
+        }
+<span class="nc" id="L402">    }</span>
+    
+    /**
+     * Substantive sind alle mit Artikel abgelegt und einige Verben zerfallen bei der Konjugation 
+     */
+    private final boolean addWordPhrase(String phrase){
+<span class="nc" id="L408">    	boolean isValid = true;</span>
+    	// recognize optional [e] or (e) and add both variants
+<span class="nc" id="L410">    	int index = phrase.indexOf(&quot;[e]&quot;);</span>
+<span class="nc bnc" id="L411" title="All 4 branches missed.">    	if (index &gt; 0 &amp;&amp; Character.isLetter(phrase.charAt(index-1))) {</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">    		for (int i = 0; i &lt; 2; i++) {</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        		addWordPhrase(phrase.substring(0, index) + (i==0?&quot;e&quot;:&quot;&quot;) + phrase.substring(index + 3));</span>
+			}
+<span class="nc" id="L415">    	}</span>
+    	else {
+<span class="nc" id="L417">	        String[] words = phrase.split( &quot;(\\s|/|,|!)+&quot; );</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">	        for( int i = 0; i &lt; words.length; i++ ) {</span>
+<span class="nc" id="L419">	            String word = words[i];</span>
+<span class="nc bnc" id="L420" title="All 2 branches missed.">	            if(word.length()&gt;0){</span>
+<span class="nc bnc" id="L421" title="All 2 branches missed.">	                if(super.isValidWord(word)){</span>
+<span class="nc" id="L422">	                    addWord(word);</span>
+<span class="nc" id="L423">	                }else{</span>
+<span class="nc" id="L424">	                    isValid = false;</span>
+	                }
+	            }
+	        }
+    	}
+<span class="nc" id="L429">        return isValid;</span>
+    }
+
+    /**
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deklinationsseite_Adjektiv
+     * A sample can see at http://de.wiktionary.org/w/index.php?title=hoch_%28Deklination%29&amp;action=edit
+     * @param wikiText
+     * @param idx
+     */
+    private void addDeklinationAdjektiv( Properties props ) {
+<span class="nc" id="L439">        addDeklinationAdjektiv( props.getProperty(&quot;Positiv-Stamm&quot;) );</span>
+<span class="nc" id="L440">        addDeklinationAdjektiv( props.getProperty(&quot;Komparativ-Stamm&quot;) );</span>
+<span class="nc" id="L441">        addDeklinationAdjektiv( props.getProperty(&quot;Superlativ-Stamm&quot;) );</span>
+<span class="nc" id="L442">    }</span>
+    
+    /**
+     * Add the Adjective Declination for the given word root.
+     * @param wordStamm the word root, can be null
+     */
+    private void addDeklinationAdjektiv( String wordStamm ) {
+<span class="nc bnc" id="L449" title="All 4 branches missed.">        if( wordStamm != null &amp;&amp; super.isValidWord( wordStamm )) {</span>
+<span class="nc" id="L450">            addWord( wordStamm + &quot;e&quot; ); </span>
+<span class="nc" id="L451">            addWord( wordStamm + &quot;er&quot; );</span>
+<span class="nc" id="L452">            addWord( wordStamm + &quot;es&quot; );</span>
+<span class="nc" id="L453">            addWord( wordStamm + &quot;en&quot; );</span>
+<span class="nc" id="L454">            addWord( wordStamm + &quot;em&quot; );</span>
+        }
+<span class="nc" id="L456">    }</span>
+    
+    /**
+     * Add the declination of pronomen
+     * @param word the lemma word
+     * @param wikiText the wiki text
+     */
+    private void addIndefinitpronomen( String word, String wikiText ) {
+<span class="nc" id="L464">        Properties props = BookUtils.parseRule( wikiText, &quot;Pronomina-Tabelle&quot;, 0 );</span>
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        if( props != null ){</span>
+<span class="nc" id="L466">            Set&lt;Map.Entry&lt;Object,Object&gt;&gt; entries = props.entrySet();</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">            for( Map.Entry&lt;Object,Object&gt; entry : entries ) {</span>
+<span class="nc" id="L468">                addFormatedWordPhrase( word, (String)entry.getKey(), (String)entry.getValue() );</span>
+            }
+        }
+<span class="nc" id="L471">    }</span>
+    
+    /**
+     * Implementation of the templates
+     * http://de.wiktionary.org/wiki/Vorlage:Deutsch_Substantiv_Ãœbersicht
+     */
+    private boolean addDeklinationSubstTable( String wikiText, int fromIndex, String baseWord ) {
+<span class="nc" id="L478">        Properties props = BookUtils.parseRule( wikiText, &quot;Deutsch Substantiv Ãœbersicht&quot;, fromIndex );</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">        if( props != null ) {</span>
+<span class="nc bnc" id="L480" title="All 4 branches missed.">            if( props.remove( &quot;Bild&quot; ) != null || props.remove( &quot;Bild 1&quot; ) != null ) {</span>
+<span class="nc" id="L481">                props.remove( &quot;1&quot; );</span>
+<span class="nc" id="L482">                props.remove( &quot;2&quot; );</span>
+<span class="nc" id="L483">                props.remove( &quot;3&quot; );</span>
+            }
+<span class="nc bnc" id="L485" title="All 2 branches missed.">            if( props.remove( &quot;Bild 2&quot; ) != null ) {</span>
+<span class="nc" id="L486">                props.remove( &quot;4&quot; );</span>
+<span class="nc" id="L487">                props.remove( &quot;5&quot; );</span>
+<span class="nc" id="L488">                props.remove( &quot;6&quot; );</span>
+            }
+<span class="nc bnc" id="L490" title="All 2 branches missed.">            if( props.remove( &quot;Bild 3&quot; ) != null ) {</span>
+<span class="nc" id="L491">                props.remove( &quot;7&quot; );</span>
+<span class="nc" id="L492">                props.remove( &quot;8&quot; );</span>
+<span class="nc" id="L493">                props.remove( &quot;9&quot; );</span>
+            }
+<span class="nc bnc" id="L495" title="All 2 branches missed.">            if( props.remove( &quot;Bild 4&quot; ) != null ) {</span>
+<span class="nc" id="L496">                props.remove( &quot;10&quot; );</span>
+<span class="nc" id="L497">                props.remove( &quot;11&quot; );</span>
+<span class="nc" id="L498">                props.remove( &quot;12&quot; );</span>
+            }
+<span class="nc bnc" id="L500" title="All 2 branches missed.">            if( props.remove( &quot;Bild 5&quot; ) != null ) {</span>
+<span class="nc" id="L501">                props.remove( &quot;13&quot; );</span>
+<span class="nc" id="L502">                props.remove( &quot;14&quot; );</span>
+<span class="nc" id="L503">                props.remove( &quot;15&quot; );</span>
+            }
+<span class="nc bnc" id="L505" title="All 2 branches missed.">            for( Entry entry : props.entrySet() ) {</span>
+<span class="nc" id="L506">                String word = (String)entry.getValue();</span>
+<span class="nc" id="L507">                addFormatedWordPhrase( baseWord, (String)entry.getKey(), word );</span>
+            }
+
+<span class="nc" id="L510">            return true;</span>
+        }
+
+<span class="nc" id="L513">        return false;</span>
+    }
+
+    private String removeHtmlFormating( String word ) {
+<span class="nc" id="L517">        int idx1 = word.indexOf( '&lt;' );</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">        while( idx1 &gt;= 0 ) {</span>
+<span class="nc" id="L519">            int idx2 = word.indexOf( '&gt;', idx1 );</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">            if( idx2 &gt; 0 ) {</span>
+<span class="nc" id="L521">                String html = word.substring(idx1+1, idx2).toLowerCase().trim();</span>
+<span class="nc bnc" id="L522" title="All 8 branches missed.">                if(html.equals(&quot;br&quot;) || html.equals(&quot;p&quot;) || html.startsWith( &quot;br &quot; ) || html.startsWith( &quot;p &quot; ) ){</span>
+<span class="nc" id="L523">                    html = &quot; &quot;;</span>
+<span class="nc" id="L524">                }else{</span>
+<span class="nc" id="L525">                    html = &quot;&quot;;</span>
+                }
+<span class="nc" id="L527">                word = word.substring( 0, idx1 ) + html + word.substring( idx2 + 1 );</span>
+<span class="nc" id="L528">                idx1 = word.indexOf( '&lt;' );</span>
+<span class="nc" id="L529">            } else {</span>
+<span class="nc" id="L530">                idx1 = -1;</span>
+            }
+        }
+<span class="nc bnc" id="L533" title="All 2 branches missed.">        for (String blank : new String[]{&quot;&amp;nbsp;&quot;, &quot;&amp;#32;&quot;}) {</span>
+<span class="nc" id="L534">        	idx1 = word.indexOf( blank );</span>
+<span class="nc bnc" id="L535" title="All 2 branches missed.">        	while( idx1 &gt;= 0 ) {</span>
+<span class="nc" id="L536">        		word = word.substring( 0, idx1 ) + &quot; &quot; + word.substring( idx1 + blank.length() );</span>
+<span class="nc" id="L537">        		idx1 = word.indexOf( blank );</span>
+        	}
+        }
+<span class="nc" id="L540">        return word;</span>
+    }
+
+    /**
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_unregelm%C3%A4%C3%9Fig
+     */
+    private void addKonjugationVerbUnregular( Properties props ) {
+<span class="nc" id="L547">        String vorsilbe = props.getProperty( &quot;1&quot;, &quot;&quot; );</span>
+<span class="nc" id="L548">        String stamm = props.getProperty( &quot;2&quot; );</span>
+        
+        // Partizipien
+<span class="nc" id="L551">        addWord( vorsilbe + stamm + &quot;end&quot; );        </span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">        if( &quot;ja&quot;.equals( props.getProperty( &quot;gerund&quot; ) ) ){</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">            String gerund = vorsilbe.length() &gt; 0 ? vorsilbe + &quot;zu&quot; + stamm : stamm;</span>
+<span class="nc" id="L554">            addWord( gerund + &quot;nder&quot; );</span>
+<span class="nc" id="L555">            addWord( gerund + &quot;nde&quot; );</span>
+<span class="nc" id="L556">            addWord( gerund + &quot;ndes&quot; );</span>
+<span class="nc" id="L557">            addWord( gerund + &quot;nden&quot; );</span>
+<span class="nc" id="L558">            addWord( gerund + &quot;ndem&quot; );            </span>
+        }
+        
+        //PrÃ¤sens
+<span class="nc bnc" id="L562" title="All 4 branches missed.">        if( stamm != null &amp;&amp; super.isValidWord( stamm ) ) {</span>
+<span class="nc" id="L563">            addWord( stamm + &quot;e&quot; );</span>
+<span class="nc" id="L564">            addWord( stamm + &quot;st&quot; );</span>
+<span class="nc" id="L565">            addWord( stamm + &quot;t&quot; );</span>
+<span class="nc" id="L566">            addWord( stamm + &quot;en&quot; );</span>
+<span class="nc" id="L567">            addWord( stamm + &quot;est&quot; );</span>
+<span class="nc" id="L568">            addWord( stamm + &quot;et&quot; );</span>
+<span class="nc bnc" id="L569" title="All 2 branches missed.">            if( vorsilbe.length() &gt; 0 ){</span>
+                //Nebensatz
+<span class="nc" id="L571">                addWord( vorsilbe + stamm + &quot;e&quot; );</span>
+<span class="nc" id="L572">                addWord( vorsilbe + stamm + &quot;st&quot; );</span>
+<span class="nc" id="L573">                addWord( vorsilbe + stamm + &quot;t&quot; );</span>
+<span class="nc" id="L574">                addWord( vorsilbe + stamm + &quot;en&quot; );</span>
+<span class="nc" id="L575">                addWord( vorsilbe + stamm + &quot;est&quot; );</span>
+<span class="nc" id="L576">                addWord( vorsilbe + stamm + &quot;et&quot; );</span>
+            }
+        }
+
+        //PrÃ¤teritum
+<span class="nc" id="L581">        stamm = props.getProperty( &quot;3&quot; );</span>
+<span class="nc bnc" id="L582" title="All 4 branches missed.">        if( stamm != null &amp;&amp; super.isValidWord( stamm ) ) {</span>
+<span class="nc" id="L583">            addWord( stamm );</span>
+<span class="nc" id="L584">            addWord( stamm + &quot;st&quot; );</span>
+<span class="nc" id="L585">            addWord( stamm + &quot;en&quot; );</span>
+<span class="nc" id="L586">            addWord( stamm + &quot;t&quot; );</span>
+<span class="nc bnc" id="L587" title="All 2 branches missed.">            if( vorsilbe.length() &gt; 0 ){</span>
+                //Nebensatz
+<span class="nc" id="L589">                addWord( vorsilbe + stamm );</span>
+<span class="nc" id="L590">                addWord( vorsilbe + stamm + &quot;st&quot; );</span>
+<span class="nc" id="L591">                addWord( vorsilbe + stamm + &quot;en&quot; );</span>
+<span class="nc" id="L592">                addWord( vorsilbe + stamm + &quot;t&quot; );</span>
+            }
+        }
+
+        //PrÃ¤teritum Konjunktiv
+<span class="nc" id="L597">        stamm = props.getProperty( &quot;4&quot; );</span>
+<span class="nc bnc" id="L598" title="All 4 branches missed.">        if( stamm != null &amp;&amp; super.isValidWord( stamm ) ) {</span>
+<span class="nc" id="L599">            addWord( stamm + &quot;e&quot; );</span>
+<span class="nc" id="L600">            addWord( stamm + &quot;est&quot; );</span>
+<span class="nc" id="L601">            addWord( stamm + &quot;en&quot; );</span>
+<span class="nc" id="L602">            addWord( stamm + &quot;et&quot; );</span>
+<span class="nc bnc" id="L603" title="All 2 branches missed.">            if( vorsilbe.length() &gt; 0 ){</span>
+                //Nebensatz
+<span class="nc" id="L605">                addWord( vorsilbe + stamm );</span>
+<span class="nc" id="L606">                addWord( vorsilbe + stamm + &quot;est&quot; );</span>
+<span class="nc" id="L607">                addWord( vorsilbe + stamm + &quot;en&quot; );</span>
+<span class="nc" id="L608">                addWord( vorsilbe + stamm + &quot;et&quot; );</span>
+            }
+        }
+
+        // Partizip Perfect / Partizip 2
+<span class="nc" id="L613">        stamm = props.getProperty( &quot;5&quot; );</span>
+<span class="nc bnc" id="L614" title="All 4 branches missed.">        if( stamm != null &amp;&amp; super.isValidWord( stamm ) ) {</span>
+<span class="nc" id="L615">            addWord( vorsilbe + stamm );</span>
+<span class="nc" id="L616">            addDeklinationAdjektiv( vorsilbe + stamm );</span>
+        }
+<span class="nc" id="L618">    }</span>
+    
+    /**
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_schwach_untrennbar
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_schwach_untrennbar_reflexiv
+     */
+    private void addKonjugationVerbSchwachUntrennbar( Properties props, boolean reflexiv ) {
+        // Partizip Perfect / Partizip 2
+<span class="nc" id="L626">        String partizip2 = props.getProperty( &quot;6&quot; );</span>
+<span class="nc bnc" id="L627" title="All 4 branches missed.">        if( partizip2 != null &amp;&amp; super.isValidWord( partizip2 ) ) {</span>
+<span class="nc" id="L628">            addWord( partizip2 );</span>
+<span class="nc" id="L629">            addDeklinationAdjektiv( partizip2);</span>
+        }
+
+<span class="nc" id="L632">        String stamm4 = props.getProperty( &quot;1&quot; ) + props.getProperty( &quot;2&quot; ) + props.getProperty( &quot;3&quot; ) + props.getProperty( &quot;4&quot; );</span>
+<span class="nc bnc" id="L633" title="All 2 branches missed.">        if( super.isValidWord( stamm4 ) ) {</span>
+            // Partizipien
+<span class="nc" id="L635">            addWord( stamm4 + &quot;nd&quot; );</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">            if( !reflexiv ){</span>
+<span class="nc" id="L637">                addWord( stamm4 + &quot;nder&quot; );</span>
+<span class="nc" id="L638">                addWord( stamm4 + &quot;nde&quot; );</span>
+<span class="nc" id="L639">                addWord( stamm4 + &quot;ndes&quot; );</span>
+<span class="nc" id="L640">                addWord( stamm4 + &quot;nden&quot; );</span>
+<span class="nc" id="L641">                addWord( stamm4 + &quot;ndem&quot; );</span>
+            }
+            
+<span class="nc" id="L644">            String stamm3 = props.getProperty( &quot;1&quot; ) + props.getProperty( &quot;2&quot; ) + props.getProperty( &quot;3&quot; );</span>
+            //PrÃ¤sens
+<span class="nc" id="L646">            addWord( stamm4 );</span>
+<span class="nc" id="L647">            addWord( stamm3 + &quot;st&quot; );</span>
+<span class="nc" id="L648">            addWord( stamm3 + &quot;t&quot; );</span>
+<span class="nc" id="L649">            addWord( stamm3 + &quot;est&quot; );</span>
+<span class="nc" id="L650">            addWord( stamm3 + &quot;e&quot; );</span>
+<span class="nc" id="L651">            addWord( stamm3 + &quot;et&quot; );</span>
+            //PrÃ¤terium
+<span class="nc" id="L653">            addWord( stamm3 + &quot;te&quot; );</span>
+<span class="nc" id="L654">            addWord( stamm3 + &quot;test&quot; );</span>
+<span class="nc" id="L655">            addWord( stamm3 + &quot;ten&quot; );</span>
+<span class="nc" id="L656">            addWord( stamm3 + &quot;tet&quot; );</span>
+        }
+<span class="nc" id="L658">    }</span>
+    
+    /**
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_schwach_trennbar
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_schwach_trennbar_reflexiv
+     */
+    private void addKonjugationVerbSchwachTrennbar( Properties props, boolean reflexiv ) {
+        // Partizip Perfect / Partizip 2
+<span class="nc" id="L666">        String partizip2 = props.getProperty( &quot;7&quot; );</span>
+<span class="nc bnc" id="L667" title="All 4 branches missed.">        if( partizip2 != null &amp;&amp; super.isValidWord( partizip2 ) ) {</span>
+<span class="nc" id="L668">            addWord( partizip2 );</span>
+<span class="nc" id="L669">            addDeklinationAdjektiv( partizip2);</span>
+        }
+        
+<span class="nc" id="L672">        String vorsilbe = props.getProperty( &quot;1&quot; );</span>
+<span class="nc" id="L673">        String stamm4 = props.getProperty( &quot;2&quot; ) + props.getProperty( &quot;3&quot; ) + props.getProperty( &quot;4&quot; );</span>
+<span class="nc" id="L674">        String stamm5 = stamm4 + props.getProperty( &quot;5&quot; );</span>
+<span class="nc" id="L675">        String all4 = vorsilbe + stamm4;</span>
+<span class="nc" id="L676">        String all5 = vorsilbe + stamm5;</span>
+        
+<span class="nc" id="L678">        addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;n&quot; );</span>
+        // Partizipien
+<span class="nc" id="L680">        addWord( all5 + &quot;nd&quot; );</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">        if( !reflexiv ){</span>
+<span class="nc" id="L682">            addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;nder&quot; );</span>
+<span class="nc" id="L683">            addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;nde&quot; );</span>
+<span class="nc" id="L684">            addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;ndes&quot; );</span>
+<span class="nc" id="L685">            addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;nden&quot; );</span>
+<span class="nc" id="L686">            addWord( vorsilbe + &quot;zu&quot; + stamm5 + &quot;ndem&quot; );</span>
+        }
+        //PrÃ¤sens
+<span class="nc" id="L689">        addWord( stamm5 );</span>
+<span class="nc" id="L690">        addWord( stamm4 + &quot;st&quot; );</span>
+<span class="nc" id="L691">        addWord( stamm4 + &quot;t&quot; );</span>
+<span class="nc" id="L692">        addWord( stamm4 + &quot;est&quot; );</span>
+<span class="nc" id="L693">        addWord( stamm4 + &quot;e&quot; );</span>
+<span class="nc" id="L694">        addWord( stamm5 + &quot;n&quot; );</span>
+<span class="nc" id="L695">        addWord( stamm4 + &quot;et&quot; );</span>
+<span class="nc" id="L696">        addWord( all5 );</span>
+<span class="nc" id="L697">        addWord( all4 + &quot;st&quot; );</span>
+<span class="nc" id="L698">        addWord( all4 + &quot;t&quot; );</span>
+<span class="nc" id="L699">        addWord( all4 + &quot;est&quot; );</span>
+<span class="nc" id="L700">        addWord( all4 + &quot;e&quot; );</span>
+<span class="nc" id="L701">        addWord( all5 + &quot;n&quot; );</span>
+<span class="nc" id="L702">        addWord( all4 + &quot;et&quot; );</span>
+        //PrÃ¤terium
+<span class="nc" id="L704">        addWord( stamm4 + &quot;te&quot; );</span>
+<span class="nc" id="L705">        addWord( stamm4 + &quot;test&quot; );</span>
+<span class="nc" id="L706">        addWord( stamm4 + &quot;ten&quot; );</span>
+<span class="nc" id="L707">        addWord( stamm4 + &quot;tet&quot; );</span>
+<span class="nc" id="L708">        addWord( all4 + &quot;te&quot; );</span>
+<span class="nc" id="L709">        addWord( all4 + &quot;test&quot; );</span>
+<span class="nc" id="L710">        addWord( all4 + &quot;ten&quot; );</span>
+<span class="nc" id="L711">        addWord( all4 + &quot;tet&quot; );</span>
+<span class="nc" id="L712">    }</span>
+    
+    /**
+     * Implementation of the template http://de.wiktionary.org/wiki/Vorlage:Deutsch_Verb_schwach_doppelt_trennbar
+     */
+    private void addKonjugationVerbSchwachDoppeltTrennbar( Properties props ) {
+        // Partizip Perfect / Partizip 2
+<span class="nc" id="L719">        String partizip2 = props.getProperty( &quot;8&quot; );</span>
+<span class="nc bnc" id="L720" title="All 4 branches missed.">        if( partizip2 != null &amp;&amp; super.isValidWord( partizip2 ) ) {</span>
+<span class="nc" id="L721">            addWord( partizip2 );</span>
+<span class="nc" id="L722">            addDeklinationAdjektiv( partizip2);</span>
+        }
+        
+<span class="nc" id="L725">        String vorsilbe = props.getProperty( &quot;1&quot; ) + props.getProperty( &quot;2&quot; );;</span>
+<span class="nc" id="L726">        String stamm5 = props.getProperty( &quot;3&quot; ) + props.getProperty( &quot;4&quot; ) + props.getProperty( &quot;5&quot; );</span>
+<span class="nc" id="L727">        String stamm6 = stamm5 + props.getProperty( &quot;6&quot; );</span>
+<span class="nc" id="L728">        String all5 = vorsilbe + stamm5;</span>
+<span class="nc" id="L729">        String all6 = vorsilbe + stamm6;</span>
+        
+<span class="nc" id="L731">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;n&quot; );</span>
+        // Partizipien
+<span class="nc" id="L733">        addWord( all6 + &quot;nd&quot; );</span>
+<span class="nc" id="L734">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;nder&quot; );</span>
+<span class="nc" id="L735">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;nde&quot; );</span>
+<span class="nc" id="L736">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;ndes&quot; );</span>
+<span class="nc" id="L737">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;nden&quot; );</span>
+<span class="nc" id="L738">        addWord( vorsilbe + &quot;zu&quot; + stamm6 + &quot;ndem&quot; );</span>
+        //PrÃ¤sens
+<span class="nc" id="L740">        addWord( stamm6 );</span>
+<span class="nc" id="L741">        addWord( stamm5 + &quot;st&quot; );</span>
+<span class="nc" id="L742">        addWord( stamm5 + &quot;t&quot; );</span>
+<span class="nc" id="L743">        addWord( stamm5 + &quot;est&quot; );</span>
+<span class="nc" id="L744">        addWord( stamm5 + &quot;e&quot; );</span>
+<span class="nc" id="L745">        addWord( stamm6 + &quot;n&quot; );</span>
+<span class="nc" id="L746">        addWord( stamm5 + &quot;et&quot; );</span>
+<span class="nc" id="L747">        addWord( all6 );</span>
+<span class="nc" id="L748">        addWord( all5 + &quot;st&quot; );</span>
+<span class="nc" id="L749">        addWord( all5 + &quot;t&quot; );</span>
+<span class="nc" id="L750">        addWord( all5 + &quot;est&quot; );</span>
+<span class="nc" id="L751">        addWord( all5 + &quot;e&quot; );</span>
+<span class="nc" id="L752">        addWord( all6 + &quot;n&quot; );</span>
+<span class="nc" id="L753">        addWord( all5 + &quot;et&quot; );</span>
+        //PrÃ¤terium
+<span class="nc" id="L755">        addWord( stamm5 + &quot;te&quot; );</span>
+<span class="nc" id="L756">        addWord( stamm5 + &quot;test&quot; );</span>
+<span class="nc" id="L757">        addWord( stamm5 + &quot;ten&quot; );</span>
+<span class="nc" id="L758">        addWord( stamm5 + &quot;tet&quot; );</span>
+<span class="nc" id="L759">        addWord( all5 + &quot;te&quot; );</span>
+<span class="nc" id="L760">        addWord( all5 + &quot;test&quot; );</span>
+<span class="nc" id="L761">        addWord( all5 + &quot;ten&quot; );</span>
+<span class="nc" id="L762">        addWord( all5 + &quot;tet&quot; );</span>
+<span class="nc" id="L763">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

@@ -1,0 +1,486 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SpellCheckerDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.inet.jortho</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SpellCheckerDialog (com.inet.jortho)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpellCheckerDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 144)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SpellCheckerDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SpellCheckerDialog$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SpellCheckerDialog$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SpellCheckerDialog$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 159)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/*
+<i>2</i>&nbsp; *  JOrtho
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; *  Copyright (C) 2005-2008 by i-net software
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; *  This program is free software; you can redistribute it and/or
+<i>7</i>&nbsp; *  modify it under the terms of the GNU General Public License as 
+<i>8</i>&nbsp; *  published by the Free Software Foundation; either version 2 of the
+<i>9</i>&nbsp; *  License, or (at your option) any later version. 
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; *  This program is distributed in the hope that it will be useful, but
+<i>12</i>&nbsp; *  WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>13</i>&nbsp; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+<i>14</i>&nbsp; *  General Public License for more details.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; *  You should have received a copy of the GNU General Public License
+<i>17</i>&nbsp; *  along with this program; if not, write to the Free Software
+<i>18</i>&nbsp; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+<i>19</i>&nbsp; *  USA.
+<i>20</i>&nbsp; *  
+<i>21</i>&nbsp; *  Created on 10.11.2005
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;package com.inet.jortho;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import java.awt.*;
+<i>26</i>&nbsp;import java.awt.event.ActionEvent;
+<i>27</i>&nbsp;import java.awt.event.ActionListener;
+<i>28</i>&nbsp;import java.awt.event.KeyEvent;
+<i>29</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>30</i>&nbsp;import java.awt.event.MouseEvent;
+<i>31</i>&nbsp;import java.util.*;
+<i>32</i>&nbsp;import java.util.List;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;import javax.imageio.ImageIO;
+<i>35</i>&nbsp;import javax.swing.*;
+<i>36</i>&nbsp;import javax.swing.event.*;
+<i>37</i>&nbsp;import javax.swing.text.*;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;/**
+<i>40</i>&nbsp; * The Dialog for continues checking the orthography.
+<i>41</i>&nbsp; * @author Volker Berlin
+<i>42</i>&nbsp; */
+<b class="nc"><i>43</i>&nbsp;class SpellCheckerDialog extends JDialog implements ActionListener {</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private JTextComponent jText;
+<i>46</i>&nbsp;    private Dictionary dictionary;
+<i>47</i>&nbsp;    private Tokenizer tok;
+<i>48</i>&nbsp;    private boolean isDictionaryModify;
+<i>49</i>&nbsp;    private final SpellCheckerOptions options;
+<i>50</i>&nbsp;    
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;    final private JLabel notFound = Utils.getLabel( null );</b>
+<b class="nc"><i>53</i>&nbsp;    final private JTextField word = Utils.getTextField(); </b>
+<b class="nc"><i>54</i>&nbsp;    final private JList suggestionsList = Utils.getList();</b>
+<i>55</i>&nbsp;    
+<b class="nc"><i>56</i>&nbsp;    final private JButton ignore      = Utils.getButton( &quot;ignore&quot; );</b>
+<b class="nc"><i>57</i>&nbsp;    final private JButton ignoreAll   = Utils.getButton( &quot;ignoreAll&quot; );</b>
+<b class="nc"><i>58</i>&nbsp;    final private JButton addToDic    = Utils.getButton( &quot;addToDictionary&quot; );</b>
+<b class="nc"><i>59</i>&nbsp;    final private JButton editDic     = Utils.getButton( &quot;editDictionary&quot; );</b>
+<b class="nc"><i>60</i>&nbsp;    final private JButton change      = Utils.getButton( &quot;change&quot; );</b>
+<b class="nc"><i>61</i>&nbsp;    final private JButton changeAll   = Utils.getButton( &quot;changeAll&quot; );</b>
+<b class="nc"><i>62</i>&nbsp;    final private JButton about       = Utils.getButton( &quot;about&quot; );</b>
+<b class="nc"><i>63</i>&nbsp;    final private JButton close       = Utils.getButton( &quot;close&quot; );</b>
+<i>64</i>&nbsp;    
+<i>65</i>&nbsp;    /** List of ignore all words */  
+<b class="nc"><i>66</i>&nbsp;    final private ArrayList&lt;String&gt; ignoreWords = new ArrayList&lt;String&gt;();</b>
+<i>67</i>&nbsp;    /** Map of change all words */
+<b class="nc"><i>68</i>&nbsp;    final private HashMap&lt;String,String&gt; changeWords = new HashMap&lt;String,String&gt;();</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    SpellCheckerDialog(Dialog owner) throws HeadlessException {
+<b class="nc"><i>71</i>&nbsp;        this(owner, false, null);</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    SpellCheckerDialog(Dialog owner, boolean modal, SpellCheckerOptions options){
+<b class="nc"><i>76</i>&nbsp;        super(owner, modal);</b>
+<b class="nc"><i>77</i>&nbsp;        this.options = options == null ? SpellChecker.getOptions() : options;</b>
+<b class="nc"><i>78</i>&nbsp;        init();</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    SpellCheckerDialog(Frame owner){
+<b class="nc"><i>83</i>&nbsp;        this(owner, false, null);</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;    
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    SpellCheckerDialog(Frame owner, boolean modal, SpellCheckerOptions options){
+<b class="nc"><i>88</i>&nbsp;        super(owner, modal);</b>
+<b class="nc"><i>89</i>&nbsp;        this.options = options == null ? SpellChecker.getOptions() : options;</b>
+<b class="nc"><i>90</i>&nbsp;        init();</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    final private void init(){
+<b class="nc"><i>94</i>&nbsp;        Utils.setDialogIcon( this );</b>
+<b class="nc"><i>95</i>&nbsp;        setDefaultCloseOperation( WindowConstants.DISPOSE_ON_CLOSE );</b>
+<b class="nc"><i>96</i>&nbsp;        Container cont = getContentPane();</b>
+<b class="nc"><i>97</i>&nbsp;        cont.setLayout(new GridBagLayout());</b>
+<b class="nc"><i>98</i>&nbsp;        Insets insetL = new Insets(8,8,0,8);</b>
+<b class="nc"><i>99</i>&nbsp;        Insets insetR = new Insets(8,0,0,8);</b>
+<i>100</i>&nbsp;        
+<b class="nc"><i>101</i>&nbsp;        cont.add( Utils.getLabel(Utils.getResource(&quot;notInDictionary&quot;)+&quot;:&quot;), new GridBagConstraints( 1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST ,GridBagConstraints.NONE, insetL, 0, 0));</b>
+<i>102</i>&nbsp;        
+<b class="nc"><i>103</i>&nbsp;        notFound.setForeground(Color.RED);</b>
+<b class="nc"><i>104</i>&nbsp;        notFound.setText(&quot;xxxxxxxxxx&quot;);</b>
+<b class="nc"><i>105</i>&nbsp;        cont.add( notFound, new GridBagConstraints( 2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST ,GridBagConstraints.NONE, insetL, 0, 0));</b>
+<i>106</i>&nbsp;        
+<b class="nc"><i>107</i>&nbsp;        cont.add( word, new GridBagConstraints( 1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetL, 0, 0));</b>
+<i>108</i>&nbsp;        
+<b class="nc"><i>109</i>&nbsp;        cont.add( Utils.getLabel(Utils.getResource(&quot;suggestions&quot;)+&quot;:&quot;), new GridBagConstraints( 1, 3, 2, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST ,GridBagConstraints.NONE, insetL, 0, 0));</b>
+<b class="nc"><i>110</i>&nbsp;        JScrollPane scrollPane = new JScrollPane(suggestionsList);</b>
+<b class="nc"><i>111</i>&nbsp;        cont.add( scrollPane, new GridBagConstraints( 1, 4, 2, 6, 1.0, 1.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.BOTH, new Insets(8,8,8,8), 0, 0));</b>
+<i>112</i>&nbsp;        
+<b class="nc"><i>113</i>&nbsp;        cont.add( ignore,       new GridBagConstraints( 3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>114</i>&nbsp;        cont.add( ignoreAll,    new GridBagConstraints( 3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>115</i>&nbsp;        cont.add( addToDic,     new GridBagConstraints( 3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>116</i>&nbsp;        cont.add( editDic,      new GridBagConstraints( 3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>117</i>&nbsp;        cont.add( change,       new GridBagConstraints( 3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>118</i>&nbsp;        cont.add( changeAll,    new GridBagConstraints( 3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>119</i>&nbsp;        cont.add( about,        new GridBagConstraints( 3, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>120</i>&nbsp;        cont.add( close,        new GridBagConstraints( 3, 8, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<b class="nc"><i>121</i>&nbsp;        cont.add( Utils.getLabel( null ), new GridBagConstraints( 3, 9, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST ,GridBagConstraints.HORIZONTAL, insetR, 0, 0));</b>
+<i>122</i>&nbsp;        
+<b class="nc"><i>123</i>&nbsp;        ignore.addActionListener(this);</b>
+<b class="nc"><i>124</i>&nbsp;        ignoreAll.addActionListener(this);</b>
+<b class="nc"><i>125</i>&nbsp;        addToDic.addActionListener(this);</b>
+<b class="nc"><i>126</i>&nbsp;        editDic.addActionListener(this);</b>
+<b class="nc"><i>127</i>&nbsp;        change.addActionListener(this);</b>
+<b class="nc"><i>128</i>&nbsp;        changeAll.addActionListener(this);</b>
+<b class="nc"><i>129</i>&nbsp;        about.addActionListener(this);</b>
+<b class="nc"><i>130</i>&nbsp;        close.addActionListener(this);</b>
+<i>131</i>&nbsp;        
+<i>132</i>&nbsp;        //ESCAPE Taste
+<b class="nc"><i>133</i>&nbsp;        close.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0, false ), &quot;ESCAPE&quot; );</b>
+<b class="nc"><i>134</i>&nbsp;        close.getActionMap().put( &quot;ESCAPE&quot;, new AbstractAction() {</b>
+<i>135</i>&nbsp;            public void actionPerformed( ActionEvent e ) {
+<b class="nc"><i>136</i>&nbsp;                dispose();</b>
+<i>137</i>&nbsp;            }
+<i>138</i>&nbsp;        } );
+<i>139</i>&nbsp;        
+<b class="nc"><i>140</i>&nbsp;        word.getDocument().addDocumentListener(new DocumentListener(){</b>
+<i>141</i>&nbsp;            public void changedUpdate(DocumentEvent ev){
+<i>142</i>&nbsp;                // disable &quot;Add To Dictionary&quot; if word was changed, not this word would added else the original misspelled word
+<b class="nc"><i>143</i>&nbsp;                addToDic.setEnabled( false );</b>
+<i>144</i>&nbsp;            }
+<i>145</i>&nbsp;            public void insertUpdate(DocumentEvent ev){
+<i>146</i>&nbsp;                // disable &quot;Add To Dictionary&quot; if word was changed, not this word would added else the original misspelled word
+<b class="nc"><i>147</i>&nbsp;                addToDic.setEnabled( false );</b>
+<i>148</i>&nbsp;            }
+<i>149</i>&nbsp;            public void removeUpdate(DocumentEvent ev){
+<i>150</i>&nbsp;                // disable &quot;Add To Dictionary&quot; if word was changed, not this word would added else the original misspelled word
+<b class="nc"><i>151</i>&nbsp;                addToDic.setEnabled( false );</b>
+<i>152</i>&nbsp;            }
+<i>153</i>&nbsp;        });
+<i>154</i>&nbsp;        
+<b class="nc"><i>155</i>&nbsp;        suggestionsList.addListSelectionListener(new ListSelectionListener(){</b>
+<i>156</i>&nbsp;            public void valueChanged(ListSelectionEvent ev){
+<i>157</i>&nbsp;                // Update the word field if a suggestion is click
+<b class="nc"><i>158</i>&nbsp;                if( !ev.getValueIsAdjusting() &amp;&amp; suggestionsList.getSelectedIndex() &gt;= 0 ){</b>
+<b class="nc"><i>159</i>&nbsp;                    word.setText( (String)suggestionsList.getSelectedValue() );</b>
+<b class="nc"><i>160</i>&nbsp;                    addToDic.setEnabled( true );</b>
+<i>161</i>&nbsp;                }
+<i>162</i>&nbsp;            }
+<i>163</i>&nbsp;        });
+<i>164</i>&nbsp;        
+<b class="nc"><i>165</i>&nbsp;        suggestionsList.addMouseListener( new MouseAdapter() {</b>
+<i>166</i>&nbsp;            @Override
+<i>167</i>&nbsp;            public void mouseClicked( MouseEvent e ) {
+<b class="nc"><i>168</i>&nbsp;                if( e.getClickCount() == 2 &amp;&amp; e.getButton() == MouseEvent.BUTTON1 ) {</b>
+<i>169</i>&nbsp;                    // Change the word on a double click
+<b class="nc"><i>170</i>&nbsp;                    if( suggestionsList.getSelectedIndex() &gt;= 0 ) {</b>
+<b class="nc"><i>171</i>&nbsp;                        word.setText( (String)suggestionsList.getSelectedValue() );</b>
+<b class="nc"><i>172</i>&nbsp;                        actionPerformed( new ActionEvent( suggestionsList, 0, null ) );</b>
+<i>173</i>&nbsp;                    }
+<i>174</i>&nbsp;                }
+<i>175</i>&nbsp;            }
+<i>176</i>&nbsp;        } );
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;        boolean isUserDictionary = SpellChecker.getUserDictionaryProvider() != null;</b>
+<b class="nc"><i>179</i>&nbsp;        addToDic.setEnabled( isUserDictionary );</b>
+<b class="nc"><i>180</i>&nbsp;        editDic.setEnabled( isUserDictionary );</b>
+<b class="nc"><i>181</i>&nbsp;        pack();</b>
+<i>182</i>&nbsp;    }
+<i>183</i>&nbsp;    
+<i>184</i>&nbsp;    
+<i>185</i>&nbsp;    public void show( JTextComponent jTextComponent, Dictionary dic, Locale loc ) {
+<b class="nc"><i>186</i>&nbsp;        this.jText = jTextComponent;</b>
+<b class="nc"><i>187</i>&nbsp;        this.dictionary = dic;</b>
+<b class="nc"><i>188</i>&nbsp;        change.requestFocus();</b>
+<b class="nc"><i>189</i>&nbsp;        setTitle( Utils.getResource(&quot;spelling&quot;) + &quot;: &quot; + loc.getDisplayLanguage() );</b>
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;        tok = new Tokenizer( jTextComponent, dic, loc, options );</b>
+<i>192</i>&nbsp;        
+<b class="nc"><i>193</i>&nbsp;        if( searchNext() ){</b>
+<i>194</i>&nbsp;            // if the JTextComponent is large and has a scrollpane then Java use the bounds
+<i>195</i>&nbsp;            // and not the visible rect. This is bad
+<b class="nc"><i>196</i>&nbsp;            Container parent = jTextComponent;</b>
+<b class="nc"><i>197</i>&nbsp;            while( parent != null &amp;&amp; !(parent instanceof JScrollPane) ) {</b>
+<b class="nc"><i>198</i>&nbsp;                if( parent instanceof JComponent ) {</b>
+<b class="nc"><i>199</i>&nbsp;                    JComponent jcomp = (JComponent)parent;</b>
+<b class="nc"><i>200</i>&nbsp;                    if( jcomp.getVisibleRect().height == jcomp.getBounds().height ) {</b>
+<b class="nc"><i>201</i>&nbsp;                        break;</b>
+<i>202</i>&nbsp;                    }
+<i>203</i>&nbsp;                }
+<b class="nc"><i>204</i>&nbsp;                if( parent.getParent() != null ) {</b>
+<b class="nc"><i>205</i>&nbsp;                    parent = parent.getParent();</b>
+<i>206</i>&nbsp;                } else {
+<i>207</i>&nbsp;                    break;
+<i>208</i>&nbsp;                }
+<i>209</i>&nbsp;            }
+<i>210</i>&nbsp;            
+<b class="nc"><i>211</i>&nbsp;            setLocationRelativeTo( parent );</b>
+<b class="nc"><i>212</i>&nbsp;            setVisible( true );</b>
+<i>213</i>&nbsp;        }
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;    
+<i>216</i>&nbsp;    /**
+<i>217</i>&nbsp;     * Search the next misspelling word. If found it then refresh the dialog with the new information.
+<i>218</i>&nbsp;     * ignoreWords and changeWords will handle automatically.
+<i>219</i>&nbsp;     * @return true, if found a spell error.
+<i>220</i>&nbsp;     */
+<i>221</i>&nbsp;    private boolean searchNext() {
+<i>222</i>&nbsp;        String wordStr;
+<i>223</i>&nbsp;        while( true ) {
+<b class="nc"><i>224</i>&nbsp;            wordStr = tok.nextInvalidWord();</b>
+<b class="nc"><i>225</i>&nbsp;            if( wordStr == null ) {</b>
+<b class="nc"><i>226</i>&nbsp;                dispose();</b>
+<b class="nc"><i>227</i>&nbsp;                String title = SpellChecker.getApplicationName();</b>
+<b class="nc"><i>228</i>&nbsp;                if(title == null){</b>
+<b class="nc"><i>229</i>&nbsp;                    title = this.getTitle();</b>
+<i>230</i>&nbsp;                }
+<b class="nc"><i>231</i>&nbsp;                SpellChecker.getMessageHandler().handleInformation( getParent(), title, Utils.getResource( &quot;msgFinish&quot; ) );</b>
+<b class="nc"><i>232</i>&nbsp;                return false;</b>
+<i>233</i>&nbsp;            }
+<b class="nc"><i>234</i>&nbsp;            if( ignoreWords.contains( wordStr ) ) {</b>
+<b class="nc"><i>235</i>&nbsp;                continue;</b>
+<i>236</i>&nbsp;            }
+<b class="nc"><i>237</i>&nbsp;            String changeTo = changeWords.get( wordStr );</b>
+<b class="nc"><i>238</i>&nbsp;            if( changeTo != null ) {</b>
+<b class="nc"><i>239</i>&nbsp;                replaceWord( wordStr, changeTo );</b>
+<b class="nc"><i>240</i>&nbsp;                continue;</b>
+<i>241</i>&nbsp;            }
+<i>242</i>&nbsp;            break;
+<i>243</i>&nbsp;        }
+<b class="nc"><i>244</i>&nbsp;        word.setText( wordStr );</b>
+<b class="nc"><i>245</i>&nbsp;        notFound.setText( wordStr );</b>
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;        List&lt;Suggestion&gt; list = dictionary.searchSuggestions( wordStr );</b>
+<i>248</i>&nbsp;        
+<b class="nc"><i>249</i>&nbsp;        boolean needCapitalization = tok.isFirstWordInSentence() &amp;&amp; Utils.isFirstCapitalized( wordStr );</b>
+<i>250</i>&nbsp;
+<b class="nc"><i>251</i>&nbsp;        Vector&lt;String&gt; suggestionsVector = new Vector&lt;String&gt;();</b>
+<b class="nc"><i>252</i>&nbsp;        for( int i = 0; i &lt; list.size() &amp;&amp; i &lt; options.getSuggestionsLimitDialog(); i++ ) {</b>
+<b class="nc"><i>253</i>&nbsp;            Suggestion sugestion = list.get( i );</b>
+<b class="nc"><i>254</i>&nbsp;            String newWord = sugestion.getWord();</b>
+<b class="nc"><i>255</i>&nbsp;            if( needCapitalization ) {</b>
+<b class="nc"><i>256</i>&nbsp;                newWord = Utils.getCapitalized( newWord );</b>
+<i>257</i>&nbsp;            }
+<b class="nc"><i>258</i>&nbsp;            if( i == 0 )</b>
+<b class="nc"><i>259</i>&nbsp;                word.setText( newWord );</b>
+<b class="nc"><i>260</i>&nbsp;            suggestionsVector.add( newWord );</b>
+<i>261</i>&nbsp;        }
+<b class="nc"><i>262</i>&nbsp;        suggestionsList.setListData( suggestionsVector );</b>
+<i>263</i>&nbsp;        
+<b class="nc"><i>264</i>&nbsp;        addToDic.setEnabled( true );</b>
+<b class="nc"><i>265</i>&nbsp;        return true;</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;    
+<i>268</i>&nbsp;    
+<i>269</i>&nbsp;    public void actionPerformed( ActionEvent ev ) {
+<b class="nc"><i>270</i>&nbsp;        Object source = ev.getSource();</b>
+<b class="nc"><i>271</i>&nbsp;        if( source == ignore ) {</b>
+<b class="nc"><i>272</i>&nbsp;            searchNext();</b>
+<b class="nc"><i>273</i>&nbsp;        } else if( source == about ) {</b>
+<b class="nc"><i>274</i>&nbsp;            new AboutDialog( this ).setVisible( true );</b>
+<b class="nc"><i>275</i>&nbsp;        } else if( source == close ) {</b>
+<b class="nc"><i>276</i>&nbsp;            dispose();</b>
+<i>277</i>&nbsp;        } else{
+<b class="nc"><i>278</i>&nbsp;            String newWord = word.getText();</b>
+<b class="nc"><i>279</i>&nbsp;            String oldWord = notFound.getText();</b>
+<b class="nc"><i>280</i>&nbsp;            if( source == ignoreAll ) {</b>
+<b class="nc"><i>281</i>&nbsp;                ignoreWords.add( oldWord );</b>
+<b class="nc"><i>282</i>&nbsp;                searchNext();</b>
+<b class="nc"><i>283</i>&nbsp;            } else if( source == addToDic ) {</b>
+<b class="nc"><i>284</i>&nbsp;                UserDictionaryProvider provider = SpellChecker.getUserDictionaryProvider();</b>
+<b class="nc"><i>285</i>&nbsp;                if( provider != null ) {</b>
+<b class="nc"><i>286</i>&nbsp;                    provider.addWord( oldWord );</b>
+<i>287</i>&nbsp;                }
+<b class="nc"><i>288</i>&nbsp;                dictionary.add( oldWord );</b>
+<b class="nc"><i>289</i>&nbsp;                dictionary.trimToSize();</b>
+<b class="nc"><i>290</i>&nbsp;                isDictionaryModify = true;</b>
+<b class="nc"><i>291</i>&nbsp;                searchNext();</b>
+<b class="nc"><i>292</i>&nbsp;            } else if( source == editDic ) {</b>
+<b class="nc"><i>293</i>&nbsp;                new DictionaryEditDialog( this ).setVisible( true );</b>
+<b class="nc"><i>294</i>&nbsp;            } else if( source == change || source == suggestionsList ) {</b>
+<b class="nc"><i>295</i>&nbsp;                replaceWord( oldWord, newWord );</b>
+<b class="nc"><i>296</i>&nbsp;                searchNext();</b>
+<b class="nc"><i>297</i>&nbsp;            } else if( source == changeAll ) {</b>
+<b class="nc"><i>298</i>&nbsp;                changeWords.put( oldWord, newWord );</b>
+<b class="nc"><i>299</i>&nbsp;                replaceWord( oldWord, newWord );</b>
+<b class="nc"><i>300</i>&nbsp;                searchNext();</b>
+<i>301</i>&nbsp;            }
+<i>302</i>&nbsp;        }
+<i>303</i>&nbsp;    }
+<i>304</i>&nbsp;    
+<i>305</i>&nbsp;    private void replaceWord( String oldWord, String newWord ) {
+<b class="nc"><i>306</i>&nbsp;        jText.setSelectionStart( tok.getWordOffset() );</b>
+<b class="nc"><i>307</i>&nbsp;        jText.setSelectionEnd( tok.getWordOffset() + oldWord.length() );</b>
+<b class="nc"><i>308</i>&nbsp;        jText.replaceSelection( newWord );</b>
+<b class="nc"><i>309</i>&nbsp;        tok.updatePhrase();</b>
+<i>310</i>&nbsp;    }
+<i>311</i>&nbsp;
+<i>312</i>&nbsp;
+<i>313</i>&nbsp;    @Override
+<i>314</i>&nbsp;    public void dispose(){
+<b class="nc"><i>315</i>&nbsp;        super.dispose();</b>
+<b class="nc"><i>316</i>&nbsp;        if( isDictionaryModify ){</b>
+<b class="nc"><i>317</i>&nbsp;            AutoSpellChecker.refresh( jText );</b>
+<i>318</i>&nbsp;        }
+<i>319</i>&nbsp;    }
+<i>320</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-04-07 19:14</div>
+</div>
+</body>
+</html>

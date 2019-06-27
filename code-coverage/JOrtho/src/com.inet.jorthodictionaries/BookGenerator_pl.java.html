@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BookGenerator_pl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jorthodictionaries</a> &gt; <span class="el_source">BookGenerator_pl.java</span></div><h1>BookGenerator_pl.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 13.12.2007
+ */
+package com.inet.jorthodictionaries;
+
+import java.io.File;
+
+/**
+ * 
+ * @author Volker Berlin
+ */
+<span class="nc" id="L31">public class BookGenerator_pl extends BookGenerator {</span>
+
+    @Override
+    void start( File file ) throws Exception {
+        //because the polish dictionary include no conjugation we read also the english dictionary
+<span class="nc" id="L36">        String path = file.getPath().replace( &quot;plwiktionary&quot;, &quot;enwiktionary&quot; );</span>
+<span class="nc" id="L37">        File fileEnglisch = new File(path);</span>
+<span class="nc" id="L38">        BookGenerator english = new BookGenerator_pl_Engish(getBook());</span>
+<span class="nc" id="L39">        english.start( fileEnglisch );</span>
+        
+<span class="nc" id="L41">        super.start( file );</span>
+<span class="nc" id="L42">    }</span>
+    
+    @Override
+    boolean isValidLanguage( String word, String wikiText ) {
+<span class="nc bnc" id="L46" title="All 4 branches missed.">        if( wikiText.indexOf( &quot;{{jÄ™zyk polski}}&quot; ) &lt; 0 &amp;&amp; wikiText.indexOf( &quot;{{JÄ™zyk polski}}&quot; ) &lt; 0) {</span>
+<span class="nc" id="L47">            return false;</span>
+        }
+
+<span class="nc" id="L50">        int idx = wikiText.indexOf( &quot;{{odmiana}}&quot; );</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if( idx &gt; 0 ) {</span>
+<span class="nc" id="L52">            odmiana( idx + &quot;{{odmiana}}&quot;.length(), wikiText );</span>
+        }
+<span class="nc" id="L54">        return true;</span>
+    }
+
+    /** 
+     * Flections
+     * 
+     * @param idx start of the flextion
+     */
+    private void odmiana( int idx, String wikiText ) {
+        // sample
+        // {{odmiana}} {{M}}: {{m}} ktÃ³r|y, {{f}} ~a, {{n}} ~e; {{lm m}} ~zy, {{lm nm}} ~e; {{D}}: ~ego, ~ej, ~ego, ~ych, ~ych; {{C}}: ~emu, ~ej, ~emu, ~ym, ~ym; {{B}}: ~ego, ~Ä…, ~y, ~ych, ~e; {{N}}: ~ym, ~Ä…, ~ym, ~ymi, ~ymi; {{Ms}}: ~ym, ~ej, ~ym, ~ych, ~ych; {{W}} ~y, ~a, ~e/~o, ~zy, ~e
+
+<span class="nc" id="L66">        String wordRoot = null;</span>
+<span class="nc" id="L67">        boolean newWordRoot1 = false;</span>
+<span class="nc" id="L68">        boolean newWordRoot2 = false;</span>
+<span class="nc" id="L69">        StringBuilder builder = new StringBuilder();</span>
+<span class="nc" id="L70">        boolean wasNewline = false;</span>
+<span class="nc" id="L71">        int bracket = 0;</span>
+        
+<span class="nc bnc" id="L73" title="All 4 branches missed.">        while( idx &lt; wikiText.length() &amp;&amp; !wasNewline) {</span>
+<span class="nc" id="L74">            char ch = wikiText.charAt( idx++ );</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            if( ch == '\n'){</span>
+<span class="nc" id="L76">                wasNewline = true;</span>
+            }
+            
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if( newWordRoot1 ){</span>
+<span class="nc" id="L80">                newWordRoot2 = true;</span>
+            }
+            
+<span class="nc bnc" id="L83" title="All 4 branches missed.">            if( Character.isWhitespace( ch ) &amp;&amp; bracket == 0) {</span>
+                // multiple whitespace
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if( builder.length() == 0 ) {</span>
+<span class="nc" id="L86">                    continue;</span>
+                }
+
+<span class="nc" id="L89">                String word = builder.toString();</span>
+<span class="nc" id="L90">                builder.setLength( 0 );</span>
+                
+                // start a new grammatic sequence
+<span class="nc bnc" id="L93" title="All 4 branches missed.">                if( word.equals( &quot;lp&quot; ) || word.equals( &quot;lm&quot; )</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">                                || word.equals( &quot;{{lp}}&quot; ) || word.equals( &quot;{{lm}}&quot; )</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                                || word.equals( &quot;''lp''&quot; ) || word.equals( &quot;''lm''&quot; )) {</span>
+<span class="nc" id="L96">                    newWordRoot1 = true;</span>
+<span class="nc" id="L97">                    continue;</span>
+                }
+
+                // remove the delimiter
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                if( word.charAt( word.length()-1 ) == ','){</span>
+<span class="nc" id="L102">                    word = word.substring( 0, word.length()-1 );</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                    if( word.length() == 0 ){</span>
+<span class="nc" id="L104">                        continue;</span>
+                    }
+                }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                if( word.charAt( word.length()-1 ) == ';'){</span>
+<span class="nc" id="L108">                    word = word.substring( 0, word.length()-1 );</span>
+<span class="nc" id="L109">                    newWordRoot1 = true;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                    if( word.length() == 0 ){</span>
+<span class="nc" id="L111">                        continue;</span>
+                    }
+                }
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                if( word.charAt( word.length()-1 ) == '!'){</span>
+<span class="nc" id="L115">                    word = word.substring( 0, word.length()-1 );</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                    if( word.length() == 0 ){</span>
+<span class="nc" id="L117">                        continue;</span>
+                    }
+                }
+                                
+                // skip grammatic comments
+<span class="nc bnc" id="L122" title="All 6 branches missed.">                if( word.equals( &quot;{{m}}&quot; ) || word.equals( &quot;{{f}}&quot; ) || word.equals( &quot;{{n}}&quot; ) </span>
+<span class="nc bnc" id="L123" title="All 6 branches missed.">                                || word.equals( &quot;{{mosob}}&quot; ) || word.equals( &quot;{{nmosob}}&quot; ) || word.equals( &quot;{{nieodm}}&quot; ) </span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                                || isCaseLabel( word ) ) {</span>
+<span class="nc" id="L125">                    continue;</span>
+                }
+
+                // set the new word root if needed
+<span class="nc bnc" id="L129" title="All 4 branches missed.">                if( wordRoot == null || newWordRoot2 ) {</span>
+<span class="nc" id="L130">                    newWordRoot1 = newWordRoot2 = false;</span>
+<span class="nc" id="L131">                    int pipeIdx = word.indexOf( '|' );</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                    String possibleRoot = (pipeIdx &gt;= 0) ? word.substring( 0, pipeIdx ) : word;</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                    if( isValidWord( possibleRoot ) ) {</span>
+<span class="nc" id="L134">                        wordRoot = possibleRoot;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                        if(pipeIdx &gt;= 0){</span>
+<span class="nc" id="L136">                            word = wordRoot + word.substring( pipeIdx + 1 );</span>
+                        }
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                        if( isValidWord( word ) ) {</span>
+<span class="nc" id="L139">                            addWord( word );</span>
+<span class="nc" id="L140">                        } else {</span>
+<span class="nc" id="L141">                            System.err.println( word );</span>
+<span class="nc" id="L142">                            System.err.print( &quot;&quot; );</span>
+                        }
+<span class="nc" id="L144">                        continue;</span>
+                    } else {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                        if( wordRoot == null ){</span>
+<span class="nc" id="L147">                            System.err.println( &quot;Wordroot: &quot;+word );</span>
+<span class="nc" id="L148">                            continue;</span>
+                        }
+                    }
+                }
+<span class="nc" id="L152">                word = word.replace( &quot;~|&quot;, wordRoot );</span>
+<span class="nc" id="L153">                word = word.replace( &quot;~&quot;, wordRoot );</span>
+<span class="nc" id="L154">                word = word.replace( &quot;-&quot;, wordRoot );</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">                if( isValidWord( word ) ) {</span>
+<span class="nc" id="L156">                    addWord( word );</span>
+<span class="nc" id="L157">                } else {</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                    if( !isAlternateWords( word ) ) {</span>
+<span class="nc" id="L159">                        System.err.println( word );</span>
+<span class="nc" id="L160">                        System.err.print( &quot;&quot; );</span>
+                    }
+                }
+<span class="nc" id="L163">                continue;</span>
+            }
+            
+<span class="nc bnc" id="L166" title="All 3 branches missed.">            switch(ch){</span>
+                case '{':
+                case '[':
+                case '(':
+<span class="nc" id="L170">                    bracket++;</span>
+<span class="nc" id="L171">                    break;</span>
+                case '}':
+                case ']':
+                case ')':
+<span class="nc" id="L175">                    bracket--;</span>
+                    break;
+            }
+            
+<span class="nc" id="L179">            builder.append( ch );</span>
+        }
+<span class="nc" id="L181">    }</span>
+    
+    /**
+     * Check if the word include 2 worde with alternate writting. If yes then both will be added.
+     * 
+     * @param word
+     *            a paosble worde alternative
+     * @return true, if there are 2 valid words.
+     */
+    private boolean isAlternateWords( String word ) {
+<span class="nc" id="L191">        String[] words = word.split( &quot;/&quot; );</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if( words.length &gt; 1 ) {</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            for( String w : words ){</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                if( !isValidWord( w )){</span>
+<span class="nc" id="L195">                    return false;</span>
+                }
+            }
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            for( String w : words ){</span>
+<span class="nc" id="L199">                addWord( w );</span>
+            }
+<span class="nc" id="L201">            return true;</span>
+        }
+<span class="nc" id="L203">        return false;</span>
+    }
+    
+    /**
+     * Test if it is a case label like (1), (1.2) or (3.1) 
+     * @param word
+     * @return
+     */
+    private boolean isCaseLabel( String word ){
+<span class="nc bnc" id="L212" title="All 6 branches missed.">        return word.startsWith( &quot;(&quot; ) &amp;&amp; word.length() &gt; 1 &amp;&amp; Character.isDigit( word.charAt( 1 ) );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LowMemoryArrayList.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">LowMemoryArrayList.java</span></div><h1>LowMemoryArrayList.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2010 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ * Created on 01.10.2010
+ */
+package com.inet.jortho;
+
+/**
+ * An ArrayList that need only a minimum of memory size. The list will be need on reading the dictionary with a very
+ * large count.
+ * 
+ * @author Volker Berlin
+ */
+<span class="fc" id="L31">class LowMemoryArrayList&lt;E&gt; {</span>
+
+    /**
+     * The array buffer into which the elements of the ArrayList are stored. The capacity of the ArrayList is the length
+     * of this array buffer.
+     */
+    private transient E[] elementData;
+
+    /**
+     * Returns the number of elements in this list.
+     * 
+     * @return the number of elements in this list.
+     */
+    public int size() {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        return elementData == null ? 0 : elementData.length;</span>
+    }
+
+    /**
+     * Returns the element at the specified position in this list.
+     * 
+     * @param index
+     *            index of the element to return
+     * @return the element at the specified position in this list
+     * @throws IndexOutOfBoundsException
+     *             if the index is out of range
+     */
+    public E get( int index ) {
+<span class="fc" id="L58">        return elementData[index];</span>
+    }
+
+    /**
+     * Appends the specified element to the end of this list.
+     * 
+     * @param o
+     *            element to be appended to this list.
+     */
+    public void add( E o ) {
+<span class="fc" id="L68">        int size = size();</span>
+<span class="fc" id="L69">        Object tempData[] = new Object[size + 1];</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if( size &gt; 0 ) {</span>
+<span class="fc" id="L71">            System.arraycopy( elementData, 0, tempData, 0, size );</span>
+        }
+<span class="fc" id="L73">        elementData = (E[])tempData;</span>
+<span class="fc" id="L74">        elementData[size] = o;</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Inserts the specified element at the specified position in this list. Shifts the element currently at that
+     * position (if any) and any subsequent elements to the right (adds one to their indices).
+     * 
+     * @param index
+     *            index at which the specified element is to be inserted
+     * @param element
+     *            element to be inserted
+     * @throws IndexOutOfBoundsException
+     *             if the index is out of range
+     */
+    public void add( int index, E element ) {
+<span class="nc" id="L89">        int size = size();</span>
+<span class="nc" id="L90">        Object tempData[] = new Object[size + 1];</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if( size &gt; 0 ) {</span>
+<span class="nc" id="L92">            System.arraycopy( elementData, 0, tempData, 0, index );</span>
+<span class="nc" id="L93">            System.arraycopy( elementData, index, tempData, index + 1, size - index );</span>
+        }
+<span class="nc" id="L95">        elementData = (E[])tempData;</span>
+<span class="nc" id="L96">        elementData[index] = element;</span>
+<span class="nc" id="L97">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

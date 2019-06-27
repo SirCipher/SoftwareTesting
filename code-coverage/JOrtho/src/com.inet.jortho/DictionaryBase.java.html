@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DictionaryBase.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">DictionaryBase.java</span></div><h1>DictionaryBase.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2008 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 02.11.2005
+ */
+package com.inet.jortho;
+
+import java.util.*;
+
+/**
+ * @author Volker Berlin
+ */
+abstract class DictionaryBase {
+
+    protected char[] tree;
+    protected int size;
+    protected int idx;
+    
+    
+    protected static final char LAST_CHAR = 0xFFFF;
+    
+    
+<span class="fc" id="L40">    DictionaryBase(char[] tree){</span>
+<span class="fc" id="L41">        this.tree = tree;</span>
+<span class="fc" id="L42">        size = tree.length;</span>
+<span class="fc" id="L43">    }</span>
+    
+    /**
+     * Empty Constructor.
+     */
+<span class="nc" id="L48">    protected DictionaryBase(){</span>
+        /* empty */
+<span class="nc" id="L50">    }</span>
+    
+    
+    /**
+     * Check if the word exist in this dictinary.
+     * @param word the word to check. Can't be null.
+     * @return true if the word exist.
+     */
+    public boolean exist(String word){
+<span class="fc" id="L59">        idx = 0;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for(int i=0; i&lt;word.length(); i++){</span>
+<span class="fc" id="L61">            char c = word.charAt(i);</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">            while(idx&lt;size &amp;&amp; tree[idx] &lt; c){</span>
+<span class="fc" id="L63">                idx += 3;</span>
+            }
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">            if((idx&gt;=size || tree[idx] != c)){</span>
+<span class="fc" id="L66">                return false;</span>
+            }
+<span class="fc bfc" id="L68" title="All 4 branches covered.">            if( i == word.length() - 1 &amp;&amp; isWordMatch() ) {</span>
+<span class="fc" id="L69">                return true;</span>
+            }
+<span class="fc" id="L71">            idx = readIndex();</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if(idx &lt;= 0) return false;</span>
+        }
+<span class="fc" id="L74">        return false;</span>
+    }
+    
+    
+    
+    /**
+     * Returns a list of suggestions if the word is not in the dictionary.
+     * @param word the wrong spelled word. Can't be null.
+     * @return a list of class Suggestion.
+     * @see Suggestion
+     */
+    public List&lt;Suggestion&gt; searchSuggestions(String word){
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if(word.length() == 0 || exist(word)){</span>
+<span class="nc" id="L87">            return new ArrayList&lt;Suggestion&gt;();</span>
+        }
+<span class="fc" id="L89">        Suggestions suggesions = new Suggestions( Math.min( 20, 4+word.length() ) );</span>
+<span class="fc" id="L90">        idx = 0;</span>
+<span class="fc" id="L91">        searchSuggestions( suggesions, word, 0, 0, 0);</span>
+<span class="fc" id="L92">        List&lt;Suggestion&gt; list = suggesions.getlist();</span>
+<span class="fc" id="L93">        Collections.sort( list );</span>
+<span class="fc" id="L94">        return list;</span>
+    }
+    
+    
+    /**
+     * It will search with different rules for similar words.
+     * For every rule there are a different difference. The smaller the difference that so similarer.
+     * This method is calling recursive it self.
+     * @param list Container for found words
+     * @param chars until charPosition already map characters, after the part of the original word that still need to map.
+     * @param charPosition character position in char array
+     * @param lastIdx position in the index (dictionary) to the current character position
+     * @param diff the dissimilar up to the current character position
+     */
+    private void searchSuggestions( Suggestions list, CharSequence chars, int charPosition, int lastIdx, int diff){
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if(diff &gt; list.getMaxDissimilarity()){</span>
+<span class="fc" id="L110">            return;</span>
+        }
+        // First with the correct letters to go on 
+<span class="fc" id="L113">        idx = lastIdx;</span>
+<span class="fc" id="L114">        char currentChar = chars.charAt(charPosition);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if(searchChar(currentChar)){</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if( isWordMatch() ) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                if(charPosition+1 == chars.length()){</span>
+                    // exact match at this character position
+<span class="fc" id="L119">                    list.add( new Suggestion(chars, diff));</span>
+<span class="fc" id="L120">                }else{</span>
+                    // a shorter match, we need to cut the string
+<span class="fc" id="L122">                    int length = charPosition+1;</span>
+<span class="fc" id="L123">                    CharSequence chars2 = chars.subSequence( 0, length );</span>
+<span class="fc" id="L124">                    list.add( new Suggestion(chars2, diff + (chars.length()-length)*5));</span>
+                }
+            }
+<span class="fc" id="L127">            idx = readIndex();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if( idx &gt; 0 ) {</span>
+                // more characters in the tree
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                if(charPosition+1 == chars.length()){</span>
+<span class="fc" id="L131">                    searchSuggestionsLonger( list, chars, idx, diff + 5);</span>
+<span class="fc" id="L132">                } else {</span>
+<span class="fc" id="L133">                    searchSuggestions( list, chars, charPosition + 1, idx, diff );</span>
+                }
+            }
+        }
+
+        
+        // transposed letters and additional letter
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if(charPosition+1 &lt; chars.length()){</span>
+<span class="fc" id="L141">            idx = lastIdx;</span>
+<span class="fc" id="L142">            currentChar = chars.charAt(charPosition+1);</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            if(searchChar(currentChar)){</span>
+<span class="fc" id="L144">                int tempIdx = idx;</span>
+                
+                //transposed letters (German - Buchstabendreher)
+<span class="fc" id="L147">                idx = readIndex();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                if( idx &gt; 0 ) {</span>
+<span class="fc" id="L149">                    StringBuilder buffer = new StringBuilder( chars );</span>
+<span class="fc" id="L150">                    buffer.setCharAt( charPosition+1, chars.charAt( charPosition ) );</span>
+<span class="fc" id="L151">                    buffer.setCharAt( charPosition, currentChar );</span>
+<span class="fc" id="L152">                    searchSuggestions( list, buffer, charPosition+1, idx, diff+3);</span>
+                }
+                
+                // Additional character in the misspelled word
+<span class="fc" id="L156">                idx = tempIdx;</span>
+<span class="fc" id="L157">                StringBuilder buffer = new StringBuilder();</span>
+<span class="fc" id="L158">                buffer.append( chars, 0, charPosition );</span>
+<span class="fc" id="L159">                buffer.append( chars, charPosition+1, chars.length() );</span>
+<span class="fc" id="L160">                searchSuggestions( list, buffer, charPosition, lastIdx, diff+5);</span>
+            }
+        }
+
+        // Missing letters, we need to add one character
+        {
+<span class="fc" id="L166">            int tempIdx = idx = lastIdx;</span>
+<span class="pc bpc" id="L167" title="1 of 4 branches missed.">            while( idx &lt; size &amp;&amp; tree[idx] &lt; LAST_CHAR ) {</span>
+<span class="fc" id="L168">                char newChar = tree[idx];</span>
+<span class="fc" id="L169">                idx = readIndex();</span>
+<span class="fc bfc" id="L170" title="All 4 branches covered.">                if( idx &gt; 0 &amp;&amp; newChar != currentChar) {</span>
+<span class="fc" id="L171">                    StringBuilder buffer = new StringBuilder( chars );</span>
+<span class="fc" id="L172">                    buffer.insert( charPosition, newChar );</span>
+<span class="fc" id="L173">                    searchSuggestions( list, buffer, charPosition + 1, idx, diff + 5 );</span>
+                }
+<span class="fc" id="L175">                idx = tempIdx += 3;</span>
+            }
+        }
+        
+        // Typos - wrong letters (One character is replaced with any character)
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if(charPosition &lt; chars.length()){</span>
+<span class="fc" id="L181">            currentChar = chars.charAt(charPosition);</span>
+<span class="fc" id="L182">            int tempIdx = idx = lastIdx;</span>
+<span class="pc bpc" id="L183" title="1 of 4 branches missed.">            while( idx &lt; size &amp;&amp; tree[idx] &lt; LAST_CHAR ) {</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                if( isWordMatch() ){</span>
+<span class="fc" id="L185">                    StringBuilder buffer = new StringBuilder();</span>
+<span class="fc" id="L186">                    buffer.append( chars, 0, charPosition );</span>
+<span class="fc" id="L187">                    buffer.append( tree[idx] );</span>
+<span class="fc" id="L188">                    list.add( new Suggestion( buffer, diff + 5 + (chars.length()-buffer.length())*5 ) );</span>
+                }
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                if(charPosition + 1 &lt; chars.length()){</span>
+<span class="fc" id="L191">                    char newChar = tree[idx];</span>
+<span class="fc" id="L192">                    idx = readIndex();</span>
+<span class="fc bfc" id="L193" title="All 4 branches covered.">                    if( idx &gt; 0 &amp;&amp; newChar != currentChar) {</span>
+<span class="fc" id="L194">                        StringBuilder buffer = new StringBuilder( chars );</span>
+<span class="fc" id="L195">                        buffer.setCharAt( charPosition, newChar );</span>
+<span class="fc" id="L196">                        searchSuggestions( list, buffer, charPosition + 1, idx, diff + charDiff( currentChar, newChar ) );</span>
+                    }
+                }
+<span class="fc" id="L199">                idx = tempIdx += 3;</span>
+            }
+        }
+<span class="fc" id="L202">    }</span>
+    
+    private void searchSuggestionsLonger( Suggestions list, CharSequence chars, int lastIdx, int diff){
+<span class="fc" id="L205">        int tempIdx = idx = lastIdx;</span>
+<span class="pc bpc" id="L206" title="1 of 4 branches missed.">        while(idx&lt;size &amp;&amp; tree[idx] &lt; LAST_CHAR){</span>
+<span class="fc" id="L207">            StringBuilder buffer = new StringBuilder();</span>
+<span class="fc" id="L208">            buffer.append( chars );</span>
+<span class="fc" id="L209">            buffer.append( tree[idx] );</span>
+<span class="fc" id="L210">                searchSuggestions( list, buffer, chars.length(), idx, diff );</span>
+<span class="fc" id="L211">            idx = tempIdx += 3;</span>
+        }
+<span class="fc" id="L213">    }</span>
+    
+    /**
+     * Search if the character exist in the current node. If found then the variable &lt;code&gt;idx&lt;/code&gt; point to the location.
+     * If not found then it point on the next character (char value) item in the node. 
+     * @param c the searching character
+     * @return true if found
+     */
+    private boolean searchChar(char c){
+<span class="pc bpc" id="L222" title="1 of 4 branches missed.">        while(idx&lt;size &amp;&amp; tree[idx] &lt; c){</span>
+<span class="fc" id="L223">            idx += 3;</span>
+        }
+<span class="pc bpc" id="L225" title="1 of 4 branches missed.">        if((idx&gt;=size || tree[idx] != c)){</span>
+<span class="fc" id="L226">            return false;</span>
+        }
+<span class="fc" id="L228">        return true;</span>
+    }
+    
+    /**
+     * Check if on the current item position a word ends.
+     */
+    private boolean isWordMatch(){
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        return (tree[idx + 1] &amp; 0x8000) &gt; 0;</span>
+    }
+    
+    /**
+     * Read the offset in the tree of the next character. 
+     */
+    final int readIndex(){
+<span class="fc" id="L242">        return ((tree[idx+1] &amp; 0x7fff)&lt;&lt;16) + tree[idx+2]; </span>
+    }
+    
+    /**
+     * Returns an int that describe the dissimilarity of the characters. 
+     * The value is ever larger 0. A value of means only a small difference.
+     * @param a first char
+     * @param b second char
+     * @return the dissimilarity
+     */
+    private int charDiff( char a, char b ) {
+<span class="fc" id="L253">        a = Character.toLowerCase( a );</span>
+<span class="fc" id="L254">        b = Character.toLowerCase( b );</span>
+
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if( a == b ) {</span>
+<span class="fc" id="L257">            return 1;</span>
+        }
+
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if( Character.getType( a ) != Character.getType( b ) ) {</span>
+<span class="fc" id="L261">            return 6;</span>
+        }
+
+<span class="fc" id="L264">        return 5;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>

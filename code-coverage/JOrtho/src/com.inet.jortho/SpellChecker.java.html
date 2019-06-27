@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>SpellChecker.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">AllTests (07-Apr-2019 21:21:31)</a> &gt; <a href="../../index.html" class="el_group">JOrtho</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">com.inet.jortho</a> &gt; <span class="el_source">SpellChecker.java</span></div><h1>SpellChecker.java</h1><pre class="source lang-java linenums">/*
+ *  JOrtho
+ *
+ *  Copyright (C) 2005-2009 by i-net software
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation; either version 2 of the
+ *  License, or (at your option) any later version. 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ *  USA.
+ *  
+ *  Created on 05.12.2007
+ */
+package com.inet.jortho;
+
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.WeakHashMap;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+
+/**
+ * This class is the major class of the spell checker JOrtho (Java Orthography Checker). 
+ * In the most cases this is the only class that you need to add spell checking to your application.
+ * First you need to do a one-time registration of your dictionaries. In standalone applications this can
+ * look like:
+ * &lt;code&gt;&lt;pre&gt;
+ * SpellChecker.registerDictionaries( new URL(&quot;file&quot;, null, &quot;&quot;), &quot;en,de&quot;, &quot;de&quot; );
+ * &lt;/pre&gt;&lt;/code&gt;
+ * and in an applet this will look like:
+ * &lt;code&gt;&lt;pre&gt;
+ * SpellChecker.registerDictionaries( getCodeBase(), &quot;en,de&quot;, &quot;en&quot; );
+ * &lt;/pre&gt;&lt;/code&gt;
+ * After this you can register your text component that should have the spell checker features
+ * (Highlighter, context menu, spell checking dialog). 
+ * This looks like:&lt;code&gt;&lt;pre&gt;
+ * JTextPane text = new JTextPane();
+ * SpellChecker.register( text );
+ * &lt;/pre&gt;&lt;/code&gt;
+ * @author Volker Berlin
+ */
+public class SpellChecker {
+    
+<span class="fc" id="L75">    private final static ArrayList&lt;LanguageAction&gt; languages = new ArrayList&lt;LanguageAction&gt;();</span>
+    private static Dictionary currentDictionary;
+    private static Locale currentLocale;
+    private static UserDictionaryProvider userDictionaryProvider;
+    private static CustomDictionaryProvider customDictionaryProvider;
+<span class="fc" id="L80">    private final static java.util.Map&lt;LanguageChangeListener, Object&gt; listeners = Collections.synchronizedMap( new WeakHashMap&lt;LanguageChangeListener, Object&gt;() );</span>
+    private static String applicationName;
+<span class="fc" id="L82">    private static final SpellCheckerOptions globalOptions = new SpellCheckerOptions();</span>
+<span class="fc" id="L83">    private static MessageHandler messageHandler = new DefaultMessageHandler( null );</span>
+    private static CustomUIProvider customUIProvider;
+    
+    /**
+     * Duplicate of Action.SELECTED_KEY since 1.6
+     */
+<span class="fc" id="L89">    static final String SELECTED_KEY = &quot;SwingSelectedKey&quot;;</span>
+    
+    /**
+     * There is no instance needed of SpellChecker. All methods are static.
+     */
+    private SpellChecker(){/*nothing*/}
+    
+    /**
+     * Sets the UserDictionaryProvider. This is needed if the user should be able to add their own words.
+     * This method must be called before {@link #registerDictionaries(URL, String, String)}.
+     * 
+     * @param userDictionaryProvider the new UserDictionaryProvider or null
+     * @see #setCustomDictionaryProvider(CustomDictionaryProvider)
+     * @see #getUserDictionaryProvider()
+     * @see #registerDictionaries(URL, String, String)
+     */
+    public static void setUserDictionaryProvider( UserDictionaryProvider userDictionaryProvider ) {
+<span class="nc" id="L106">        SpellChecker.userDictionaryProvider = userDictionaryProvider;</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Gets the currently set UserDictionaryProvider. If none has been set then null is returned.
+     * 
+     * @see #setUserDictionaryProvider(UserDictionaryProvider)
+     */
+    public static UserDictionaryProvider getUserDictionaryProvider() {
+<span class="fc" id="L115">        return SpellChecker.userDictionaryProvider;</span>
+    }
+    
+    /**
+     * Set a CustomDictionaryProvider. This can be used to add an expert dictionary
+     * like a medical dictionary or a chemical dictionary. 
+     * 
+     * @param customDictionaryProvider the new CustomDictionaryProvider or null
+     * @see #setUserDictionaryProvider(UserDictionaryProvider)
+     * @see #registerDictionaries(URL, String, String)
+     */
+    public static void setCustomDictionaryProvider( CustomDictionaryProvider customDictionaryProvider ) {
+<span class="nc" id="L127">        SpellChecker.customDictionaryProvider = customDictionaryProvider;</span>
+<span class="nc" id="L128">    }</span>
+    
+    /**
+     * Gets the currently set CustomDictionaryProvider. If none has been set then null is returned.
+     * 
+     * @see #setCustomDictionaryProvider(CustomDictionaryProvider)
+     */
+    public static CustomDictionaryProvider getCustomDictionaryProvider() {
+<span class="nc" id="L136">        return SpellChecker.customDictionaryProvider;</span>
+    }
+    
+    /**
+     * Set the message handler used for handling errors and information messages. 
+     * 
+     * @param messageHandler the new MessageHandler or null (DefaultMessageHandler will be used)
+     */
+    public static void setMessageHandler( MessageHandler messageHandler ) {
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if( messageHandler == null ) {</span>
+<span class="nc" id="L146">            throw new IllegalArgumentException();</span>
+        }
+<span class="nc" id="L148">        SpellChecker.messageHandler = messageHandler;</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Gets the currently set message handler. 
+     * 
+     * @see #setMessageHandler(MessageHandler)
+     * @return the message handler, never null
+     */
+    public static MessageHandler getMessageHandler() {
+<span class="nc" id="L158">        return SpellChecker.messageHandler;</span>
+    }
+
+    /**
+     * Set a CustomUIProvider. This can be used to add an expert UI provider
+     * that constructs advances UI components for an application that needs
+     * common components that are more than just default Swing components
+     *
+     * @param customUIProvider the new CustomUIProvider or null
+     */
+    public static void setCustomUIProvider( CustomUIProvider customUIProvider ) {
+<span class="nc" id="L169">        SpellChecker.customUIProvider = customUIProvider;</span>
+<span class="nc" id="L170">    }</span>
+
+    /**
+     * Gets the currently set CustomUIProvider. If none has been set then null is returned.
+     *
+     * @see #setCustomUIProvider(CustomUIProvider)
+     */
+    public static CustomUIProvider getCustomUIProvider() {
+<span class="nc" id="L178">        return SpellChecker.customUIProvider;</span>
+    }
+
+    /**
+     * Registers the available dictionaries. The dictionaries' URLs must have the form &quot;dictionary_xx.xxxxx&quot; and must be
+     * relative to the baseURL. The available languages and extension of the dictionaries is load from a configuration file.
+     * The configuration file must also relative to the baseURL and must be named dictionaries.cnf, dictionaries.properties or
+     * dictionaries.txt. If the dictionary of the active Locale does not exist, the first dictionary is loaded. There is
+     * only one dictionary loaded in memory at a given time. 
+     * You can download the dictionary files from http://sourceforge.net/projects/jortho/files/Dictionaries/
+     * The configuration file has a Java Properties format. Currently there are the follow options:
+     * &lt;ul&gt;
+     * &lt;li&gt;languages&lt;/li&gt;
+     * &lt;li&gt;extension&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;b&gt;Samples:&lt;/b&gt; &lt;code&gt;&lt;pre&gt;
+     * // Load the configuration and dictionaries from the current working directory and use the current locale or the first language as default 
+     * SpellChecker.registerDictionaries( null, null );
+     * 
+     * // Load the configuration and dictionaries from the sub directory &quot;dict&quot;
+     * SpellChecker.registerDictionaries( new URL( &quot;file&quot;, null, &quot;dict&quot; ), null );
+     * 
+     * // Load the configuration and dictionaries from a web server and activate English as language 
+     * SpellChecker.registerDictionaries( new URL( &quot;http://MyWebServer/dictionries/&quot; ), &quot;en&quot; );
+     * 
+     * // Load the configuration and dictionaries from the same web location like the applet and use the German dictionary as default 
+     * SpellChecker.registerDictionaries( myApplet.getCodeBase(), &quot;de&quot; );
+     * 
+     * // Sample content from a file dictionaries.cnf
+     * extension=.ortho
+     * languages=de,en,it,fr,es,ru
+     * &lt;/pre&gt;&lt;/code&gt;
+     * 
+     * @param baseURL
+     *            the base URL where the dictionaries and configuration file can be found. If null then first in the classloader root is searched.
+     *            After it the URL(&quot;file&quot;, null, &quot;&quot;) is used which is equals to the current working directory.
+     * @param activeLocale
+     *            the locale that should be loaded and made active. If null or empty then the default locale is used.
+     * @see #setUserDictionaryProvider(UserDictionaryProvider)
+     * @see #registerDictionaries(URL, String, String)
+     * @see #registerDictionaries(URL, String, String, String)           
+     */
+    public static void registerDictionaries( URL baseURL, String activeLocale ) {
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if( baseURL == null ){</span>
+            try {
+<span class="fc" id="L223">                baseURL = SpellChecker.class.getResource( &quot;/dictionaries.cnf&quot; );</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                if( baseURL != null ) {</span>
+<span class="fc" id="L225">                    baseURL = new URL( baseURL, &quot;.&quot; );</span>
+<span class="fc" id="L226">                } else {</span>
+<span class="nc" id="L227">                    baseURL = new URL( &quot;file&quot;, null, &quot;&quot; );</span>
+                }
+<span class="nc" id="L229">            } catch( MalformedURLException e ) {</span>
+                // should never occur because the URL is valid
+<span class="nc" id="L231">            	SpellChecker.getMessageHandler().handleException( e );</span>
+            }
+        }
+        InputStream input;
+        try {
+<span class="fc" id="L236">            input = new URL( baseURL, &quot;dictionaries.cnf&quot; ).openStream();</span>
+<span class="pc" id="L237">        } catch( Exception e1 ) {</span>
+            try {
+<span class="nc" id="L239">                input = new URL( baseURL, &quot;dictionaries.properties&quot; ).openStream();</span>
+<span class="nc" id="L240">            } catch( Exception e2 ) {</span>
+                try {
+<span class="nc" id="L242">                    input = new URL( baseURL, &quot;dictionaries.txt&quot; ).openStream();</span>
+<span class="nc" id="L243">                } catch( Exception e3 ) {</span>
+<span class="nc" id="L244">                    System.err.println( &quot;JOrtho configuration file not found!&quot; );</span>
+<span class="nc" id="L245">                	SpellChecker.getMessageHandler().handleException( e1 );</span>
+<span class="nc" id="L246">                	SpellChecker.getMessageHandler().handleException( e2 );</span>
+<span class="nc" id="L247">                	SpellChecker.getMessageHandler().handleException( e3 );</span>
+<span class="nc" id="L248">                    return;</span>
+                }
+            }
+        }
+<span class="fc" id="L252">        Properties props = new Properties();</span>
+        try {
+<span class="fc" id="L254">            props.load( input );</span>
+<span class="pc" id="L255">        } catch( IOException e ) {</span>
+<span class="nc" id="L256">        	SpellChecker.getMessageHandler().handleException( e );</span>
+<span class="nc" id="L257">            return;</span>
+        }
+<span class="fc" id="L259">        String availableLocales = props.getProperty( &quot;languages&quot; );</span>
+<span class="fc" id="L260">        String extension = props.getProperty( &quot;extension&quot;, &quot;.ortho&quot; );</span>
+<span class="fc" id="L261">        registerDictionaries( baseURL, availableLocales, activeLocale, extension );</span>
+<span class="fc" id="L262">    }</span>
+
+    /**
+     * Registers the available dictionaries. The dictionaries' URLs must have the form &quot;dictionary_xx.ortho&quot; and must be
+     * relative to the baseURL. If the dictionary of the active Locale does not exist, the first dictionary is loaded.
+     * There is only one dictionary loaded in memory at a given time.
+     * You can download the dictionary files from http://sourceforge.net/projects/jortho/files/Dictionaries/
+     * 
+     * &lt;p&gt;&lt;b&gt;Samples:&lt;/b&gt; &lt;code&gt;&lt;pre&gt;
+     * // Load the dictionaries from the current working directory and use the current locale or the first language as default 
+     * SpellChecker.registerDictionaries( null, &quot;de,en&quot;, null );
+     * 
+     * // Load the dictionaries from the sub directory &quot;dict&quot;
+     * SpellChecker.registerDictionaries( new URL( &quot;file&quot;, null, &quot;dict&quot; ), &quot;de,en&quot;, null );
+     * 
+     * // Load the dictionaries from a web server and activate English as language 
+     * SpellChecker.registerDictionaries( new URL( &quot;http://MyWebServer/dictionries/&quot; ), &quot;de,en&quot;, &quot;en&quot; );
+     * 
+     * // Load the dictionaries from the same web location like the applet and use the German dictionary as default 
+     * SpellChecker.registerDictionaries( myApplet.getCodeBase(), &quot;de,en&quot;, &quot;de&quot; );
+     * 
+     * &lt;/pre&gt;&lt;/code&gt;
+     * 
+     * @param baseURL
+     *            the base URL where the dictionaries can be found. If null then URL(&quot;file&quot;, null, &quot;&quot;) is used.
+     * @param availableLocales
+     *            a comma separated list of locales
+     * @param activeLocale
+     *            the locale that should be loaded and made active. If null or empty then the default locale is used.
+     * @see #setUserDictionaryProvider(UserDictionaryProvider)
+     * @see #registerDictionaries(URL, String)
+     * @see #registerDictionaries(URL, String, String, String)
+     */
+    public static void registerDictionaries( URL baseURL, String availableLocales, String activeLocale ) {
+<span class="nc" id="L296">        registerDictionaries( baseURL, availableLocales, activeLocale, &quot;.ortho&quot; );</span>
+<span class="nc" id="L297">    }</span>
+
+    /**
+     * Registers the available dictionaries. The dictionaries' URLs must have the form &quot;dictionary_xx.xxxxx&quot; and must be
+     * relative to the baseURL. The extension can be set via parameter.
+     * If the dictionary of the active Locale does not exist, the first dictionary is loaded.
+     * There is only one dictionary loaded in memory at a given time.
+     * You can download the dictionary files from http://sourceforge.net/projects/jortho/files/Dictionaries/
+     * 
+     * &lt;p&gt;&lt;b&gt;Samples:&lt;/b&gt; &lt;code&gt;&lt;pre&gt;
+     * // Load the dictionaries from the current working directory 
+     * // and use the current locale or the first language as default.
+     * // The dictionaries must be named dictionary_de.ortho and dictionary_en.ortho
+     * SpellChecker.registerDictionaries( null, &quot;de,en&quot;, null, &quot;.ortho&quot; );
+     * 
+     * // Load the dictionaries from the sub directory &quot;dict&quot;
+     * // and use the current locale or the first language as default.
+     * // The dictionaries must be named dict/dictionary_de.ortho and dict/dictionary_en.ortho
+     * SpellChecker.registerDictionaries( new URL( &quot;file&quot;, null, &quot;dict&quot; ), &quot;de,en&quot;, null, &quot;.ortho&quot; );
+     * 
+     * // Load the dictionaries from a web server and activate English as language 
+     * // The dictionaries must be named http://MyWebServer/dictionries/dictionary_de.bin and http://MyWebServer/dictionries/dictionary_en.bin
+     * SpellChecker.registerDictionaries( new URL( &quot;http://MyWebServer/dictionries/&quot; ), &quot;de,en&quot;, &quot;en&quot;, &quot;.bin&quot; );
+     * 
+     * // Load the configuration from the same web location like the applet and use the German dictionary as default 
+     * // The dictionaries must be named dictionary_de.bin and dictionary_en.bin in the codebase
+     * SpellChecker.registerDictionaries( myApplet.getCodeBase(), &quot;de,en&quot;, &quot;de&quot;, &quot;.bin&quot; );
+     * 
+     * &lt;/pre&gt;&lt;/code&gt;
+     * 
+     * @param baseURL
+     *            the base URL where the dictionaries can be found. If null then URL(&quot;file&quot;, null, &quot;&quot;) is used.
+     * @param availableLocales
+     *            a comma separated list of locales
+     * @param activeLocale
+     *            the locale that should be loaded and made active. If null or empty then the default locale is used.
+     * @param extension
+     *            the file extension of the dictionaries. Some web server like the IIS6 does not support the default &quot;.ortho&quot;.
+     * @see #setUserDictionaryProvider(UserDictionaryProvider)
+     * @see #registerDictionaries(URL, String)
+     * @see #registerDictionaries(URL, String, String)
+     */
+    public static void registerDictionaries( URL baseURL, String availableLocales, String activeLocale, String extension ) {
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        if( baseURL == null ){</span>
+            try {
+<span class="nc" id="L342">                baseURL = new URL(&quot;file&quot;, null, &quot;&quot;);</span>
+<span class="nc" id="L343">            } catch( MalformedURLException e ) {</span>
+                // should never occur because the URL is valid
+<span class="nc" id="L345">            	SpellChecker.getMessageHandler().handleException( e );</span>
+            }
+        }
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        if( activeLocale == null ) {</span>
+<span class="fc" id="L349">            activeLocale = &quot;&quot;;</span>
+        }
+<span class="fc" id="L351">        activeLocale = activeLocale.trim();</span>
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">        if( activeLocale.length() == 0 ) {</span>
+<span class="fc" id="L353">            activeLocale = Locale.getDefault().getLanguage();</span>
+        }
+        
+<span class="fc" id="L356">        boolean activeSelected = false;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        for( String locale : availableLocales.split( &quot;,&quot; ) ) {</span>
+<span class="fc" id="L358">            locale = locale.trim().toLowerCase();</span>
+<span class="pc bpc" id="L359" title="1 of 2 branches missed.">            if(locale.length() &gt; 0){</span>
+<span class="fc" id="L360">                LanguageAction action = new LanguageAction( baseURL, new Locale( locale ), extension );</span>
+<span class="fc" id="L361">                languages.remove( action );</span>
+<span class="fc" id="L362">                languages.add( action );</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">                if( locale.equals( activeLocale ) ) {</span>
+<span class="fc" id="L364">                    action.actionPerformed( null );</span>
+<span class="fc" id="L365">                    activeSelected = true;</span>
+                }
+            }
+        }
+        // if nothing selected then select the first entry
+<span class="pc bpc" id="L370" title="3 of 4 branches missed.">        if( !activeSelected &amp;&amp; languages.size() &gt; 0 ) {</span>
+<span class="nc" id="L371">            LanguageAction action = languages.get( 0 );</span>
+<span class="nc" id="L372">            action.actionPerformed( null );</span>
+        }
+        
+        //sort the display names in order of the current language 
+<span class="fc" id="L376">        Collections.sort( languages );</span>
+<span class="fc" id="L377">    }</span>
+    
+    /**
+     * Activate the spell checker for the given &lt;code&gt;JTextComponent&lt;/code&gt;. The call is equal to register( text,
+     * true, true ).
+     * 
+     * @param text
+     *            the JTextComponent
+     * @throws NullPointerException
+     *             if text is null
+     */
+    public static void register( final JTextComponent text) throws NullPointerException{
+<span class="fc" id="L389">        register( text, true, true, true, true );</span>
+<span class="fc" id="L390">    }</span>
+
+    /**
+     * Activates the spell checker for the given &lt;code&gt;JTextComponent&lt;/code&gt;. You do not need to unregister if the
+     * JTextComponent is not needed anymore.
+     * 
+     * @param text
+     *            the JTextComponent
+     * @param hasPopup
+     *            if true, the JTextComponent is to have a popup menu with the menu item &quot;Orthography&quot; and &quot;Languages&quot;.
+     * @param submenu
+     *            if true, the popup has a sub menu           
+     * @param hasShortKey
+     *            if true, pressing the F7 key will display the spell check dialog.
+     * @param hasAutoSpell
+     *            if true, the JTextComponent has a auto spell checking.
+     * @throws NullPointerException
+     *             if text is null
+     */
+    public static void register( final JTextComponent text, boolean hasPopup, boolean submenu, boolean hasShortKey, boolean hasAutoSpell ) throws NullPointerException {
+<span class="pc bpc" id="L410" title="1 of 2 branches missed.">        if( hasPopup ) {</span>
+<span class="fc" id="L411">            enablePopup( text, true, submenu );</span>
+        }
+<span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if( hasShortKey ) {</span>
+<span class="fc" id="L414">            enableShortKey( text, true );</span>
+        }
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        if( hasAutoSpell ) {</span>
+<span class="fc" id="L417">            enableAutoSpell( text, true );</span>
+        }
+<span class="fc" id="L419">    }</span>
+    
+    /**
+     * Removes all spell checker features from the JTextComponent. This does not need to be called
+     * if the text component is no longer needed.
+     * @param text the JTextComponent
+     */
+    public static void unregister( JTextComponent text ){
+<span class="nc" id="L427">        enableShortKey( text, false );</span>
+<span class="nc" id="L428">        enablePopup( text, false, false );</span>
+<span class="nc" id="L429">        enableAutoSpell( text, false );</span>
+<span class="nc" id="L430">    }</span>
+    
+    /**
+     * Enable or disable the F7 key. Pressing the F7 key will display the spell check dialog. This also
+     * register an Action with the name &quot;spell-checking&quot;.
+     * @param text the JTextComponent that should change
+     * @param enable true, enable the feature.
+     */
+    public static void enableShortKey( final JTextComponent text, boolean enable ){
+<span class="fc" id="L439">        enableShortKey( text, enable, null );</span>
+<span class="fc" id="L440">    }</span>
+    
+    /**
+     * Enable or disable the F7 key. Pressing the F7 key will display the spell check dialog. This also
+     * register an Action with the name &quot;spell-checking&quot;.
+     * @param text the JTextComponent that should change
+     * @param enable true, enable the feature.
+     * @param options override the default options for this menu.
+     */
+    public static void enableShortKey( final JTextComponent text, boolean enable, final SpellCheckerOptions options ){
+<span class="pc bpc" id="L450" title="1 of 2 branches missed.">        if( enable ){</span>
+<span class="fc" id="L451">            text.getInputMap().put( KeyStroke.getKeyStroke( KeyEvent.VK_F7, 0 ), &quot;spell-checking&quot; );</span>
+<span class="fc" id="L452">            text.getActionMap().put( &quot;spell-checking&quot;, new AbstractAction(){</span>
+                public void actionPerformed( ActionEvent e ) {
+<span class="nc" id="L454">                    showSpellCheckerDialog( text, options );</span>
+<span class="nc" id="L455">                }</span>
+            });
+<span class="fc" id="L457">        }else{</span>
+<span class="nc" id="L458">            text.getActionMap().remove( &quot;spell-checking&quot; ); </span>
+        }
+<span class="fc" id="L460">    }</span>
+    
+    /**
+     * Show the Spell Checker dialog for the given JTextComponent. It will be do nothing if
+     * the JTextComponent is not editable or there are no dictionary loaded.
+     * The action for this method can you receive via:
+     * &lt;code&gt;&lt;pre&gt;
+     * Action action = text.getActionMap().get(&quot;spell-checking&quot;);
+     * &lt;/pre&gt;&lt;/code&gt;
+     * The action is only available if you have enable the short key (F7).
+     * @param text JTextComponent to check
+     * @param options override the default options for this menu.
+     */
+    public static void showSpellCheckerDialog( final JTextComponent text, SpellCheckerOptions options ) {
+<span class="nc bnc" id="L474" title="All 2 branches missed.">        if( !text.isEditable() ) {</span>
+            // only editable text component have spell checking
+<span class="nc" id="L476">            return;</span>
+        }
+<span class="nc" id="L478">        Dictionary dictionary = currentDictionary;</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">        if( dictionary != null ) {</span>
+<span class="nc" id="L480">            Window parent = SwingUtilities.getWindowAncestor( text );</span>
+            SpellCheckerDialog dialog;
+<span class="nc bnc" id="L482" title="All 2 branches missed.">            if( parent instanceof Frame ) {</span>
+<span class="nc" id="L483">                dialog = new SpellCheckerDialog( (Frame)parent, true, options );</span>
+<span class="nc" id="L484">            } else {</span>
+<span class="nc" id="L485">                dialog = new SpellCheckerDialog( (Dialog)parent, true, options );</span>
+            }
+<span class="nc" id="L487">            dialog.show( text, dictionary, currentLocale );</span>
+
+        }
+<span class="nc" id="L490">    }</span>
+    
+    /**
+     * Enable or disable the popup menu with the menu item &quot;Orthography&quot; and &quot;Languages&quot; or only suggestion. 
+     * @param text the JTextComponent that should change
+     * @param submenu true, menu item &quot;Orthography&quot; and &quot;Languages&quot;; false, only suggestions
+     * @param enable true, enable the feature.
+     */
+    public static void enablePopup( JTextComponent text, boolean enable, boolean submenu ){
+<span class="pc bpc" id="L499" title="1 of 2 branches missed.">        if( enable ){</span>
+            final JPopupMenu menu;
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">            if( submenu ){</span>
+<span class="fc" id="L502">                menu = new JPopupMenu();</span>
+<span class="fc" id="L503">                menu.add( createCheckerMenu() );</span>
+<span class="fc" id="L504">                menu.add( createLanguagesMenu() );</span>
+<span class="fc" id="L505">            } else {</span>
+<span class="nc" id="L506">                menu = createCheckerPopup();</span>
+            }
+<span class="fc" id="L508">            text.addMouseListener( new PopupListener(menu) );</span>
+<span class="fc" id="L509">        } else {</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">            for(MouseListener listener : text.getMouseListeners()){</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">                if(listener instanceof PopupListener){</span>
+<span class="nc" id="L512">                    text.removeMouseListener( listener );</span>
+                }
+            }
+        }
+<span class="fc" id="L516">    }</span>
+    
+    /**
+     * Enable or disable the auto spell checking feature (red zigzag line) for a text component.
+     * If you change the document then you need to reenable it.
+     * 
+     * @param text
+     *            the JTextComponent that should change
+     * @param enable
+     *            true, enable the feature.
+     */
+    public static void enableAutoSpell( JTextComponent text, boolean enable ){
+<span class="fc" id="L528">        enableAutoSpell( text, enable, null );</span>
+<span class="fc" id="L529">    }</span>
+
+    /**
+     * Enable or disable the auto spell checking feature (red zigzag line) for a text component. If you change the
+     * document then you need to reenable it.
+     * 
+     * @param text
+     *            the JTextComponent that should change
+     * @param enable
+     *            true, enable the feature.
+     * @param options
+     *            override the default options for this menu.
+     */
+    public static void enableAutoSpell( JTextComponent text, boolean enable, SpellCheckerOptions options ){
+<span class="pc bpc" id="L543" title="1 of 2 branches missed.">        if( enable ){</span>
+<span class="fc" id="L544">            new AutoSpellChecker( text, options );</span>
+<span class="fc" id="L545">        } else {</span>
+<span class="nc" id="L546">            AutoSpellChecker.disable( text );</span>
+        }
+<span class="fc" id="L548">    }</span>
+    
+    /**
+     * Adds a LanguageChangeListener. You do not need to remove it if the LanguageChangeListener is not needed
+     * anymore. You need a hard reference to the listener because the SpellChecker hold only a WeakReference.
+     * 
+     * @param listener
+     *            listener to add
+     * @see LanguageChangeListener
+     */
+    public static void addLanguageChangeLister(LanguageChangeListener listener){
+<span class="fc" id="L559">        listeners.put( listener, null );</span>
+<span class="fc" id="L560">    }</span>
+    
+    /**
+     * Removes the LanguageChangeListener.
+     * @param listener listener to remove
+     */
+    public static void removeLanguageChangeLister(LanguageChangeListener listener){
+<span class="nc" id="L567">        listeners.remove( listener );</span>
+<span class="nc" id="L568">    }</span>
+    
+    /**
+     * Helper method to fire an Language change event.
+     */
+    private static void fireLanguageChanged( Locale oldLocale ) {
+<span class="fc" id="L574">        LanguageChangeEvent ev = new LanguageChangeEvent( currentLocale, oldLocale );</span>
+        
+        Object[] list;
+<span class="fc" id="L577">        synchronized( listeners ) {</span>
+<span class="fc" id="L578">            list = listeners.keySet().toArray();</span>
+        }
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">        for( Object listener : list ) {</span>
+<span class="nc" id="L581">            ((LanguageChangeListener)listener).languageChanged( ev );</span>
+        }
+<span class="fc" id="L583">    }</span>
+    
+    /**
+     * Creates a menu item &quot;Orthography&quot; (or the equivalent depending on the user language) with a
+     * sub-menu that includes suggestions for a correct spelling.
+     * You can use this to add this menu item to your own popup.
+     * @return the new menu.
+     */
+    public static JMenu createCheckerMenu(){
+<span class="fc" id="L592">        return createCheckerMenu( null );</span>
+    }
+    
+    /**
+     * Creates a menu item &quot;Orthography&quot; (or the equivalent depending on the user language) with a
+     * sub-menu that includes suggestions for a correct spelling.
+     * You can use this to add this menu item to your own popup.
+     * @param options override the default options for this menu.
+     * @return the new menu.
+     */
+    public static JMenu createCheckerMenu(SpellCheckerOptions options){
+<span class="fc" id="L603">        return new CheckerMenu(options);</span>
+    }
+    
+    /**
+     * Create a dynamic JPopupMenu with a list of suggestion. You can use the follow code sequence:&lt;pre&gt;&lt;code&gt;
+     * JPopupMenu popup = SpellChecker.createCheckerPopup();
+     * text.addMouseListener( new PopupListener(popup) );
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @return the new JPopupMenu.
+     * @see #createCheckerMenu()
+     */
+    public static JPopupMenu createCheckerPopup(){
+<span class="nc" id="L615">        return createCheckerPopup( null );</span>
+    }
+    
+    /**
+     * Create a dynamic JPopupMenu with a list of suggestion. You can use the follow code sequence:&lt;pre&gt;&lt;code&gt;
+     * JPopupMenu popup = SpellChecker.createCheckerPopup( null );
+     * text.addMouseListener( new PopupListener(popup) );
+     * &lt;/code&gt;&lt;/pre&gt;
+     * @return the new JPopupMenu.
+     * @see #createCheckerMenu(SpellCheckerOptions)
+     */
+    public static JPopupMenu createCheckerPopup(SpellCheckerOptions options){
+<span class="nc" id="L627">        return new CheckerPopup(options);</span>
+    }
+    
+    /**
+     * Creates a menu item &quot;Languages&quot; (or the equivalent depending on the user language) with a sub-menu
+     * that lists all available dictionary languages. 
+     * You can use this to add this menu item to your own popup or to your menu bar.
+     * &lt;code&gt;&lt;pre&gt;
+     * JPopupMenu popup = new JPopupMenu();
+     * popup.add( SpellChecker.createLanguagesMenu() );
+     * &lt;/pre&gt;&lt;/code&gt;
+     * @return the new menu.
+     */
+    public static JMenu createLanguagesMenu(){
+<span class="fc" id="L641">        return createLanguagesMenu( null );</span>
+    }
+    
+    /**
+     * Creates a menu item &quot;Languages&quot; (or the equivalent depending on the user language) with a sub-menu
+     * that lists all available dictionary languages. 
+     * You can use this to add this menu item to your own popup or to your menu bar.
+     * &lt;code&gt;&lt;pre&gt;
+     * JPopupMenu popup = new JPopupMenu();
+     * popup.add( SpellChecker.createLanguagesMenu() );
+     * &lt;/pre&gt;&lt;/code&gt;
+     * @param options override the default options for this menu.
+     * @return the new menu.
+     */
+    public static JMenu createLanguagesMenu(SpellCheckerOptions options){
+<span class="fc" id="L656">        JMenu menu = new JMenu(Utils.getResource(&quot;languages&quot;));</span>
+<span class="fc" id="L657">        ButtonGroup group = new ButtonGroup();</span>
+<span class="pc bpc" id="L658" title="1 of 2 branches missed.">        menu.setEnabled( languages.size() &gt; 0 );</span>
+        
+<span class="fc bfc" id="L660" title="All 2 branches covered.">        for(LanguageAction action : languages){</span>
+<span class="fc" id="L661">            JRadioButtonMenuItem item = new JRadioButtonMenuItem( action );</span>
+            //Hack that all items of the action have the same state.
+            //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4133141
+<span class="fc" id="L664">            item.setModel( new ActionToggleButtonModel(action) );</span>
+<span class="fc" id="L665">            menu.add( item );</span>
+<span class="fc" id="L666">            group.add( item );</span>
+        }
+        
+<span class="pc bpc" id="L669" title="1 of 2 branches missed.">        if(options == null ){</span>
+<span class="fc" id="L670">            options = SpellChecker.getOptions();</span>
+        }
+        
+<span class="pc bpc" id="L673" title="2 of 4 branches missed.">        if(languages.size() &gt; 0 &amp;&amp; options.isLanguageDisableVisible()){</span>
+<span class="nc" id="L674">        	menu.addSeparator();</span>
+<span class="nc" id="L675">            JRadioButtonMenuItem item = new JRadioButtonMenuItem( DisableLanguageAction.instance );</span>
+<span class="nc" id="L676">            item.setModel( new ActionToggleButtonModel(DisableLanguageAction.instance) );</span>
+<span class="nc" id="L677">            menu.add( item );</span>
+<span class="nc" id="L678">            group.add( item );</span>
+        }
+        
+<span class="fc" id="L681">        return menu;</span>
+    }
+    
+    private static class ActionToggleButtonModel extends JToggleButton.ToggleButtonModel{
+        private final AbtsractLanguageAction action;
+        
+<span class="fc" id="L687">        ActionToggleButtonModel(AbtsractLanguageAction action){</span>
+<span class="fc" id="L688">            this.action = action;</span>
+<span class="fc" id="L689">        }</span>
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isSelected() {
+<span class="fc" id="L696">            return Boolean.TRUE.equals(action.getValue(SELECTED_KEY));</span>
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setSelected( boolean b ) {
+            // copy from super.setSelected
+<span class="nc" id="L705">            ButtonGroup group = getGroup();</span>
+<span class="nc bnc" id="L706" title="All 2 branches missed.">            if (group != null) {</span>
+                // use the group model instead
+<span class="nc" id="L708">                group.setSelected(this, b);</span>
+<span class="nc" id="L709">                b = group.isSelected(this);</span>
+            }
+
+<span class="nc bnc" id="L712" title="All 2 branches missed.">            if (isSelected() == b) {</span>
+<span class="nc" id="L713">                return;</span>
+            }
+
+<span class="nc" id="L716">            action.setSelected( b );</span>
+
+            // Send ChangeEvent
+<span class="nc" id="L719">            fireStateChanged();</span>
+
+            // Send ItemEvent
+<span class="nc" id="L722">            fireItemStateChanged(</span>
+<span class="nc" id="L723">                    new ItemEvent(this,</span>
+<span class="nc" id="L724">                                  ItemEvent.ITEM_STATE_CHANGED,</span>
+<span class="nc" id="L725">                                  this,</span>
+<span class="nc bnc" id="L726" title="All 2 branches missed.">                                  this.isSelected() ?  ItemEvent.SELECTED : ItemEvent.DESELECTED));</span>
+
+<span class="nc" id="L728">        }</span>
+    }
+    
+    /**
+     * Base class for languages change actions. This class has a static state to solv
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4133141
+     */
+    private static abstract class AbtsractLanguageAction extends AbstractAction{
+        
+        // the current active (selected) LanguageAction
+        private static AbtsractLanguageAction currentAction;
+        
+        public AbtsractLanguageAction( String name ) {
+<span class="fc" id="L741">            super(name);</span>
+<span class="fc" id="L742">        }</span>
+
+        /**
+         * Selects or deselects the menu item.
+         * 
+         * @param b
+         *            true selects the menu item, false deselects the menu item.
+         */
+        public void setSelected( boolean b ) {
+<span class="pc bpc" id="L751" title="1 of 2 branches missed.">            if( b ) {</span>
+                // because there are some problems with multiple ButtonGroups that we duplicate some of the logic here
+<span class="pc bpc" id="L753" title="3 of 4 branches missed.">                if( currentAction != null &amp;&amp; currentAction != this ) {</span>
+<span class="nc" id="L754">                    currentAction.setSelected( false );</span>
+                }
+<span class="fc" id="L756">                currentAction = this;</span>
+            }
+<span class="fc" id="L758">            putValue( SELECTED_KEY, Boolean.valueOf( b ) );</span>
+<span class="fc" id="L759">        }</span>
+
+    }
+
+    /**
+     * Action for disable all dictionary language.
+     */
+    private static class DisableLanguageAction extends AbtsractLanguageAction{
+<span class="nc" id="L767">    	static DisableLanguageAction instance = new DisableLanguageAction();</span>
+
+        private DisableLanguageAction() {
+<span class="nc" id="L770">            super(Utils.getResource(&quot;disable&quot;));</span>
+<span class="nc" id="L771">        }</span>
+        
+        public void actionPerformed( ActionEvent ev ) {
+<span class="nc bnc" id="L774" title="All 2 branches missed.">            if( !isEnabled() ) {</span>
+                //because multiple MenuItems share the same action that
+                //also the event occur multiple time
+<span class="nc" id="L777">                return;</span>
+            }
+<span class="nc" id="L779">            setEnabled( false );</span>
+<span class="nc" id="L780">            setSelected( true );</span>
+            try {
+<span class="nc" id="L782">                currentDictionary = null;</span>
+<span class="nc" id="L783">                Locale oldLocale = currentLocale;</span>
+<span class="nc" id="L784">                currentLocale = null;</span>
+<span class="nc" id="L785">                fireLanguageChanged( oldLocale );</span>
+<span class="nc" id="L786">            } finally {</span>
+<span class="nc" id="L787">                setEnabled( true );</span>
+            }
+<span class="nc" id="L789">        }</span>
+    }
+    
+    /**
+     * Action for change the current dictionary language.
+     */
+    private static class LanguageAction extends AbtsractLanguageAction implements Comparable&lt;LanguageAction&gt;{
+        
+        private final URL baseURL;
+        private final Locale locale;
+        private String extension;
+        
+        LanguageAction(URL baseURL, Locale locale, String extension){
+<span class="fc" id="L802">            super( locale.getDisplayLanguage() );</span>
+<span class="fc" id="L803">            this.baseURL = baseURL;</span>
+<span class="fc" id="L804">            this.locale = locale;</span>
+<span class="fc" id="L805">            this.extension = extension;</span>
+<span class="fc" id="L806">        }</span>
+
+        public void actionPerformed( ActionEvent ev ) {
+<span class="pc bpc" id="L809" title="1 of 2 branches missed.">            if( !isEnabled() ){</span>
+                //because multiple MenuItems share the same action that
+                //also the event occur multiple time
+<span class="nc" id="L812">                return;</span>
+            }
+<span class="fc" id="L814">            setEnabled( false );</span>
+<span class="fc" id="L815">            setSelected( true );</span>
+            
+<span class="fc" id="L817">            Thread thread = new Thread( new Runnable() {</span>
+                public void run() {
+                    try {
+<span class="fc" id="L820">                        DictionaryFactory factory = new DictionaryFactory();</span>
+                        try {
+<span class="fc" id="L822">                            factory.loadWordList( new URL( baseURL, &quot;dictionary_&quot; + locale + extension ) );</span>
+<span class="pc" id="L823">                        } catch( Exception ex ) {</span>
+<span class="nc" id="L824">                        	SpellChecker.getMessageHandler().handleError( ex.toString(), &quot;Error&quot;, ex );</span>
+                        }
+                         try {
+<span class="fc" id="L827">                            CustomDictionaryProvider provider = userDictionaryProvider;</span>
+<span class="pc bpc" id="L828" title="1 of 2 branches missed.">                            if( provider != null ) {</span>
+<span class="nc" id="L829">                                Iterator&lt;String&gt; userWords = provider.getWords( locale );</span>
+<span class="nc bnc" id="L830" title="All 2 branches missed.">                                if( userWords != null ) {</span>
+<span class="nc" id="L831">                                    factory.loadWords( userWords );</span>
+                                }
+                            }
+<span class="fc" id="L834">                            provider = customDictionaryProvider;</span>
+<span class="pc bpc" id="L835" title="1 of 2 branches missed.">                            if( provider != null ) {</span>
+<span class="nc" id="L836">                                Iterator&lt;String&gt; userWords = provider.getWords( locale );</span>
+<span class="nc bnc" id="L837" title="All 2 branches missed.">                                if( userWords != null ) {</span>
+<span class="nc" id="L838">                                    factory.loadWords( userWords );</span>
+                                }
+                            }
+<span class="nc" id="L841">                        } catch( Exception ex ) {</span>
+<span class="nc" id="L842">                        	SpellChecker.getMessageHandler().handleError( ex.toString(), &quot;Error&quot;, ex );</span>
+                        }
+<span class="fc" id="L844">                        Locale oldLocale = locale;</span>
+<span class="fc" id="L845">                        currentDictionary = factory.create();</span>
+<span class="fc" id="L846">                        factory = null; // make memory faster free</span>
+<span class="fc" id="L847">                        currentLocale = locale;</span>
+<span class="fc" id="L848">                        fireLanguageChanged( oldLocale );</span>
+<span class="fc" id="L849">                    } finally {</span>
+<span class="fc" id="L850">                        setEnabled( true );</span>
+                    }
+<span class="fc" id="L852">                }</span>
+            });
+<span class="fc" id="L854">            thread.setPriority( Thread.NORM_PRIORITY );</span>
+<span class="fc" id="L855">            thread.setDaemon( true );</span>
+<span class="fc" id="L856">            thread.start();</span>
+<span class="fc" id="L857">        }</span>
+        
+        @Override
+        public boolean equals(Object obj){
+<span class="pc bpc" id="L861" title="1 of 2 branches missed.">            if(obj instanceof LanguageAction){</span>
+<span class="fc" id="L862">                return locale.equals( ((LanguageAction)obj).locale );</span>
+            }
+<span class="nc" id="L864">            return false;</span>
+        }
+        
+        @Override
+        public int hashCode(){
+<span class="fc" id="L869">            return locale.hashCode();</span>
+        }
+
+        /**
+         * Sort the displaynames in the order of the current language
+         */
+        public int compareTo( LanguageAction obj ) {
+<span class="fc" id="L876">            return toString().compareTo( obj.toString() );</span>
+        }
+    }
+
+    /**
+     * Get the current &lt;code&gt;Dictionary&lt;/code&gt;. The current dictionary will be set if the user one select or on calling &lt;code&gt;registerDictionaries&lt;/code&gt;.
+     * @return the current &lt;code&gt;Dictionary&lt;/code&gt; or null if not set.
+     * @see #registerDictionaries(URL, String, String)
+     */
+    static Dictionary getCurrentDictionary() {
+<span class="fc" id="L886">        return currentDictionary;</span>
+    }
+
+    /**
+     * Gets the current &lt;code&gt;Locale&lt;/code&gt;. The current Locale will be set if the user selects
+     * one, or when calling &lt;ode&gt;registerDictionaries&lt;/code&gt;.
+     * @return the current &lt;code&gt;Locale&lt;/code&gt; or null if none is set.
+     * @see #registerDictionaries(URL, String, String)
+     * @see #isDictionaryLoaded()
+     */
+    public static Locale getCurrentLocale() {
+<span class="fc" id="L897">        return currentLocale;</span>
+    }
+    
+    /**
+     * Set the current &lt;code&gt;Locale&lt;/code&gt;. The call is asynchronous.
+     * @param locale the new locale, must be registered.
+     * @throws IllegalArgumentException if the locale was not registered as available.
+     * @see #registerDictionaries(URL, String, String)
+     * @see #isDictionaryLoaded()
+     * @see #getCurrentLocale()
+     */
+    public static void setCurrentLocale( Locale locale ) throws IllegalArgumentException {
+<span class="nc bnc" id="L909" title="All 2 branches missed.">        if( locale.equals( currentLocale ) ) {</span>
+<span class="nc" id="L910">            return;</span>
+        }
+<span class="nc bnc" id="L912" title="All 2 branches missed.">        for( LanguageAction language : languages ){</span>
+<span class="nc bnc" id="L913" title="All 2 branches missed.">            if( language.locale.equals( locale ) ){</span>
+<span class="nc" id="L914">                language.actionPerformed( null );</span>
+<span class="nc" id="L915">                return;</span>
+            }
+        }
+<span class="nc" id="L918">        throw new IllegalArgumentException( &quot;Not registered locale: &quot; + locale );</span>
+    }
+    
+    /**
+     * If currently a Dictionary is loaded.
+     * @return true, if a dictionary is loaded and include at minimum one word. 
+     */
+    public static boolean isDictionaryLoaded(){
+<span class="nc bnc" id="L926" title="All 4 branches missed.">        return currentDictionary != null &amp;&amp; currentDictionary.getDataSize() &gt; 1;</span>
+    }
+    
+    /**
+     * Set the title of your application. This valuse is used as title for info boxes (JOptionPane).
+     * If not set then the translated &quot;Spelling&quot; is used.
+     */
+    public static void setApplicationName( String name ){
+<span class="nc" id="L934">        applicationName = name;</span>
+<span class="nc" id="L935">    }</span>
+
+    /**
+     * Get the title of your application.
+     */
+    public static String getApplicationName(){
+<span class="nc" id="L941">        return applicationName;</span>
+    }
+ 
+    /**
+     * Get the default SpellCheckerOptions. This object is a singleton. That there is no set method.
+     * @return the default SpellCheckerOptions
+     */
+    public static SpellCheckerOptions getOptions(){
+<span class="fc" id="L949">        return globalOptions;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>AllTests (07-Apr-2019 21:21:31)</div></body></html>
